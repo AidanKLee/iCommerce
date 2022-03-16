@@ -1,70 +1,91 @@
-# Getting Started with Create React App
+*Attribution
+<a href="http://www.freepik.com">Logo Designed by pikisuperstar / Freepik</a>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Photo by <a href="https://unsplash.com/@enikoo?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">eniko kis</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@revolt?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">REVOLT</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-## Available Scripts
+Photo by <a href="https://unsplash.com/@rachitank?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Rachit Tank</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-In the project directory, you can run:
+Photo by <a href="https://unsplash.com/@cdx2?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">C D-X</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-### `npm start`
+Photo by <a href="https://unsplash.com/@giorgiotrovato?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Giorgio Trovato</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Photo by <a href="https://unsplash.com/@imani_bht?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Imani Bahati</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Photo by <a href="https://unsplash.com/@carolineattwood?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Caroline Attwood</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-### `npm test`
+Photo by <a href="https://unsplash.com/@ruslanbardash?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Ruslan Bardash</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Photo by <a href="https://unsplash.com/@ikredenets?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Irene Kredenets</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-### `npm run build`
+Photo by <a href="https://unsplash.com/@joanofarts?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Joan Tran</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Photo by <a href="https://unsplash.com/@danielkorpai?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Daniel Korpai</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Photo by <a href="https://unsplash.com/@kiranck123?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Kiran CK</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Photo by <a href="https://unsplash.com/@mohammadmetri?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Mohammad Metri</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-### `npm run eject`
+Photo by <a href="https://unsplash.com/@varunkgaba?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Varun Gaba</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Photo by <a href="https://unsplash.com/@charlesdeluvio?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">charlesdeluvio</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@pl_gt?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Paul Gaudriault</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Photo by <a href="https://unsplash.com/@grantritchie?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Grant Ritchie</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Photo by <a href="https://unsplash.com/@jakobowens1?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jakob Owens</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Photo by <a href="https://unsplash.com/@battlecreekcoffeeroasters?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Battlecreek Coffee Roasters</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@bechbox?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Mikkel Bech</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-## Learn More
+Photo by <a href="https://unsplash.com/@thisisnando?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Fernando Andrade</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Photo by <a href="https://unsplash.com/@picoftasty?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Mae Mu</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@iamdavid_10?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">David Švihovec</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@sunlingyan?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Sun Lingyan</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Photo by <a href="https://unsplash.com/@iyamiphotography?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Valeriia Miller</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-### Code Splitting
+Photo by <a href="https://unsplash.com/@kuiye?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Kuiye Chen</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@alexunderhess?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Alexunder Hess</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Photo by <a href="https://unsplash.com/@curology?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Curology</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@itshopelessfox?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Ali Bakhtiari</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-### Analyzing the Bundle Size
+Photo by <a href="https://unsplash.com/@felipepelaquim?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">@felipepelaquim</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Photo by <a href="https://unsplash.com/@groblechnersara?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Sara Groblechner</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-### Making a Progressive Web App
+Photo by <a href="https://unsplash.com/@vinikhill?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">NIKHIL</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@fakurian?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Milad Fakurian</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Photo by <a href="https://unsplash.com/@tarikul_islam?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Shardar Tarikul Islam</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-### Advanced Configuration
+Photo by <a href="https://unsplash.com/@derickray?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Derick McKinney</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@haziq_jb1?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Haziq JB</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Photo by <a href="https://unsplash.com/@tex450?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Matthew Ball</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@nampoh?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Maxim Hopman</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-### Deployment
+Photo by <a href="https://unsplash.com/@panvojtek?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Honza Vojtek</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Photo by <a href="https://unsplash.com/@kiranck123?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Kiran CK</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@len0xx43?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Prokhor Minin</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-### `npm run build` fails to minify
+Photo by <a href="https://unsplash.com/@regeci?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Adrian Regeci</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Photo by <a href="https://unsplash.com/@lensinkmitchel?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Mitchel Lensink</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
+Photo by <a href="https://unsplash.com/@rocky1638?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Rock Zhou</a> on <a href="https://unsplash.com/s/photos/product?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  

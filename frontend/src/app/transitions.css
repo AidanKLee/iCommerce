@@ -1,0 +1,58 @@
+.app.header.section.item .search.search-bar-enter {
+    max-width: 31px;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+.app.header.section.item .search.search-bar-enter-active {
+    max-width: 320px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app.header.section.item .search.search-bar-enter-done {
+    max-width: 320px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app.header.section.item .search.search-bar-exit {
+    max-width: 320px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app.header.section.item .search.search-bar-exit-active {
+    max-width: 31px;
+    border: 1px solid transparent;
+    background-color: transparent;
+}
+
+.app.header.section.item .search.search-bar-enter {
+    max-width: 31px;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+
+.app.header.section.item #search.search-bar-enter {
+    padding: 0;
+}
+
+.app.header.section.item #search.search-bar-input-enter-active {
+    padding: 4px 0px 4px 8px;
+    transition: .3s;
+}
+
+.app.header.section.item #search.search-bar-input-enter-done {
+    padding: 4px 0px 4px 8px;
+}
+
+.app.header.section.item #search.search-bar-input-exit {
+    padding: 4px 0px 4px 8px;
+}
+
+.app.header.section.item #search.search-bar-input-exit-active {
+    padding: 0;
+    transition: .3s;
+}

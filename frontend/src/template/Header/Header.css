@@ -1,0 +1,277 @@
+.app.header {
+    color: #dadada;
+    fill: #dadada;
+    font-size: .8rem;
+    background-color: rgb(30, 30, 30);
+}
+
+.app.header.section {
+    display: flex;
+    justify-content: space-between;
+    height: 48px;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 8px;
+}
+
+.app.header.section.item {
+    display: flex;
+    width: fit-content;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.app.header.section.item.menu-button {
+    margin-right: 8px;
+    display: none;
+}
+
+.app.header.section.item.logo {
+    height: 36px;
+    width: 36px;
+}
+
+.app.header.section.item.logo-text a {
+    color: #dadada;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-left: 4px;
+    transition: .3s;
+}
+
+.app.header.section.item.logo-text a:hover {
+    color: white;
+}
+
+.app.header.section.item.categories {
+    margin-left: 16px;
+}
+
+.app.header.section.item .categories {
+    list-style: none;
+    display: flex;
+    color: inherit;
+    height: 100%;
+}
+
+.app.header.section.item .categories.item {
+    width: fit-content;
+    padding: 0 8px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: .5s;
+    border-bottom: 0px solid transparent;
+}
+
+.app.header.section.item .categories.item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-bottom: 3px solid #dadada;
+}
+
+.app.header.section.item .categories.item a {
+    white-space: nowrap;
+    color: inherit;
+    transition: .3s;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.app.header.section.item .categories.item.more {
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.app.header.section.item .categories.item.more:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-bottom: 0 solid transparent;
+    color: white;
+    fill: white;
+}
+
+.app.header.section.item .categories.item.more .dropdown {
+    display: flex;
+    align-items: center;
+    color: inherit;
+    cursor: context-menu;
+}
+
+.app.header.section.item .categories.item.more .dropdown.list {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background-color: rgb(30, 30, 30);
+    font-size: .7rem;
+    display: block;
+    opacity: 0;
+    transition: opacity .5s;
+    z-index: 21;
+}
+
+.app.header.section.item .categories.item.more:hover .dropdown.list {
+    opacity: 1;
+}
+
+.app.header.section.item .categories.item.more .dropdown.list.item {
+    position: relative;
+    top: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.app.header.section.item .categories.item.more .dropdown.list.item:hover {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.app.header.section.item .categories.item.more .dropdown.list.item a {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 4px 16px;
+}
+
+.app.header.section.item .categories.item a:hover {
+    color: white;
+}
+
+.app.header.section.item.search {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.app.header.section.item .search {
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    /* max-width: 320px; */
+    margin-left: 8px;
+    border-radius: 16px;
+    transition: .3s;
+    border: 1px solid transparent;
+    max-width: 31px;
+}
+
+.app.header.section.item .search:hover {
+    fill: white;
+}
+
+.app.header.section.item .search input {
+    background-color: transparent;
+    color: #f1f1f1;
+    padding: 0px;
+    width: calc(100% - 29px);
+}
+
+.app.header.section.item .search input:focus {
+    outline: 0 none transparent;
+}
+
+.app.header.section.item .search label {
+    background-color: transparent;
+    height: 29px;
+    width: 29px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app.header.section.item .user {
+    display: flex;
+    align-items: center;
+    color: inherit;
+    height: 100%;
+}
+
+.app.header.section.item .user.item {
+    margin-left: 12px;
+}
+
+.app.header.section.item .user.item.sign {
+    font-size: .7rem;
+}
+
+.app.header.section.item .user.item a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    color: inherit;
+    fill: inherit;
+    text-decoration: underline;
+    transition: .3s;
+}
+
+.app.header.section.item .user.item a:hover {
+    color: inherit;
+    fill: inherit;
+    text-decoration: underline;
+    transition: .3s;
+    color: white;
+    fill: white;
+}
+
+.sign a {
+    margin: 4px;
+}
+
+.app.header.section.item .user.item a:hover {
+    text-decoration: none;
+}
+
+.app.header .breadcrumb {
+    background-color: rgba(235, 235, 235, 0.1);
+    padding: 4px 8px;
+    font-size: .7rem;
+    display: flex;
+    color: inherit;
+    display: flex;
+    justify-content: center;
+}
+
+.app.header .breadcrumb.list {
+    width: 100%;
+    padding: 0;
+    justify-content: flex-start;
+    max-width: 1920px;
+    background-color: transparent;
+}
+
+.app.header .breadcrumb.list.item {
+    background-color: transparent;
+    color: inherit;
+    font-weight: 400;
+}
+
+.app.header .breadcrumb.list.item a {
+    font-weight: inherit;
+    color: inherit;
+}
+
+@media only screen and (max-width: 680px) {
+    .app.header.section.item.categories {
+        display: none;
+    }
+    .app.header.section.item.menu-button {
+        display: flex;
+    }
+}
+
+@media only screen and (max-width: 580px) {
+    .app.header.section.item.logo-text {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 440px) {
+    .app.header.section.item .user.item.sign {
+        display: none;
+    }
+}

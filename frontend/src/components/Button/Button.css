@@ -1,0 +1,78 @@
+.button {
+    border-radius: 0px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    margin: 4px;
+    min-width: 96px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .2s;
+    color: rgb(200, 0, 0);
+}
+
+.button:hover {
+    transform: scale(1.03);
+}
+
+.button:active {
+    transform: scale(.97);
+}
+
+.curved {
+    border-radius: 8px;
+}
+
+.circle {
+    border-radius: 26px;
+}
+
+.small {
+    padding: 4px 8px;
+    min-width: 0;
+}
+
+.large {
+    padding: 12px 20px;
+    min-width: 128px;
+}
+
+.link {
+    padding: 0;
+    display: inline-flex;
+}
+
+.link:hover {
+    transform: scale(1);
+    text-decoration: underline;
+}
+
+.leftIcon svg {
+    margin-right: 6px;
+}
+
+.rightIcon svg {
+    margin-left: 6px;
+}
+
+svg {
+    width: 24px;
+    height: 24px;
+}
+
+path {
+    pointer-events: none;
+}
+
+.icon {
+    min-width: 0;
+    padding: 8px;
+}
+
+.icon.small {
+    padding: 4px;
+}
+
+.icon.large {
+    padding: 12px;
+}
