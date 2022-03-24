@@ -8,17 +8,19 @@ class SQLQuery {
     queries = {};
 
     build = query => {
-        const { name, type } = query;
+        const { name, custom, type } = query;
 
-        if (type.toLowerCase() === 'select') {
+        if (type && type.toLowerCase() === 'select') {
             query = this.buildSelectQuery(query);
-        } else if (type.toLowerCase() === 'insert') {
+        } else if (type && type.toLowerCase() === 'insert') {
             query = this.buildInsertQuery(query);
-        } else if (type.toLowerCase() === 'update') {
+        } else if (type && type.toLowerCase() === 'update') {
             query = this.buildUpdateQuery(query);
-        } else if (type.toLowerCase() === 'delete') {
+        } else if (type && type.toLowerCase() === 'delete') {
             query = this.buildDeleteQuery(query);
-        }
+        } else if (name && custom) {
+            query = custom;
+        } 
 
         this.queries[name] = query;
         this[name] = async (values) => {
@@ -52,8 +54,8 @@ class SQLQuery {
             }
             if (param.toLowerCase().includes('join')) {
                 let columns = tables.map(table => table.columns);
-                columns = columns ? columns.map(column => typeof column === 'string' ? column : column.map(col => col).join(', ')) : '';
-                columns = columns.join(', ');
+                columns = columns ? typeof columns === 'string' ? columns : columns.map(col => col).join(', ') : '';
+                // columns = columns.join(', ');
                 if (columns) {
                     table[0] = table[0].split(' FROM ');
                     table[0] = `${table[0][0]}, ${columns} FROM ${table[0][1]}`;
@@ -85,9 +87,10 @@ class SQLQuery {
         let { tables, conditions } = query;
         query = tables.map((table, i) => {
             let { name, columns } = table;
+            columns = !columns ? '' : columns;
             columns = typeof columns === 'string' ? columns : columns.join(', ');
             conditions = typeof conditions === 'string' ? [conditions] : conditions;
-            conditions = conditions ? conditions.map((condition, i) => `${condition} $${i + 1}`).join(', ') : '';
+            conditions = conditions ? conditions.map((condition, i) => `${condition} $${i + 1}`).join(' ') : '';
             return [`SELECT ${columns} FROM ${name}`, conditions];
         })
         
@@ -127,7 +130,7 @@ class SQLQuery {
         const table = tables[0] || tables;
         let { name, columns } = table;
         conditions = typeof conditions === 'string' ? [conditions] : conditions;
-        conditions = conditions ? conditions.map((condition, i) => `${condition} $${columns.length + 1 + i}`) : '';
+        conditions = conditions ? conditions.map((condition, i) => `${condition} $${columns.length > 0 ? columns.length + 1 + i : 1}`).join(' ') : '';
         columns = typeof columns === 'string' ? [columns] : columns;
         columns = columns.map((column, i) => `${column} = $${i + 1}`).join(', ');
         query = `UPDATE ${name} SET ${columns} ${conditions}`
@@ -138,9 +141,11 @@ class SQLQuery {
         let { tables, conditions } = query;
         const table = tables[0] || tables;
         const { name } = table;
-        conditions = typeof conditions === 'string' ? [conditions] : conditions;
-        conditions = conditions.map((condition, i) => `${condition} $${i + 1}`).join(', ');
-        query = `DELETE FROM ${name} ${conditions}`;
+        if (conditions) {
+            conditions = typeof conditions === 'string' ? [conditions] : conditions;
+            conditions = conditions.map((condition, i) => `${condition} $${i + 1}`).join(' ');
+        }
+        query = `DELETE FROM ${name}${conditions ? ' ' + conditions : ''}`;
         return query;
     };
 

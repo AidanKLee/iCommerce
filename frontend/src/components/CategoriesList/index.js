@@ -11,7 +11,7 @@ const CategoriesList = props => {
     const { width } = useWindowDimensions();
 
     const mediaPositions = useMemo(() => {
-        let positions = [1160, 1140, 1080, 1040, 920, 800, 740, 660];
+        let positions = [1280, 1260, 1200, 1160, 1040, 920, 860, 780, 660];
         if (searchOpen) positions = positions.map(position => position + 280);
         let statements = {};
         positions.forEach(statement => {
@@ -26,16 +26,7 @@ const CategoriesList = props => {
     const [ more, setMore ] = useState([]);
     const [ moreHover, setMoreHover ] = useState(false);
 
-    const [ media, setMedia ] = useState({
-        '1160px': width < 1160,
-        '1140px': width < 1140,
-        '1080px': width < 1080,
-        '1040px': width < 1040,
-        '920px': width < 920,
-        '800px': width < 800,
-        '740px': width < 740,
-        '660px': width < 660
-    })
+    const [ media, setMedia ] = useState(mediaPositions)
 
     const matches = useMemo(() => {
         let count = 0;
@@ -84,11 +75,14 @@ const CategoriesList = props => {
 
     return (
         <ul className='categories'>
+            <li className='categories item'>
+                <Link to={'/'}>Home</Link>
+            </li>
             {
                 showing.map(category => {
                     return (
                         <li key={category.name} className='categories item'>
-                            <Link to={category.link}>{category.name}</Link>
+                            <Link to={category.href}>{category.name}</Link>
                         </li>
                     )
                 })
@@ -106,7 +100,7 @@ const CategoriesList = props => {
                                     more.map(category => {
                                         return (
                                             <li key={category.name} className='dropdown list item'>
-                                                <Link to={category.link}>{category.name}</Link>
+                                                <Link to={category.href}>{category.name}</Link>
                                             </li>
                                         )
                                     })

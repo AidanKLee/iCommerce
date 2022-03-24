@@ -16,7 +16,7 @@ html {
 }
 
 body {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
 }
 
@@ -30,7 +30,41 @@ a {
   display: inline;
 }
 
+b {
+  font-weight: bold;
+  color: inherit;
+}
+
 code {
   font-family: 'Roboto Mono', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+h1, h2, h2, h3, h5, h6 {
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 1.3rem;
+}
+
+h4 {
+  font-size: 1.2rem;
+}
+
+h5 {
+  font-size: 1.1rem;
+}
+
+input:focus {
+  outline: 2px solid rgba(50, 50, 50, 0.6);
+  border-radius: 4px;
 }

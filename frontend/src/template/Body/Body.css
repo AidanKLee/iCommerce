@@ -1,0 +1,4 @@
+.app.body {
+    min-height: calc(100vh - 73px);
+    display: flex;
+}

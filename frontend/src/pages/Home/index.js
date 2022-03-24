@@ -6,7 +6,7 @@ import './Home.css';
 const carouselCards = [
     {
         name: 'Gaming', src: '../../images/sony-2619483_1920.jpg',
-        title: 'All the latesest games, new and used.',
+        title: 'All the latest games, new and used.',
         text: 'Never miss out on the best deals for the latest games.',
         href: '/',
         style: {
@@ -75,7 +75,6 @@ const Home = props => {
                 {
                     cards.map(card => {
                         const name = card.name.split(' ').join('_').toLowerCase();
-                        console.log(name)
                         return (
                             <div key={name}>
                                 {card.src ? <img src={card.src} alt={card.name}/> : undefined}

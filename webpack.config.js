@@ -17,8 +17,10 @@ module.exports = {
                     options: {
                         "presets": [
                             "@babel/preset-env",
-                            "@babel/preset-react",
-                            @babel
+                            "@babel/preset-react"
+                        ],
+                        "plugins": [
+                            "@babel/plugin-transform-runtime"
                         ],
                         "comments": false
                     }

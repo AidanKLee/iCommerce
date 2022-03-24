@@ -77,6 +77,8 @@ const Button = props => {
     if (rightIcon) className = className + ' rightIcon';
     if (icon) className = className + ' icon';
 
+    const noFunction = () => {};
+
     const renderButton = () => {
         if (type === 'navlink') {
             return <Link 
@@ -115,9 +117,10 @@ const Button = props => {
             </a>
         } else {
             return <button 
+                type={type}
                 className={className}
                 disabled={disabled}
-                onClick={e => onClick(e)}
+                onClick={e => onClick ? onClick(e) : noFunction()}
                 style={style}
             >
                 { loading && leftIcon ? loader : leftIcon }

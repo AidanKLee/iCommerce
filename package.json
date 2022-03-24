@@ -3,16 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/runtime": "^7.17.8",
     "@reduxjs/toolkit": "^1.8.0",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
+    "an-array-of-english-words": "^2.0.0",
     "antd": "^4.19.2",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.2",
     "cors": "^2.8.5",
     "csurf": "^1.11.0",
     "dotenv": "^16.0.0",
+    "errorhandler": "^1.5.1",
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "express-validator": "^6.14.0",
@@ -36,6 +39,7 @@
   "devDependencies": {
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.5",
+    "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "babel-loader": "^8.2.3",
@@ -48,7 +52,7 @@
   },
   "scripts": {
     "start": "npm-run-all -p nodemon webpack",
-    "nodemon": "nodemon app.js",
+    "nodemon": "nodemon --watch backend app.js --ignore frontend/",
     "webpack": "npx webpack",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

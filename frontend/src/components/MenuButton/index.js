@@ -8,7 +8,6 @@ const MenuButton = props => {
     const [ open, setOpen ] = useState(false);
 
     const handleClick = e => {
-        console.log('toggling')
         setOpen(!open);
         onClick(e);
     }

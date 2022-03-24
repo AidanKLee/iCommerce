@@ -1,0 +1,16 @@
+.modal-overlay {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(50, 50, 50, 0.2);
+    padding: 16px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-loading {
+    height: 128px;
+    width: 128px;
+}

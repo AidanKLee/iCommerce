@@ -1,0 +1,107 @@
+.auth {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+}
+
+.auth.form {
+    height: auto;
+    display: block;
+    padding: 16px;
+    max-width: 800px;
+}
+
+.auth.form.login {
+    max-width: 440px;
+}
+
+.auth.form input {
+    background-color: rgb(250, 250, 250);
+}
+
+.auth.form.double {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.auth.form.double.input {
+    flex-direction: column;
+    max-width: calc(50% - 8px);
+    margin: 0;
+}
+
+.auth.form.double, .auth.form.single {
+    margin-top: 4px;
+    position: relative;
+    padding: 0px;
+}
+
+.auth.form .show {
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    right: 8px;
+    bottom: 8px;
+    fill:rgba(50, 50, 50, 0.6);
+}
+
+.auth.form.subscribe {
+    padding: 16px 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.auth.form.subscribe label {
+    margin-right: 16px;
+}
+
+.auth input {
+    padding: 8px 16px;
+    width: 100%;
+}
+
+.auth label {
+    width: 100%;
+}
+
+.auth input:checked + .slider {
+    background-color: rgb(30, 30, 30);
+}
+
+.auth.form.actions {
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.auth.form.actions.login {
+    margin-top: 16px;
+}
+
+.auth.form.actions .button {
+    margin: 0 12px 0 0;
+}
+
+.auth.form .incorrect {
+    font-size: .6rem;
+    position: absolute;
+    font-weight: bold;
+    color: rgb(200, 0, 0);
+    transform: translateY(2px);
+}
+
+@media only screen and (max-width: 560px) {
+    .auth.form.double.input {
+        max-width: 100%;
+    }
+    .auth.form.double {
+        flex-direction: column;
+    }
+}
