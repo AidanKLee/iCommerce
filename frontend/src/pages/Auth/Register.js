@@ -40,6 +40,7 @@ const Register = props => {
             setRequesting(false);
             navigate('/login', {replace: false});
         } catch (err) {
+            setRequesting(false);
             console.log('Registration Failed')
         }
     }
@@ -105,7 +106,7 @@ const Register = props => {
                     <label htmlFor='phone'>
                         Phone
                     </label>
-                    <input onChange={handleChange} type='tel' id='phone' name='phone' placeholder='07123456789' value={phone} maxLength={13} />
+                    <input onChange={handleChange} type='tel' id='phone' name='phone' placeholder='07123456789 | +447123456789' value={phone} maxlength={16} />
                 </div>
                 <div className='auth form subscribe'>
                     <label htmlFor='subscribed'>

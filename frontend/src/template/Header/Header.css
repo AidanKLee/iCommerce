@@ -2,7 +2,16 @@
     color: #dadada;
     fill: #dadada;
     font-size: .8rem;
-    background-color: rgb(30, 30, 30);
+    background-color: rgb(45, 45, 45);
+    border-bottom: 1px solid transparent;
+    transition: .3s;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+}
+
+.app.header:hover {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .app.header.section {
@@ -13,6 +22,7 @@
     max-width: 1440px;
     margin: 0 auto;
     padding: 0 8px;
+    border: 0 none transparent;
 }
 
 .app.header.section.item {
@@ -68,7 +78,7 @@
 }
 
 .app.header.section.item .categories.item:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(0, 0, 0, 0.2);
     border-bottom: 3px solid #dadada;
 }
 
@@ -79,6 +89,7 @@
     height: 100%;
     display: flex;
     align-items: center;
+    font-weight: 400;
 }
 
 .app.header.section.item .categories.item.more {
@@ -99,13 +110,14 @@
     align-items: center;
     color: inherit;
     cursor: context-menu;
+    font-weight: 400;
 }
 
 .app.header.section.item .categories.item.more .dropdown.list {
     position: absolute;
     top: 48px;
     right: 0;
-    background-color: rgb(30, 30, 30);
+    background-color: rgb(45, 45, 45);
     font-size: .7rem;
     display: block;
     opacity: 0;
@@ -121,7 +133,7 @@
     position: relative;
     top: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .app.header.section.item .categories.item.more .dropdown.list.item:hover {
@@ -194,9 +206,15 @@
     margin-left: 12px;
 }
 
+.app.header.section.item .user.item.wrapper {
+    margin-left: 0;
+}
+
 .app.header.section.item .user.item.sign {
     width: 108px;
     font-size: .7rem;
+    display: flex;
+    justify-content: center;
 }
 
 .app.header.section.item .user.item.auth {
@@ -208,6 +226,11 @@
     border-right: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
     cursor: context-menu;
+    transition: .3s;
+}
+
+.app.header.section.item .user.item.auth:hover {
+    border-left: 1px solid rgba(255, 255, 255, 0.0);
 }
 
 .app.header.section.item .user.item.auth.dropdown {
@@ -219,7 +242,7 @@
     width: fit-content;
     top: 48px;
     right: -1px;
-    background-color: rgb(30, 30, 30);
+    background-color: rgb(45, 45, 45);
     list-style: none;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-top: 0 none transparent;
@@ -232,8 +255,13 @@
     transition: .3s;
 }
 
+.app.header.section.item .user.item.auth.dropdown li a {
+    display: flex;
+    justify-content: flex-start;
+}
+
 .app.header.section.item .user.item.auth.dropdown li:hover {
-    background-color: rgb(40, 40, 40);
+    background-color: rgba(0, 0, 0, .2);
 }
 
 .app.header.section.item .user.item.auth.dropdown li a {
@@ -256,9 +284,9 @@
 }
 
 .app.header.section.item .user.item a {
-    width: 100%;
     height: 100%;
     display: flex;
+    justify-content: flex-end;
     align-items: center;
     color: inherit;
     fill: inherit;
@@ -328,7 +356,7 @@
 }
 
 @media only screen and (max-width: 440px) {
-    .app.header.section.item .user.item.sign {
+    .app.header.section.item .user.item.sign, .app.header.section.item .user.item.auth {
         display: none;
     }
 }

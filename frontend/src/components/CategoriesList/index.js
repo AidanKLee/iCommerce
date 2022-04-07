@@ -82,7 +82,7 @@ const CategoriesList = props => {
                 showing.map(category => {
                     return (
                         <li key={category.name} className='categories item'>
-                            <Link to={category.href}>{category.name}</Link>
+                            <Link to={`/products${category.href}`}>{category.name}</Link>
                         </li>
                     )
                 })
@@ -100,7 +100,7 @@ const CategoriesList = props => {
                                     more.map(category => {
                                         return (
                                             <li key={category.name} className='dropdown list item'>
-                                                <Link to={category.href}>{category.name}</Link>
+                                                <Link to={`/products${category.href}`}>{category.name}</Link>
                                             </li>
                                         )
                                     })

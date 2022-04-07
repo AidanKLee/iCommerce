@@ -8,7 +8,10 @@
     text-decoration: none;
     cursor: pointer;
     transition: .2s;
-    color: rgb(200, 0, 0);
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+    white-space: nowrap;
 }
 
 .button:hover {

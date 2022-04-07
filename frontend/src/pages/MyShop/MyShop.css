@@ -1,0 +1,87 @@
+.my-shop {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.my-shop svg, .my-shop p {
+    pointer-events: none;
+}
+
+.my-shop.manage {
+    width: 100%;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+.my-shop.manage.header {
+    height: 56px;
+    width: 100%;
+    background-color: #e0e0e0;
+    flex-direction: row;
+    position: sticky;
+    top: 49px;
+    z-index: 29;
+}
+
+.my-shop.manage.header.logo {
+    height: 56px;
+    width: fit-content;
+    min-width: 56px;
+    background-color: rgb(100, 100, 255);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: .3s;
+}
+
+.my-shop.manage.header.logo.active {
+    border-bottom: 4px solid white;
+}
+
+.my-shop.manage.header.logo svg {
+    fill: #dadada;
+    height: 36px;
+    width: 36px;
+    transition: .3s;
+}
+
+.my-shop.manage.header.logo:hover svg {
+    fill: #f1f1f1;
+}
+
+.my-shop.manage.header.actions.item {
+    align-items: center;
+    padding: 0 16px;
+    cursor: context-menu;
+    width: fit-content;
+    transition: .3s;
+    min-width: 56px;
+}
+
+.my-shop.manage.header.actions.item.active {
+    border-bottom: 4px solid #1f1f1f;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.my-shop.manage.header.actions.item:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.my-shop.manage.header.actions.item p {
+    margin-left: 8px;
+    font-weight: 600;
+}
+
+.my-shop.manage.main {
+    height: 100%;
+}
+
+.shop {
+    padding: 16px;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

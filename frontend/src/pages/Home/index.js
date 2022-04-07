@@ -12,7 +12,8 @@ const carouselCards = [
         style: {
             backgroundColor: 'rgba(35, 35, 35, .7)', color: '#f1f1f1',
             padding: '20px', textAlign: 'center', transform: 'translateX(-50%)',
-            left: '50%', top: '64px'
+            left: '50%', top: '64px', display: 'flex', flexDirection: 'column',
+            alignItems: 'center'
         }
     },
     {
@@ -24,7 +25,8 @@ const carouselCards = [
         style: {
             backgroundColor: 'rgba(35, 35, 35, .8)', color: 'white',
             padding: '20px', textAlign: 'center', transform: 'translateX(-50%)',
-            left: '50%', top: 'unset', bottom: '0', maxWidth: '100%'
+            left: '50%', top: 'unset', bottom: '0', maxWidth: '100%', 
+            display: 'flex', flexDirection: 'column', alignItems: 'center'
         }
     },
     {
@@ -35,7 +37,8 @@ const carouselCards = [
         style: {
             backgroundColor: 'rgba(35, 35, 35, .8)', color: 'white',
             padding: '20px', textAlign: 'right', transform: 'translateY(-50%)',
-            left: 'unset', top: '50%', right: '0', maxWidth: '480px'
+            left: 'unset', top: '50%', right: '0', maxWidth: '480px', 
+            display: 'flex', flexDirection: 'column', alignItems: 'flex-end'
         }
     },
     {
@@ -46,7 +49,7 @@ const carouselCards = [
             backgroundColor: '#463b73', color: '#f1f1f1',
             padding: '48px', textAlign: 'center', transform: 'translate(-50%, -50%)',
             left: '50%', top: '50%', height: '360px', width: '360px', display: 'flex',
-            alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'column',
             borderRadius: '50%'
         },
         buttonStyle: {backgroundColor: '#463b73'},

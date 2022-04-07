@@ -1,0 +1,99 @@
+.gallery {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 8px 0 0;
+    background-color: white;
+    border: 2px solid rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.gallery .display {
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 56.3%;
+    overflow: hidden;
+}
+
+.gallery .display .navigate {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    border-radius: 50%;
+    transition: transform .2s, background-color .3s, fill .3s;
+    fill:rgba(0, 0, 0, 0.4);
+    background-color: transparent;
+}
+
+.gallery .display .navigate svg {
+    pointer-events: none;
+}
+
+.gallery .display .navigate:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    fill:rgba(0, 0, 0, 0.8);
+}
+
+.gallery .display .navigate:active {
+    transform: translateY(-50%) scale(.8);
+}
+
+.gallery .display .navigate.back {
+    left: 16px;
+}
+
+.gallery .display .navigate.next {
+    right: 16px;
+}
+
+.gallery .display img {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    padding: 16px 0;
+}
+
+.gallery .select {
+    list-style: none;
+    width: 100%;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.01);
+    display: flex;
+    justify-content: center;
+}
+
+.gallery .select li {
+    min-height: 72px;
+    min-width: 72px;
+    max-height: 72px;
+    max-width: 72px;
+    background-color: white;
+    border-radius: 50%;
+    margin: 8px;
+    border: 2px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: .3s;
+    padding: 8px;
+    outline: 0 solid rgba(100, 100, 255, .0);
+}
+
+.gallery .select li:hover {
+    outline: 4px solid rgba(100, 100, 255, .3);
+}
+
+.gallery .select li img {
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+    object-fit: contain;
+}

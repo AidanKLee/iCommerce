@@ -42,6 +42,7 @@ const Login = props => {
             dispatch(login(user));
             navigate('/', {replace: false});
         } catch (err) {
+            setRequesting(false);
             setIncorrect(err.message);
         }
     }

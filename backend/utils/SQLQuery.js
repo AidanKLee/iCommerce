@@ -53,8 +53,9 @@ class SQLQuery {
                 query = tables.join(` ${param.toUpperCase()} `);
             }
             if (param.toLowerCase().includes('join')) {
+                console.log(tables)
                 let columns = tables.map(table => table.columns);
-                columns = columns ? typeof columns === 'string' ? columns : columns.map(col => col).join(', ') : '';
+                columns = columns ? typeof columns === 'string' ? columns : columns.filter(col => col !== undefined).join(', ') : '';
                 // columns = columns.join(', ');
                 if (columns) {
                     table[0] = table[0].split(' FROM ');

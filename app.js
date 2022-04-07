@@ -3,7 +3,6 @@ const session = require('express-session');
 const path = require('path');
 const logger = require('morgan');
 const cors = require('cors');
-const errorHandler = require('errorhandler');
 const apiRoute = require('./backend/routes/api');
 const passport = require('passport');
 require('dotenv').config();
@@ -27,17 +26,17 @@ app.use(passport.authenticate('session'));
 app.use('/api', apiRoute);
 
 app.get('*', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'frontend/public/index.html'));
-})
+    res.sendFile(path.join(__dirname, '/frontend/public/index.html'));
+});
 
 app.use((err, req, res, next) => {
-    const status = err.status;
+    const status = err.status || 500;
     const message = err.message;
-    res.statusMessage = message;
-    res.status(status).json({status, message});
+    console.log(err)
+    res.status(status).json({message});
 })
 
-app.use(errorHandler());
+// app.use(errorHandler());
 
 app.listen(PORT, () => {
     console.log(`Server listening on PORT: ${PORT}`)

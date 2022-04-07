@@ -14,7 +14,7 @@ const queries = [
         type: 'select',
         tables: [
             {name: 'image', columns: ['id' ,'src']},
-            {name: 'item_image', columns: ['primary']}
+            {name: 'item_image', columns: ['"primary"']}
         ],
         conditions: ['WHERE item_id ='],
         params: {
@@ -30,6 +30,18 @@ const queries = [
         name: 'insertItemImage',
         type: 'insert',
         tables: {name: 'item_image', columns: ['item_id', 'image_id', '"primary"']}
+    },
+    {
+        name: 'updateImage',
+        type: 'update',
+        tables: {name: 'image', columns: ['src']},
+        conditions: ['WHERE id =']
+    },
+    {
+        name: 'updateItemImage',
+        type: 'update',
+        tables: {name: 'item_image', columns: ['"primary"']},
+        conditions: ['WHERE id =']
     },
     {
         name: 'deleteImage',
@@ -247,6 +259,30 @@ const queries = [
         conditions: 'WHERE category_name ='
     },
     {
+        name: 'selectCategoryByHref',
+        type: 'select',
+        tables: {name: 'category', columns: ['name', 'parent_category_name']},
+        conditions: 'WHERE href ='
+    },
+    {
+        name: 'selectParentCategory',
+        custom: 'SELECT category.name, href, parent_category_name, COUNT(DISTINCT(item.id)) FROM category LEFT JOIN product_category ON category.name = category_name LEFT JOIN item ON product_category.product_id = item.product_id WHERE category.name = $1 GROUP BY category.name'
+    },
+    {
+        name: 'selectProductsByCategory',
+        type: 'select',
+        tables: [
+            {name: 'product', columns: ['id', 'is_active', 'views', 'favourites']},
+            {name: 'seller_product', columns: ['seller_id']},
+            {name: 'product_category'}
+        ],
+        conditions: 'WHERE category_name =',
+        params: {
+            'left join': ['id', 'product_category.product_id'],
+            'outer join': ['id', 'seller_product.product_id']
+        }
+    },
+    {
         name: 'insertCategoryAttribute',
         type: 'insert',
         tables: {name: 'category_attribute', columns: ['category_name', 'attribute']}
@@ -276,8 +312,14 @@ const queries = [
     {
         name: 'selectProductById',
         type: 'select',
-        tables: {name: 'product', columns: '*'},
-        conditions: 'WHERE id ='
+        tables: [
+            {name: 'product', columns: ['id', 'is_active', 'views', 'favourites']},
+            {name: 'seller_product', columns: ['seller_id']}
+        ],
+        conditions: 'WHERE product.id =',
+        params: {
+            'join': ['id', 'seller_product.product_id']
+        }
     },
     {
         name: 'selectProductByName',
@@ -288,11 +330,13 @@ const queries = [
         type: 'select',
         tables: [
             {name: 'product', columns: ['id', 'is_active', 'views', 'favourites']},
+            {name: 'seller_product', columns: ['seller_id']},
             {name: 'product_category'}
         ],
         conditions: 'WHERE category_name =',
         params: {
-            'left join': ['id', 'product_id']
+            'left join': ['id', 'product_category.product_id'],
+            'outer join': ['id', 'seller_product.product_id']
         }
     },
     {
@@ -303,7 +347,8 @@ const queries = [
     {
         name: 'updateProduct',
         type: 'update',
-        tables: {name: 'product', columns: ['is_active']}
+        tables: {name: 'product', columns: ['is_active']},
+        conditions: ['WHERE id =']
     },
     {
         name: 'incrememntProductViews',
@@ -343,6 +388,12 @@ const queries = [
         conditions: ['WHERE product_id =', 'AND category_name =']
     },
     {
+        name: 'deleteProductCategories',
+        type: 'delete',
+        tables: {name: 'product_category'},
+        conditions: ['WHERE product_id =']
+    },
+    {
         name: 'selectItemsByProductId',
         type: 'select',
         tables: {name: 'item', columns: ['id', 'name', 'description', 'price', 'in_stock', 'ordered', 'awards']},
@@ -356,7 +407,7 @@ const queries = [
     {
         name: 'updateItem',
         type: 'update',
-        tables: {name: 'item', columns: ['name', 'description', 'price', 'in_stock', 'ordered']},
+        tables: {name: 'item', columns: ['name', 'description', 'price']},
         conditions: 'WHERE id ='
     },
     {
@@ -366,6 +417,14 @@ const queries = [
     {
         name: 'itemsReturned',
         custom: 'UPDATE item SET ordered = ordered - $1, in_stock = in_stock + $1 WHERE id = $2'
+    },
+    {
+        name: 'itemsInventoryAdd',
+        custom: 'UPDATE item SET in_stock = in_stock + $1 WHERE id = $2'
+    },
+    {
+        name: 'itemsInventoryMinus',
+        custom: 'UPDATE item SET in_stock = in_stock - $1 WHERE id = $2'
     },
     {
         name: 'deleteItem',
@@ -385,10 +444,10 @@ const queries = [
         tables: {name: 'item_attribute_value', columns: ['item_id', 'attribute', 'value']}
     },
     {
-        name: 'updateItemAttributeValues',
+        name: 'updateItemAttributeValue',
         type: 'update',
-        tables: {name: 'item_attribute_value', columns: ['attribute', 'value']},
-        conditions: ['WHERE item_id =', 'AND attribute =', 'AND value =']
+        tables: {name: 'item_attribute_value', columns: ['value']},
+        conditions: ['WHERE item_id =', 'AND attribute =']
     },
     {
         name: 'deleteItemAttributeValues',
@@ -502,6 +561,30 @@ const queries = [
         custom: 'SELECT shop_name FROM seller WHERE shop_name = $1'
     },
     {
+        name: 'selectSellerStats',
+        type: 'select',
+        tables: [
+            {name: 'order_item', columns: 'SUM(item_quantity) AS sold_products'},
+            {name: 'seller_review', columns: ['ROUND(AVG(rating), 2) AS average_rating', 'COUNT(*) AS review_count']}
+        ],
+        conditions: ['WHERE order_item.seller_id ='],
+        params: {
+            'left join': ['order_item.order_id', 'seller_review.order_id']
+        }
+    },
+    {
+        name: 'selectSellerByProduct',
+        type: 'select',
+        tables: [
+            {name: 'seller', columns: ['id', 'shop_name']},
+            {name: 'seller_product'}
+        ],
+        conditions: ['WHERE product_id ='],
+        params: {
+            'left join': ['id', 'seller_id']
+        }
+    },
+    {
         name: 'insertSeller',
         type: 'insert',
         tables: {name: 'seller', columns: ['id', 'shop_name', 'image_id', 'description', 'business_email', 'business_phone']}
@@ -522,8 +605,8 @@ const queries = [
         name: 'selectSellerProducts',
         type: 'select',
         tables: [
-            {name: 'product', columns: ['id', 'name', 'description', 'is_active', 'views', 'favourites']},
-            {name: 'seller_product'}
+            {name: 'product', columns: ['id', 'is_active', 'views', 'favourites']},
+            {name: 'seller_product', columns: ['seller_id']}
         ],
         conditions: 'WHERE seller_id =',
         params: {
@@ -613,6 +696,15 @@ const queries = [
         name: 'selectProductReviews',
         type: 'select',
         tables: {name: 'product_review', columns: '*'},
+        conditions: 'WHERE product_id ='
+    },
+    {
+        name: 'selectProductStats',
+        type: 'select',
+        tables: [
+            {name: 'product_review', columns: ['ROUND(AVG(rating), 2) AS average_rating', 'COUNT(*) AS count']},
+            {name: 'order_item', columns: []}
+        ],
         conditions: 'WHERE product_id ='
     },
     {

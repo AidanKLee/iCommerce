@@ -18,7 +18,7 @@
     max-width: 440px;
 }
 
-.auth.form input {
+.auth.form input, .auth.form textarea {
     background-color: rgb(250, 250, 250);
 }
 
@@ -60,9 +60,13 @@
     margin-right: 16px;
 }
 
-.auth input {
+.auth input, .auth textarea {
     padding: 8px 16px;
     width: 100%;
+}
+
+.auth textarea {
+    height: calc(5rem + 16px);
 }
 
 .auth label {

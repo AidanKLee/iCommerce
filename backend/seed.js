@@ -5,8 +5,8 @@ const model = require('./model')
 
 const categories = require('./model/tables/categories');
 const itemAttributeValue = require('./model/tables/itemAttributeValue');
-const user = require('./model/tables/user');
-const products = require('./model/tables/products');
+// const user = require('./model/tables/user');
+// const products = require('./model/tables/products');
 
 // console.log(products)
 
@@ -14,14 +14,14 @@ console.log(model.queries)
 
 // DELETE ROWS FROM TABLES
 const deleteAll = async () => {
-    await model.deleteAllItemImages();
-    await model.deleteAllImages();
-    await model.deleteAllItemsAttributes();
-    await model.deleteAllItems();
-    await model.deleteAllProductCategories();
-    await model.deleteAllProducts();
-    await model.deleteSeller(['1601aa9a-c866-4702-902b-fdc0afa315f7']);
-    await model.deleteCustomerPerm(['1601aa9a-c866-4702-902b-fdc0afa315f7']);
+    // await model.deleteAllItemImages();
+    // await model.deleteAllImages();
+    // await model.deleteAllItemsAttributes();
+    // await model.deleteAllItems();
+    // await model.deleteAllProductCategories();
+    // await model.deleteAllProducts();
+    // await model.deleteSeller(['1601aa9a-c866-4702-902b-fdc0afa315f7']);
+    // await model.deleteCustomerPerm(['1601aa9a-c866-4702-902b-fdc0afa315f7']);
     await model.deleteAllCategoriesAttributes();
     await model.deleteAllAttributeValues();
     await model.deleteAllAttributes();
@@ -89,32 +89,26 @@ const createSalePercentages = async () => {
     };
 };
 
-// CREATE USER
-const createMainUser = async () => {
-    await model.insertCustomer(user.customer);
-    await model.insertSeller(user.seller);
-};
-
 // CREATING PRODUCTS
-const createProducts = async () => {
-    for (let product of products) {
-        await model.insertProduct(product.product);
-        for (let category of product.productCategories) {
-            await model.insertProductCategory([product.id, category]);
-        };
-        for (let item of product.items) {
-            await model.insertItem(item.item);
-            for (let attribute in item.attributes) {
-                const insert = [item.id, attribute, item.attributes[attribute]];
-                await model.insertItemAttributeValues(insert);
-            };
-            for (let image of item.images.names) {
-                await model.insertImage([image[0], `${item.images.url}${image[1]}`]);
-                await model.insertItemImage([item.id, image[0], image[2] || false])
-            };
-        };
-    };
-};
+// const createProducts = async () => {
+//     for (let product of products) {
+//         await model.insertProduct(product.product);
+//         for (let category of product.productCategories) {
+//             await model.insertProductCategory([product.id, category]);
+//         };
+//         for (let item of product.items) {
+//             await model.insertItem(item.item);
+//             for (let attribute in item.attributes) {
+//                 const insert = [item.id, attribute, item.attributes[attribute]];
+//                 await model.insertItemAttributeValues(insert);
+//             };
+//             for (let image of item.images.names) {
+//                 await model.insertImage([image[0], `${item.images.url}${image[1]}`]);
+//                 await model.insertItemImage([item.id, image[0], image[2] || false])
+//             };
+//         };
+//     };
+// };
 
 const enterInitialData = async () => {
     await deleteAll();
@@ -122,7 +116,7 @@ const enterInitialData = async () => {
     await createCategories();
     await createAttributesValues();
     await createCategoriesAttributes();
-    await createMainUser();
-    await createProducts();
+    // await createMainUser();
+    // await createProducts();
 }
 enterInitialData();

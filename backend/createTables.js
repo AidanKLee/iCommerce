@@ -120,7 +120,7 @@ const tables = [
         name: 'item_attribute_value',
         columns: [
             'item_id UUID NOT NULL REFERENCES item(id)',
-            'attribute varchar(64) NOT NULL REFERENCES attribute(name)',
+            'attribute varchar(64) NOT NULL',
             'value varchar(64) NOT NULL',
             'PRIMARY KEY (item_id, attribute)'
         ]

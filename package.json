@@ -52,7 +52,7 @@
   },
   "scripts": {
     "start": "npm-run-all -p nodemon webpack",
-    "nodemon": "nodemon --watch backend app.js --ignore frontend/",
+    "nodemon": "nodemon --watch backend/ app.js --ignore frontend/",
     "webpack": "npx webpack",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

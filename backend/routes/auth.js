@@ -7,7 +7,7 @@ const { parser, helper } = require('../controller/middleware');
 
 route.get('/', auth.restoreSession, helper.getAllUserData);
 
-route.post('/login', parser.json, passport.authenticate('local'),
+route.post('/login', parser.json, passport.authenticate('local', {failWithError: true}),
     (req, res, next) => {
         delete req.user.password;
         next();
@@ -20,6 +20,8 @@ route.post('/logout', (req, res, next) => {
 });
 
 route.post('/register', parser.json, auth.register);
+
+route.post('/registerShop', parser.json, auth.registerShop, helper.getAllUserData);
 
 passport.use(new LocalStrategy({usernameField: 'email'}, auth.login));
 

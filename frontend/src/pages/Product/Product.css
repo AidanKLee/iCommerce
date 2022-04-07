@@ -1,0 +1,49 @@
+.product-page {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.product-page .top {
+    padding: 16px;
+    display: flex;
+}
+
+.product-page .top .left {
+    width: calc(100% - 336px);
+}
+
+.product-page .top .left h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.product-page .top .right {
+    min-width: 320px;
+    margin-left: 16px;
+    overflow: hidden;
+}
+
+.product-page .top .right .price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    background-color: #6464ff;
+    padding: 8px;
+    color: white;
+}
+
+@media only screen and (max-width: 840px) {
+    .product-page .top {
+        padding: 16px;
+        flex-direction: column;
+    }
+
+    .product-page .top .left {
+        width: 100%;
+    }
+
+    .product-page .top .right {
+        margin-top: 8px;
+        margin-left: 0;
+    }
+}

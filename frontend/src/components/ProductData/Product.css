@@ -1,0 +1,18 @@
+.rating-wrapper {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+.rating-wrapper p {
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+    font-size: .6rem;
+    font-weight: 500;
+}
+
+.rating-wrapper .rating {
+    display: flex;
+    height: fit-content;
+}

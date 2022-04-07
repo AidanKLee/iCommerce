@@ -22,6 +22,7 @@ const Button = props => {
         size = '',
         style = {},
         text,
+        title,
         type = 'button'
     } = props;
 
@@ -80,11 +81,12 @@ const Button = props => {
     const noFunction = () => {};
 
     const renderButton = () => {
-        if (type === 'navlink') {
+        if (type === 'link') {
             return <Link 
                 to={href}
                 className={className}
                 style={style}
+                title={title}
             >
                 { icon }
                 { leftIcon }
@@ -96,6 +98,7 @@ const Button = props => {
                 to={href}
                 className={className}
                 style={style}
+                title={title}
             >
                 { icon }
                 { leftIcon }
@@ -108,6 +111,7 @@ const Button = props => {
                 className={className}
                 style={style}
                 target='_blank'
+                title={title}
                 rel="noopener noreferrer"
             >
                 { icon }
@@ -122,6 +126,7 @@ const Button = props => {
                 disabled={disabled}
                 onClick={e => onClick ? onClick(e) : noFunction()}
                 style={style}
+                title={title}
             >
                 { loading && leftIcon ? loader : leftIcon }
                 { !icon ? loading ? loader : text || children : loading ? loader : icon }

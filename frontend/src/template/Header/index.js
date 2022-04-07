@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import { fetchCategories, selectCategories } from '../../app/appSlice';
-import Breadcrumb from '../../components/Breadcrumb';
+// import Breadcrumb from '../../components/Breadcrumb';
 import CategoriesList from '../../components/CategoriesList';
 import MenuButton from '../../components/MenuButton';
 import SearchBar from '../../components/SearchBar';
@@ -15,6 +15,8 @@ const Header = props => {
 
     const dispatch = useDispatch();
     const categories = useSelector(selectCategories);
+
+    const { menuOpen: [menuOpen, setMenuOpen], style} = props;
 
     const [ searchOpen, setSearchOpen ] = useState(false);
 
@@ -28,10 +30,10 @@ const Header = props => {
     }
 
     return (
-        <header className='app header'>
+        <header style={style} className='app header'>
             <ul className='app header section'>
                 <li className='app header section item menu-button'>
-                    <MenuButton open={true}/>
+                    <MenuButton open={[menuOpen, setMenuOpen]}/>
                 </li>
                 <li className='app header section item'>
                     <Link to='/' title='iCommerce Home'>
@@ -61,7 +63,7 @@ const Header = props => {
                     <UserActions/>
                 </li>
             </ul>
-            <Breadcrumb/>
+            {/* <Breadcrumb/> */}
         </header>
     );
 };

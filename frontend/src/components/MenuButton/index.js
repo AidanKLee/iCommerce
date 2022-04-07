@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './MenuButton.css';
 
 const MenuButton = props => {
 
-    const { onClick } = props;
-
-    const [ open, setOpen ] = useState(false);
+    const {open: [ open, setOpen ]} = props;
 
     const handleClick = e => {
         setOpen(!open);
-        onClick(e);
     }
 
     return (
