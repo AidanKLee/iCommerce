@@ -554,7 +554,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _bab
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar env = 'prod';\nvar baseUrl = env === 'dev' ? 'https://localhost:3000' : 'https://i-commerce-uk.herokuapp.com';\n/* harmony default export */ __webpack_exports__[\"default\"] = (baseUrl);\n\n//# sourceURL=webpack://i-commerce/./frontend/src/utils/baseUrl.js?");
+eval("__webpack_require__.r(__webpack_exports__);\nvar env = 'dev';\nvar baseUrl = env === 'dev' ? 'https://localhost:3000' : 'https://i-commerce-uk.herokuapp.com';\n/* harmony default export */ __webpack_exports__[\"default\"] = (baseUrl);\n\n//# sourceURL=webpack://i-commerce/./frontend/src/utils/baseUrl.js?");
 
 /***/ }),
 
