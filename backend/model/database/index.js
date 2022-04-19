@@ -4,7 +4,10 @@ const { PG_USERNAME, PG_PASSWORD, PG_HOST, PG_PORT, PG_DATABASE } = process.env;
 
 let ssl = null;
 if (process.env.NODE_ENV === 'dev') {
-   ssl = {rejectUnauthorized: false};
+   ssl = {
+       rejectUnauthorized: false,
+       require: true
+    };
 }
 
 const connect = {
