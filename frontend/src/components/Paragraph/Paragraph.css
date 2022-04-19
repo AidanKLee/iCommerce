@@ -1,0 +1,9 @@
+.text .show {
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.text .show:hover {
+    text-decoration: underline;
+}

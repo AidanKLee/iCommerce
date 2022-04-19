@@ -245,6 +245,15 @@ const tables = [
             'rating integer NOT NULL check(rating > 0 AND rating <= 5)',
             'review varchar(1024) NOT NULL'
         ]
+    },
+    {
+        name: 'oauth2',
+        columns: [
+            'customer_id UUID NOT NULL REFERENCES customer(id)',
+            'provider varchar NOT NULL',
+            'subject varchar NOT NULL',
+            'PRIMARY KEY (customer_id, provider, subject)'
+        ]
     }
 ]
 

@@ -7,15 +7,95 @@
     font-size: .7rem;
 }
 
+.auth .register {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth .third {
+    width: 100%;
+    max-width: 640px;
+    display: block;
+    margin: 0 auto;
+    font-size: .8rem;
+}
+
+.auth .third.r {
+    max-width: 800px;
+}
+
+.auth .third .party {
+    margin: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    height: 44px;
+    overflow: hidden;
+    width: calc(100% - 32px);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.1);
+    transition: .2s;
+}
+
+.auth .third .party:disabled {
+    filter: grayscale(.8);
+}
+
+.auth .third .party:hover {
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.auth .third .party:active {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.2);
+}
+
+.auth .third.r .party .container {
+    width: 192px;
+    pointer-events: none;
+}
+
+.auth .third .party .container {
+    display: flex;
+    align-items: center;
+    color: inherit;
+    width: 174px;
+}
+
+.auth .third .party p {
+    font-weight: 500;
+    flex: 1 1;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.auth .third .party.google {
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.auth .third .party.facebook {
+    background-color: #4267B2;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+.auth .third .party svg {
+    margin-right: 16px;
+}
+
 .auth.form {
     height: auto;
     display: block;
-    padding: 16px;
+    padding: 0px 16px;
     max-width: 800px;
 }
 
 .auth.form.login {
-    max-width: 440px;
+    max-width: 640px;
 }
 
 .auth.form input, .auth.form textarea {
@@ -101,10 +181,39 @@
     transform: translateY(2px);
 }
 
+.auth .link-wrapper {
+    width: 100%;
+    max-width: 768px;
+    display: block;
+    margin: 16px auto 0;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth .link-wrapper.login {
+    max-width: 608px;
+}
+
+.auth .link-wrapper p {
+    font-weight: 400;
+}
+
+.auth .link-wrapper a {
+    margin-left: 4px;
+    font-weight: 600;
+}
+
+.auth .link-wrapper a:hover {
+    text-decoration: underline;
+}
+
 @media only screen and (max-width: 560px) {
     .auth.form.double.input {
         max-width: 100%;
     }
+
     .auth.form.double {
         flex-direction: column;
     }

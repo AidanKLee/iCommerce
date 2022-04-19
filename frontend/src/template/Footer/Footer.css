@@ -1,0 +1,24 @@
+footer {
+    background-color: rgb(100, 100, 100);
+    color: white;
+    padding: 0 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+footer .container {
+    max-width: 1600px;
+    color: inherit;
+    margin: 0 auto;
+    height: 32px;
+    display: flex;
+    align-items: center;
+}
+
+footer .container div {
+    color: inherit;
+    font-size: .7rem;
+}
+
+footer .container .left {
+    font-weight: 400;
+}

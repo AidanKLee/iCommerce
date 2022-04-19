@@ -8,11 +8,35 @@
     margin-left: 4px;
     display: flex;
     align-items: center;
-    font-size: .6rem;
+    font-size: .8rem;
     font-weight: 500;
 }
 
 .rating-wrapper .rating {
     display: flex;
     height: fit-content;
+}
+
+.product .details .bottom .categories {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: .6rem;
+}
+
+.product .details .bottom .categories li {
+    white-space: nowrap;
+}
+
+.product .details .bottom .categories li span {
+    margin: 0 4px;
+}
+
+.product .details .bottom .categories li a {
+    font-size: .7rem;
+    font-weight: 400;
+}
+
+.product .details .bottom .categories li a:hover {
+    text-decoration: underline;
 }

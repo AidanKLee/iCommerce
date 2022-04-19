@@ -6,7 +6,7 @@
     align-items: center;
     margin: 8px 0 0;
     background-color: white;
-    border: 2px solid rgba(0, 0, 0, 0.05);
+    border: 2px solid rgba(0, 0, 0, 0.1);
     border-radius: 16px;
     overflow: hidden;
 }
@@ -69,10 +69,18 @@
     padding: 8px;
     background-color: rgba(0, 0, 0, 0.01);
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
+.gallery .select::-webkit-scrollbar {
+    display: none;
+  }
+
 .gallery .select li {
+    user-select: none;
     min-height: 72px;
     min-width: 72px;
     max-height: 72px;
@@ -96,4 +104,5 @@
     width: 100%;
     pointer-events: none;
     object-fit: contain;
+    border-radius: 50%;
 }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import './SearchBar.css';
 
@@ -7,7 +8,11 @@ const SearchBar = props => {
     const {
         open: [ open, setOpen ]
     } = props;
+
+    const navigate = useNavigate();
+
     const [ padding, setPadding ] = useState(false);
+    const [ search, setSearch ] = useState('');
 
     const handleClick = () => {
         if (!open) {
@@ -15,7 +20,18 @@ const SearchBar = props => {
         } else {
             setPadding(!padding)
         }
-        
+    }
+
+    const handleChange = e => {
+        const value = e.target.value;
+        setSearch(value);
+    }
+
+    const handleSearch = e => {
+        if (e.keyCode === 13) {
+            navigate(`/products?query=${search}`);
+            setSearch('');
+        }
     }
 
     return (
@@ -32,7 +48,7 @@ const SearchBar = props => {
             classNames={'search-bar-input'}
             onExit={() => setOpen(false)}
             >
-                <input id='search' name='search' type='search'/>
+                <input onKeyDown={handleSearch} onChange={handleChange} id='search' name='search' type='search' value={search}/>
             </CSSTransition>
                 
                 <label onClick={() => handleClick()} htmlFor='search'>

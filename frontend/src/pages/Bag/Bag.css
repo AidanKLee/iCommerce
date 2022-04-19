@@ -1,0 +1,222 @@
+.bag {
+    width: 100%;
+}
+
+.bag .header h2 {
+    max-width: 1440px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 20px auto;
+    padding: 0 16px;
+}
+
+.bag .products {
+    max-width: 1600px;
+    margin: -8px auto 0;
+    display: flex;
+}
+
+.bag .products .right {
+    width: 100%;
+    max-width: 320px;
+    padding-right: 8px;
+}
+
+.bag .products .right .sticky {
+    width: 100%;
+    background-color: white;
+    margin: 8px 0;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    position: sticky;
+    top: 57px;
+    overflow: hidden;
+}
+
+.bag .products .right .sticky h3 {
+    padding: 8px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    background-color: #6464ff;
+    color: white;
+}
+
+.bag .products .right .sticky .prices {
+    padding: 8px 8px 16px;
+}
+
+.bag .products .right .sticky .prices select {
+    padding: 8px;
+    width: 100%;
+    margin-bottom: 8px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.bag .products .right .sticky .prices .sub.total {
+    font-weight: 500;
+    font-size: .8rem;
+    margin-top: 0;
+}
+
+.bag .products .right .sticky .prices .total {
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.bag .products .right .sticky .actions a {
+    width: calc(100% - 16px);
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 8px 8px;
+    font-size: .9rem;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: .2s;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0);
+}
+
+.bag .products .right .sticky .actions a:hover {
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.02);
+}
+
+.bag .products .right .sticky .actions .checkout {
+    background-color: #e69600;
+    color: white;
+}
+
+.bag .products .right .sticky .actions .checkout:hover {
+    background-color: #b89c00;
+}
+
+.bag .products .right .sticky .actions .shop {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.bag .products .right .sticky .actions .shop:hover {
+    border: 0 solid rgba(0, 0, 0, 0);
+    background-color: #efefef;
+    color: black;
+}
+
+.bag .main {
+    width: 100%;
+    padding: 48px 16px;
+    background-color: white;
+}
+
+.bag .main .no-bag {
+    width: 100%;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.bag .main .login {
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    font-size: .8rem;
+}
+
+.bag .main .login a {
+    margin: 0 auto;
+    display: block;
+    background-color: #efefef;
+    width: 100%;
+    max-width: 256px;
+    padding: 12px;
+    margin-top: 16px;
+    font-weight: 500;
+    font-size: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: .2s;
+}
+
+.bag .main .login a:hover {
+    background-color: #6464ff;
+    color: white;
+}
+
+.bag .main .login a:active {
+    background-color: #4747ff;
+}
+
+.bag .main .login svg {
+    height: 36px;
+    width: 36px;
+    transition: .3s;
+}
+
+.bag .main:hover svg {
+    fill: #4747ff;
+    animation: rotate 1s linear 0s infinite forwards;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+@media only screen and (max-width: 1280px) {
+    .bag .products .left .tile {
+        flex-direction: column;
+    }
+
+    .bag .products .left .tile .img {
+        padding-bottom: 0;
+    }
+
+    .bag .products .left .tile .top .data {
+        margin-bottom: 0;
+    }
+
+    .bag .products .left .tile .actions {
+        display: flex;
+        width: 100%;
+        margin: 0;
+    }
+
+    .bag .products .left .tile .actions .action {
+        flex: 1 1 33%;
+        margin: 8px;
+    }
+}
+
+@media only screen and (max-width: 960px) {
+    .bag .products .left .tile .top {
+        flex-direction: column;
+    }
+
+    .bag .products .left .tile .actions {
+        display: block;
+    }
+    
+    .bag .products .left .tile .actions button {
+        width: calc(100% - 16px);
+    }
+}
+
+@media only screen and (max-width: 720px) {
+    .bag .products {
+        flex-direction: column-reverse;
+    }
+
+    .bag .products .right {
+        max-width: none;
+        padding: 0 8px;
+    }
+
+    .bag .products .right .sticky {
+        margin-bottom: 0;
+    }
+}

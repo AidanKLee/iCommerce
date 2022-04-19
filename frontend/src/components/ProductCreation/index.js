@@ -34,8 +34,6 @@ const NewProduct = props => {
 
     const user = useSelector(selectUser);
 
-    console.log(user)
-
     const {open: [ open, setOpen ], refresh} = props;
 
     const [ categories, setCategories ] = useState({

@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import './Gallery.css';
 
 const Gallery = props => {
 
-    const { images } = props;
+    let { images } = props;
 
     const [ selectedImage, setSelectedImage ] = useState(0);
     const [ displayDirection, setDisplayDirection ] = useState('next');
-
-    console.log(images)
 
     const selectImage = e => {
         let i = e.target.id;
@@ -32,6 +30,41 @@ const Gallery = props => {
             index = selectedImage === 0 ? images.length - 1 : selectedImage - 1;
         }
         setSelectedImage(index)
+    }
+
+    const scrollerPos = useRef(null);
+    const prevPos = useRef(null);
+
+    const handleDrag = e => {
+        prevPos.current = e.screenX;
+        document.addEventListener('mousemove', dragMove)
+        document.addEventListener('mouseup', dragEnd)
+    }
+
+    const dragMove = e => {
+        const currentPos = e.screenX;
+        if (currentPos > prevPos.current) {
+            if (scrollerPos.current.scrollLeft - currentPos + prevPos.current > 0) {
+                scrollerPos.current.scrollLeft = scrollerPos.current.scrollLeft - currentPos + prevPos.current;
+                prevPos.current = e.screenX;
+            } else {
+                scrollerPos.current.scrollLeft = 0;
+                prevPos.current = e.screenX;
+            }
+        } else {
+            if (scrollerPos.current.scrollLeft + currentPos - prevPos.current < e.target.scrollWidth + e.target.offsetWidth) {
+                scrollerPos.current.scrollLeft = scrollerPos.current.scrollLeft + prevPos.current - currentPos;
+                prevPos.current = e.screenX;
+            } else {
+                scrollerPos.current.scrollLeft = e.target.scrollWidth;
+                prevPos.current = e.screenX;
+            }
+        }
+    }
+
+    const dragEnd = () => {
+        document.removeEventListener('mousemove', dragMove);
+        document.removeEventListener('mouseup', dragEnd)
     }
 
     return (
@@ -60,7 +93,7 @@ const Gallery = props => {
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M10.02 6L8.61 7.41 13.19 12l-4.58 4.59L10.02 18l6-6-6-6z"/></svg>
                 </button>
             </div>
-            <ul className='select'>
+            <ul onMouseDown={handleDrag} className='select' ref={scrollerPos}>
                 {
                     images.map((img, i) => {
                         return (

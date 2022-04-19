@@ -16,6 +16,8 @@ const UserActions = props => {
 
     const user = useSelector(selectUser);
     const loggedIn = useMemo(() => user.id ? true : false, [user]);
+    const saved = useMemo(() => user.saved, [user.saved]);
+    const bagItems = useMemo(() => user.cart.items, [user.cart]);
 
     const [ dropdown, setDropdown ] = useState(false);
 
@@ -28,9 +30,9 @@ const UserActions = props => {
                     </li>
                 ) : (
                     <li className='user item auth' onMouseEnter={() => setDropdown(true)} onMouseLeave={() => setDropdown(false)}>
-                        <div className='user item auth img'>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                        </div>
+                        {/* <div className='user item auth img'> */}
+                            <svg className='img' xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        {/* </div> */}
                         <b>{user.first_name}</b>
                         <CSSTransition timeout={500} classNames={type !== 'menu' ? 'fade' : 'expand'} in={dropdown} mountOnEnter={true} unmountOnExit={true}>
                             <ul className='user item auth dropdown'>
@@ -67,13 +69,19 @@ const UserActions = props => {
                 type !== 'menu' ? (
                     <div className='user item wrapper'>
                         <li className='user item'>
-                            <Link to='/' title='Saved Items'>
+                            <Link to='/saved' title='Saved Items'>
                                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M15 7v12.97l-4.21-1.81-.79-.34-.79.34L5 19.97V7h10m4-6H8.99C7.89 1 7 1.9 7 3h10c1.1 0 2 .9 2 2v13l2 1V3c0-1.1-.9-2-2-2zm-4 4H5c-1.1 0-2 .9-2 2v16l7-3 7 3V7c0-1.1-.9-2-2-2z"/></svg>
+                            </Link>
+                            <Link to='/saved' className='count' title='Saved Items'>
+                                {saved ? saved.length : 0}
                             </Link>
                         </li>
                         <li className='user item'>
-                            <Link to='/' title='Shopping Cart'>
+                            <Link to='/bag' title='Shopping Bag'>
                                 <svg xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/><path d="M18,6h-2c0-2.21-1.79-4-4-4S8,3.79,8,6H6C4.9,6,4,6.9,4,8v12c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8C20,6.9,19.1,6,18,6z M12,4c1.1,0,2,0.9,2,2h-4C10,4.9,10.9,4,12,4z M18,20H6V8h2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V8h4v2c0,0.55,0.45,1,1,1s1-0.45,1-1V8 h2V20z"/></g></svg>
+                            </Link>
+                            <Link to ='/bag' className='count' title='Shopping Bag'>
+                                {bagItems ? bagItems.length : 0}
                             </Link>
                         </li>
                     </div>

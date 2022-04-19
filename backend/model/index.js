@@ -82,6 +82,17 @@ const queries = [
         tables: {name: 'customer', columns: ['id', 'first_name', 'last_name', 'birth_date', 'email', 'phone', 'password', 'subscribed']},
     },
     {
+        name: 'selectOAuthSubject',
+        type: 'select',
+        tables: {name: 'oauth2', columns: ['*']},
+        conditions: ['WHERE provider =', 'AND subject =']
+    },
+    {
+        name: 'insertOAuthSubject',
+        type: 'insert',
+        tables: {name: 'oauth2', columns: ['customer_id', 'provider', 'subject']}
+    },
+    {
         name: 'deleteCustomerPerm',
         type: 'delete',
         tables: {name: 'customer'},
@@ -152,16 +163,25 @@ const queries = [
         conditions: 'WHERE customer_id ='
     },
     {
+        name: 'selectCartProducts',
+        custom: 'SELECT product.id AS id, item.id AS selected_item_id, is_active, views, favourites, item_quantity FROM product LEFT JOIN item ON product.id = product_id LEFT JOIN cart_item ON item.id = item_id WHERE cart_id = $1'
+    },
+    {
         name: 'selectCartItems',
         type: 'select',
         tables: {name: 'cart_item', columns: '*'},
         conditions: 'WHERE cart_id ='
     },
     {
-        name: 'insertCartItems',
+        name: 'selectCartItem',
+        type: 'select',
+        tables: {name: 'cart_item', columns: '*'},
+        conditions: ['WHERE cart_id =', 'AND item_id =']
+    },
+    {
+        name: 'insertCartItem',
         type: 'insert',
-        tables: {name: 'cart_item', columns: ['cart_id', 'item_id', 'item_quantity']},
-        conditions: ['WHERE cart_id =']
+        tables: {name: 'cart_item', columns: ['cart_id', 'item_id', 'item_quantity']}
     },
     {
         name: 'updateCartItem',
@@ -322,6 +342,14 @@ const queries = [
         }
     },
     {
+        name: 'selectProductByItemId',
+        custom: 'SELECT product.id AS id, is_active, views, favourites, item.id AS selected_item_id, seller_id FROM product JOIN seller_product ON product.id = seller_product.product_id JOIN item ON product.id = item.product_id WHERE item.id = $1'
+    },
+    {
+        name: 'selectProductByCartItemId',
+        custom: 'SELECT product.id AS id, is_active, views, favourites, item.id AS selected_item_id, seller_id, item_quantity FROM product JOIN seller_product ON product.id = seller_product.product_id JOIN item ON product.id = item.product_id JOIN cart_item ON item.id = cart_item.item_id WHERE item.id = $1 AND cart_item.cart_id = $2'
+    },
+    {
         name: 'selectProductByName',
         custom: 'SELECT * FROM product WHERE name LIKE %$1% OR DESCRIPTION LIKE %$1% ORDER BY (CASE WHEN name = "$1" THEN 1 WHEN name LIKE "%$1% " THEN 2 ELSE 3 END), name'
     },
@@ -457,11 +485,15 @@ const queries = [
     },
     {
         name: 'selectCustomerSavedProducts',
-        custom: 'SELECT product.id, is_active, views, favourites FROM product LEFT JOIN item ON product.id = product_id LEFT JOIN customer_saved_item ON item.id = item_id WHERE customer_id = $1'
+        custom: 'SELECT product.id AS id, item.id AS selected_item_id, is_active, views, favourites FROM product LEFT JOIN item ON product.id = product_id LEFT JOIN customer_saved_item ON item.id = item_id WHERE customer_id = $1'
     },
     {
         name: 'selectCustomerSavedItems',
         custom: 'SELECT id, product_id, name, description, price, in_stock, ordered, awards FROM item LEFT JOIN customer_saved_item ON id = item_id WHERE customer_id = $1'
+    },
+    {
+        name: 'selectCustomerSavedItem',
+        custom: 'SELECT item_id FROM customer_saved_item WHERE customer_id = $1 AND item_id = $2'
     },
     {
         name: 'insertCustomerSavedItem',
@@ -694,9 +726,18 @@ const queries = [
     },
     {
         name: 'selectProductReviews',
-        type: 'select',
-        tables: {name: 'product_review', columns: '*'},
-        conditions: 'WHERE product_id ='
+        custom: 'SELECT product_review.id, product_review.date, rating, review, first_name, last_name, "order".date AS order_date FROM product_review LEFT JOIN customer ON user_id = customer.id LEFT JOIN "order" ON order_id = "order".id WHERE product_id = $1 AND product_review.id IS NOT NULL ORDER BY product_review.date DESC'
+        // type: 'select',
+        // tables: [
+        //     {name: 'product_review', columns: ['product_review.id', 'product_review.date', 'rating', 'review']},
+            // {name: 'customer', columns: ['first_name', 'last_name']},
+            // {name: '"order"', columns: ['"order".date']}
+        // ],
+        // conditions: ['WHERE product_id ='],
+        // params: {
+        //     'left join': ['user_id', 'customer.id'],
+        //     'join': ['order_id', '"order".id']
+        // }
     },
     {
         name: 'selectProductStats',
@@ -705,7 +746,7 @@ const queries = [
             {name: 'product_review', columns: ['ROUND(AVG(rating), 2) AS average_rating', 'COUNT(*) AS count']},
             {name: 'order_item', columns: []}
         ],
-        conditions: 'WHERE product_id ='
+        conditions: 'WHERE product_id =',
     },
     {
         name: 'selectCustomerProductReviews',

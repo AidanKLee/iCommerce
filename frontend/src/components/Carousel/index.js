@@ -45,7 +45,7 @@ const Carousel = props => {
                 } else {
                     setCard(0);
                 }
-            }, 30000)
+            }, 5000)
             return () => clearTimeout(timer)
         }
     }, [card, timed, updatedChildren])

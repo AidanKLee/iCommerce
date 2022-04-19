@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
+import { saveItem, selectCategories, selectUser } from '../../app/appSlice';
 import Button from '../Button';
 import AddItems from '../ProductCreation/AddItems';
 import EditProduct from '../ProductCreation/EditProduct';
@@ -9,14 +11,66 @@ import './Product.css';
 
 const ProductData = props => {
 
+    const dispatch = useDispatch();
+
     const { index, product, products, type, refresh } = props;
 
+    const categories = useSelector(selectCategories);
+    const user = useSelector(selectUser);
+
     let { 
-        categories, favourites, id, is_active,
+        favourites, id, is_active,
         items, stats, seller, views 
     } = product;
-    items = useMemo(() => items.sort((a,b) => (Number(a[0].price.slice(1).replace(',', '')) > Number(b[0].price.slice(1).replace(',', ''))) ? 1 : ((Number(b[0].price.slice(1).replace(',', '')) > Number(a[0].price.slice(1).replace(',', ''))) ? -1 : 0)), [items]);
-    products[index].items = useMemo(() => products[index].items.sort((a,b) => (Number(a.price.slice(1).replace(',', '')) > Number(b.price.slice(1).replace(',', ''))) ? 1 : ((Number(b.price.slice(1).replace(',', '')) > Number(a.price.slice(1).replace(',', ''))) ? -1 : 0)), [products, index]);
+
+    const selectedCategories = useMemo(() => {
+
+        let cats;
+
+        if (categories.data && product.categories) {
+            cats = categories.data.filter(category => {
+                return product.categories.includes(category.name);
+            }) || [];
+
+            cats = cats.map(cat => {
+                let array = [cat];
+                const getSubCategories = (cat) => {
+                    if (cat.subCategories.length > 0) {
+                        let nextCat = cat.subCategories.filter(sub => {
+                            return product.categories.includes(sub.name);
+                        })
+                        if (nextCat[0]) {
+                            array.push(nextCat[0]);
+                            getSubCategories(nextCat[0]);
+                        }
+                    }
+                }
+                getSubCategories(cat);
+                return array;
+            })
+        } else {
+            cats = [];
+        }
+
+        return cats;
+
+    }, [product, categories])
+
+    items = useMemo(() => {
+        return items.sort((a,b) => {
+            if (Number(a[0].price.slice(1).replace(',', '')) > Number(b[0].price.slice(1).replace(',', ''))) {
+                return 1
+            } else if (Number(b[0].price.slice(1).replace(',', '')) > Number(a[0].price.slice(1).replace(',', ''))) {
+                return -1
+            } else if (a[0].name > b[0].name) {
+                return 1
+            } else if (b[0].name > a[0].name) {
+                return -1
+            } else {
+                return 0
+            }
+        })
+    }, [items]);
     
     const [ addItems, setAddItems ] = useState(false);
     const [ editProduct, setEditProduct ] = useState(false);
@@ -42,14 +96,34 @@ const ProductData = props => {
         setSelected(name);
     }
 
-    // const handleChange = e => {
-    //     setAddToCart(e.target.value)
-    // }
-
     const handleToggle = toggler => {
         const [ toggle, setToggle ] = toggler;
         setToggle(!toggle);
     }
+
+    const handleItemSave = async () => {
+        let index = 0;
+        user.saved.forEach(item => {
+            items[selected].forEach((it, i) => {
+                if (item.selected_item_id === it.id) {
+                    index = i;
+                }
+            })
+        });
+        dispatch(saveItem({customerId: user.id, itemId: items[selected][index].id}));
+    }
+
+    const isSavedItem = useMemo(() => {
+        const saved = items[selected].filter(item => {
+            return user.saved ? user.saved.map(it => {
+                if (it.selected_item_id === item.id) {
+                    return true;
+                }
+                return false;
+            }).includes(true) : false;
+        }).length > 0
+        return saved;
+    }, [items, selected, user.saved])
 
     return (
         <div className='product'>
@@ -63,7 +137,7 @@ const ProductData = props => {
             <div className='details'>
                 <div className='top'>
                     <Link to={`/product/${id}/${items[selected][0].id}`}><p className='name'>{product.items[selected][0].name}</p></Link>
-                    <div className='rating-wrapper'><Rating count={5} value={averageRating} width={'20px'}/><p>{`${reviewCount} Reviews`}</p></div>
+                    <div className='rating-wrapper'><Rating count={5} value={averageRating} width={'20px'}/><p>{reviewCount === 1 ? '1 Review' : `${reviewCount} Reviews`}</p></div>
                     <p className='price'>{product.items[selected][0].price}</p>
                     <div className='item-select'>
                         {
@@ -103,24 +177,18 @@ const ProductData = props => {
                                     <Button href={`/product/${id}/${items[selected][0].id}`} type='link' title={`View ${items[selected][0].name}`}>View Product</Button>
                                     <Button
                                         design='invert'
+                                        onClick={handleItemSave}
                                         primary='#1f1f1f'
                                         secondary='white'
-                                        title='Add To Favourites'
+                                        title='Save Product'
                                         icon={
-                                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
+                                            !isSavedItem ? (
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
+                                            ) : (
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                                            )
                                         }
                                     />
-                                    {/* <div className='cart'>
-                                        <Button 
-                                            type='button'
-                                            icon={<svg xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/><path d="M18,6h-2c0-2.21-1.79-4-4-4S8,3.79,8,6H6C4.9,6,4,6.9,4,8v12c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8C20,6.9,19.1,6,18,6z M12,4c1.1,0,2,0.9,2,2h-4C10,4.9,10.9,4,12,4z M18,20H6V8h2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V8h4v2c0,0.55,0.45,1,1,1s1-0.45,1-1V8 h2V20z"/></g></svg>}
-                                            title='Add To Basket'
-                                            primary='#e69600'
-                                        >
-                                            Add To Basket
-                                        </Button>
-                                        <input onChange={handleChange} className='add' type='number' name='cart-add' min={1} max={items[selected].in_stock} value={addToCart}/>
-                                    </div> */}
                                     
                                 </div>
                             )
@@ -133,7 +201,31 @@ const ProductData = props => {
                         <Link to={`/${seller.shop_name}/products`} className='name'>{seller.shop_name}</Link>
                         <Rating count={5} value={seller.stats.average_rating || 2.5} width='16px'/>
                     </div>
-                    <p>{`${categories[0]}${categories.slice(1).map(c => ` > ${c}`).join('')}`}</p>
+                    {
+                        selectedCategories.map((categories, i) => {
+                            return (
+                                <ul key={i} className='categories'>
+                                    <li>
+                                        <Link to={`/products`}>
+                                            Products
+                                        </Link>
+                                    </li>
+                                    {
+                                        categories.map((category, i) => {
+                                            return (
+                                                <li key={category.name}>
+                                                    <span>/</span>
+                                                    <Link to={`/products${category.href}`}>
+                                                        {category.name}
+                                                    </Link>
+                                                </li>
+                                            )
+                                        })
+                                    }
+                                </ul>
+                            )
+                        })
+                    }
                 </div>
             </div>
             <CSSTransition timeout={500} classNames='fade' in={addItems} mountOnEnter={true} unmountOnExit={true}>

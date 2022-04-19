@@ -204,6 +204,35 @@
 
 .app.header.section.item .user.item {
     margin-left: 12px;
+    position: relative;
+}
+
+.app.header.section.item .user.item .count {
+    background-color: #dadada;
+    font-weight: bold;
+    font-size: .6rem;
+    height: 14px;
+    width: 14px;
+    margin: auto;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 6px;
+    left: -4px;
+    outline: 2px solid #2d2d2d;
+    color: #1f1f1f;
+    text-decoration: none;
+    transition: .3s;
+}
+
+.app.header.section.item .user.item.wrapper .user.item:hover .count {
+    background-color: white;
+}
+
+.app.header.section.item .user.item .count:hover {
+    color: #1f1f1f;
 }
 
 .app.header.section.item .user.item.wrapper {
@@ -227,6 +256,12 @@
     position: relative;
     cursor: context-menu;
     transition: .3s;
+}
+
+.app.header.section.item .user.item.auth .img {
+    margin: 0 8px 0 0;
+    border: 2px solid #dadada;
+    border-radius: 50%;
 }
 
 .app.header.section.item .user.item.auth:hover {
@@ -275,14 +310,6 @@
     margin-right: 8px;
 }
 
-.app.header.section.item .user.item.auth.img {
-    width: fit-content;
-    height: fit-content;
-    margin: 0 8px 0 0;
-    border: 2px solid #dadada;
-    border-radius: 50%;
-}
-
 .app.header.section.item .user.item a {
     height: 100%;
     display: flex;
@@ -294,9 +321,7 @@
     transition: .3s;
 }
 
-.app.header.section.item .user.item a:hover {
-    color: inherit;
-    fill: inherit;
+.app.header.section.item .user.item.wrapper .user.item:hover svg {
     text-decoration: underline;
     transition: .3s;
     color: white;

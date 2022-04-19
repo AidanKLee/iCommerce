@@ -79,7 +79,7 @@ const RegisterShop = props => {
                     <label htmlFor='business_phone'>
                         Business Phone
                     </label>
-                    <input onChange={handleChange} type='tel' id='business_phone' name='business_phone' placeholder='07123456789 | +447123456789' value={business_phone} maxlength={16} />
+                    <input onChange={handleChange} type='tel' id='business_phone' name='business_phone' placeholder='07123456789 | +447123456789' value={business_phone} maxLength={16} />
                 </div>
                 <div className='auth form actions'>
                     <Button primary='rgb(30, 30, 30)' type='submit' design='invert'>Submit</Button>

@@ -141,93 +141,93 @@ const Products = props => {
         navigate(`${type === 'my-shop' ? '/my-shop' : ''}/products${e.target.value}`)
     }
 
-    console.log(results)
-
     return (
-        <div className='products'>
-            <div className='product-bar-wrapper'>
-                <div className='products-bar'>
-                    {
-                        type === 'my-shop' ? (
-                            <button onClick={() => setNewProduct(!newProduct)} title='New Product' className='products-bar-button'>
-                                <div className='products-bar-button-icon'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                                </div>
-                                <p>New Product</p>
-                            </button> ) : undefined
-                    }
-                    <div className='products-bar-search'>
-                        <select onChange={handleSearchSelect} name='category' value={category ? '/' + category : ''}>
-                            <option value={''}>{'All Categories'}</option>
-                            {
-                                data && data.parent_category && 'name' in data.parent_category > 0 ? (
-                                    <option value={data.parent_category.href}>{data.parent_category.name}</option>
-                                ) : undefined
-                            }
-                            {
-                                categoryData.name ? (
-                                    <option value={'/' + category}>{categoryData.name}</option>
-                                ) : undefined
-                            }
-                            {
-                                data && data.category && data.category.length > 0 ? (
-                                    data.category.map(category => <option key={category.href} value={category.href}>{category.category_name}</option>)
-                                ) : undefined
-                            }
-                        </select>
-                        <input onChange={handleChange} type='search' id='product-search' name='product-search' value={search}/>
-                        <label htmlFor='product-search'>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <section className='products-section'>
-                <div className='left'>
-                    <Filter category={category} data={data} filter={filter} queryParams={queryParams} setSearchParams={setSearchParams} type={type}/>
-                </div>
-                <div className='products'>
-                <div className='arrange-wrapper'>
-                    <div className='arrange'>
-                        <div className='left'>
-                            <select onChange={handleArrange} className='sort' name='sort' value={arrange.sort}>
-                                <option value='popular'>Popular</option>
-                                <option value='name-asc'>Name A-Z</option>
-                                <option value='name-desc'>Name Z-A</option>
-                                <option value='price-asc'>Price Low To High</option>
-                                <option value='price-desc'>Price High To Low</option>
-                                <option value='top-rated'>Top Rated</option>
-                                <option value='most-viewed'>Most Viewed</option>
+        <div className='products-wrapper'>
+            <div className='products'>
+                <div className='product-bar-wrapper'>
+                    <div className='products-bar'>
+                        {
+                            type === 'my-shop' ? (
+                                <button onClick={() => setNewProduct(!newProduct)} title='New Product' className='products-bar-button'>
+                                    <div className='products-bar-button-icon'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                                    </div>
+                                    <p>New Product</p>
+                                </button> ) : undefined
+                        }
+                        <div className='products-bar-search'>
+                            <select onChange={handleSearchSelect} name='category' value={category ? '/' + category : ''}>
+                                <option value={''}>{'All Categories'}</option>
+                                {
+                                    data && data.parent_category && 'name' in data.parent_category > 0 ? (
+                                        <option value={data.parent_category.href}>{data.parent_category.name}</option>
+                                    ) : undefined
+                                }
+                                {
+                                    categoryData.name ? (
+                                        <option value={'/' + category}>{categoryData.name}</option>
+                                    ) : undefined
+                                }
+                                {
+                                    data && data.category && data.category.length > 0 ? (
+                                        data.category.map(category => <option key={category.href} value={category.href}>{category.category_name}</option>)
+                                    ) : undefined
+                                }
                             </select>
-                            <div className='filter-wrapper'>
-                                Filter
-                                <svg className='down' xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7 10l5 5 5-5H7z"/></svg>
-                                <Filter category={category} data={data} filter={filter} queryParams={queryParams} setSearchParams={setSearchParams} type={type}/>
-                            </div>
+                            <input onChange={handleChange} type='search' id='product-search' name='product-search' value={search}/>
+                            <label htmlFor='product-search'>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                            </label>
                         </div>
-                        
-                        <select onChange={handleArrange} className='limit' name='limit' value={arrange.limit}>
-                            <option value={25}>25</option>
-                            <option value={50}>50</option>
-                            <option value={75}>75</option>
-                            <option value={100}>100</option>
-                        </select>
                     </div>
                 </div>
-                    {
-                        groupedProducts.length > 0 ? groupedProducts.map((product, i) => {
-                            return (
-                                <CSSTransition key={product.id} timeout={500} classNames='fade' in={groupedProducts.length > 0} mountOnEnter={true} unmountOnExit={true}>
-                                    <ProductData index={i} product={product} products={products} type={type} refresh={getProducts}/>
-                                </CSSTransition>
-                            )
-                        }) : undefined
-                    }
-                </div>
-                <CSSTransition timeout={500} classNames='fade' in={newProduct} mountOnEnter={true} unmountOnExit={true}>
-                    <NewProduct open={[newProduct, setNewProduct]} refresh={getProducts}/>
-                </CSSTransition>
-            </section>
+                <section className='products-section'>
+                    <div className='left'>
+                        <Filter category={category} data={data} filter={filter} queryParams={queryParams} setSearchParams={setSearchParams} type={type}/>
+                    </div>
+                    <div className='products'>
+                    <div className='arrange-wrapper'>
+                        <div className='arrange'>
+                            <div className='left'>
+                                <select onChange={handleArrange} className='sort' name='sort' value={arrange.sort}>
+                                    <option value='popular'>Popular</option>
+                                    <option value='name-asc'>Name A-Z</option>
+                                    <option value='name-desc'>Name Z-A</option>
+                                    <option value='price-asc'>Price Low To High</option>
+                                    <option value='price-desc'>Price High To Low</option>
+                                    <option value='top-rated'>Top Rated</option>
+                                    <option value='most-viewed'>Most Viewed</option>
+                                </select>
+                                <div className='filter-wrapper'>
+                                    Filter
+                                    <svg className='down' xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7 10l5 5 5-5H7z"/></svg>
+                                    <Filter category={category} data={data} filter={filter} queryParams={queryParams} setSearchParams={setSearchParams} type={type}/>
+                                </div>
+                            </div>
+                            
+                            <select onChange={handleArrange} className='limit' name='limit' value={arrange.limit}>
+                                <option value={25}>25</option>
+                                <option value={50}>50</option>
+                                <option value={75}>75</option>
+                                <option value={100}>100</option>
+                            </select>
+                        </div>
+                    </div>
+                        {
+                            groupedProducts.length > 0 ? groupedProducts.map((product, i) => {
+                                return product.is_active || type !== 'browse' ? (
+                                    <CSSTransition key={product.id} timeout={500} classNames='fade' in={groupedProducts.length > 0} mountOnEnter={true} unmountOnExit={true}>
+                                        <ProductData index={i} product={product} products={products} type={type} refresh={getProducts}/>
+                                    </CSSTransition>
+                                ) : undefined
+                            }) : undefined
+                        }
+                    </div>
+                    <CSSTransition timeout={500} classNames='fade' in={newProduct} mountOnEnter={true} unmountOnExit={true}>
+                        <NewProduct open={[newProduct, setNewProduct]} refresh={getProducts}/>
+                    </CSSTransition>
+                </section>
+            </div>
         </div>
     )
 }

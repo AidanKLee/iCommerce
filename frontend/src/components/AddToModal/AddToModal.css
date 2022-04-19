@@ -1,0 +1,49 @@
+.add-to-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fafafa;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    max-height: 156px;
+    max-width: 360px;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    text-align: center;
+    padding: 16px;
+}
+
+.add-to-modal p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 8px;
+}
+
+.add-to-modal svg {
+    fill: #1f1f1f75;
+    width: 156px;
+}
+
+.add-to-modal .done {
+    animation: grow .5s ease-in-out 0s 1 normal;
+    transform: scale(1.5);
+}
+
+@keyframes grow {
+    0% {
+        transform: scale(1);
+    }
+    70% {
+        transform: scale(2.5);
+    }
+    100% {
+        transform: scale(1.5);
+    }
+}

@@ -2,19 +2,24 @@ const model = require('../model');
 const middleware = require('./middleware');
 const bcrypt = require('bcrypt');
 const { v4: uuid } = require('uuid');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+require('dotenv').config();
+// const { google: g } = require('./middleware/fetch.js');
 const { helper } = middleware;
-const imageUrl = `${process.env.BASE_URL}/images/products/`
+const imageUrl = `${process.env.BASE_URL}/images/products/`;
+
+const attributes = {};
+
+
 
 const auth = {};
 
 auth.restoreSession = async (req, res, next) => {
     try {
-        if (req.session.passport && req.session.passport.user && req.session.passport.user.email) {
-            let customer = await model.selectCustomerByEmail(req.session.passport.user.email);
-            customer = customer[0];
-            delete customer.password;
-            req.user = customer;
-        }
+        let customer = await model.selectCustomerByEmail([req.session.passport.user.email]);
+        customer = customer[0];
+        delete customer.password;
+        req.user = customer;
         next();
     } catch (err) {
         next(err)
@@ -49,6 +54,62 @@ auth.register = async (req, res, next) => {
         const hash = bcrypt.hashSync(password, salt);
         await model.insertCustomer([uuid(), first_name, last_name, birth_date, email, phone, hash, subscribed]);
         res.status(201).json({message: 'Success'});
+    } catch (err) {
+        next(err);
+    }
+}
+
+auth.google = async (req, accessToken, refreshToken, profile, next) => {
+    try {
+        let user = await model.selectOAuthSubject([profile.provider, profile.id]);
+        let customer = await model.selectCustomerByEmail([profile.email]);
+        if (user.length === 0) {
+            if (customer.length === 0) {
+                let people = await fetch(`https://people.googleapis.com/v1/people/me?personFields=birthdays,phoneNumbers&key=${process.env['GOOGLE_API_KEY']}&access_token=${refreshToken.access_token}`);
+                people = await people.json();
+                const {birthdays/*, phoneNumbers*/} = people;
+                let birthday;
+                let phoneNumber = null;
+                if (birthdays) {
+                    birthday = birthdays.filter(birth => {
+                        return birth.date.day && birth.date.month && birth.date.year
+                    })[0].date;
+                }
+                birthday = birthday && birthday.year ? new Date(`${birthday.year}-${birthday.month}-${birthday.day}`).toDateString() : new Date('2001-01-01').toDateString();
+                await model.insertCustomer([uuid(), profile.given_name, profile.family_name, birthday, profile.email, phoneNumber, uuid(), true]);
+                customer = await model.selectCustomerByEmail([profile.email]);
+            }
+            await model.insertOAuthSubject([customer[0].id, profile.provider, profile.id]);
+        }
+        next(null, customer[0]);
+    } catch (err) {
+        next(err);
+    }
+}
+
+auth.facebook = async (accessToken, refreshToken, profile, next) => {
+    try {
+        let people = await fetch(`https://graph.facebook.com/v13.0/me?fields=email,birthday&access_token=${accessToken}`);
+        people = await people.json();
+        let user = await model.selectOAuthSubject([profile.provider, profile.id]);
+        let customer = await model.selectCustomerByEmail([people.email]);
+        if (user.length === 0) {
+            if (customer.length === 0) {
+                let phoneNumber = null;
+                let birthday = new Date('2001-01-01').toDateString();
+                let { family_name, given_name } = profile.name;
+                if (!family_name) {
+                    family_name = profile.displayName.split(' ').at(-1);
+                }
+                if (!given_name) {
+                    given_name = profile.displayName.split(' ')[0];
+                }
+                await model.insertCustomer([uuid(), given_name, family_name, birthday, people.email, phoneNumber, uuid(), true]);
+                customer = await model.selectCustomerByEmail([people.email]);
+            }
+            await model.insertOAuthSubject([customer[0].id, profile.provider, profile.id]);
+        }
+        next(null, customer[0]);
     } catch (err) {
         next(err);
     }
@@ -123,9 +184,75 @@ categories.getAttributes = async (req, res, next) => {
     };
 };
 
-const attributes = {};
+const customer = {};
 
+customer.saveItem = async (req, res, next) => {
+    try {
+        const { customerId, itemId } = req.params;
+        const { no_delete } = req.query;
+        const savedItem = await model.selectCustomerSavedItem([customerId, itemId]);
+        if (savedItem.length === 0) {
+            await model.insertCustomerSavedItem([customerId, itemId]);
+            next();
+        } else if (!no_delete) {
+            await model.deleteCustomerSavedItem([customerId, itemId]);
+            next();
+        } else {
+            res.status(409).json({message: 'Already exists'})
+        }
+    } catch (err) {
+        next(err);
+    }
+}
 
+customer.addCartItem = async (req, res, next) => {
+    try {
+        const { customerId, cartId, itemId } = req.params;
+        req.query.cart_id = cartId;
+        let { quantity, no_update } = req.query;
+        quantity = Number(quantity);
+        let cartItem = await model.selectCartItem([cartId, itemId]);
+        if (cartItem.length === 0) {
+            await model.insertCartItem([cartId, itemId, quantity]);
+            await model.updateCart([new Date().toISOString(), customerId]);
+            next();
+        } else if (!no_update) {
+            let { item_quantity } = cartItem[0];
+            item_quantity = Number(item_quantity);
+            await model.updateCartItem([item_quantity + quantity, cartId, itemId]);
+            await model.updateCart([new Date().toISOString(), customerId]);
+            next()
+        } else {
+            res.status(409).json({message: 'Already exists'});
+        }
+    } catch (err) {
+        next(err);
+    }
+}
+
+customer.updateCartItem = async (req, res, next) => {
+    try {
+        const { customerId, cartId, itemId } = req.params;
+        req.query.cart_id = cartId;
+        const { quantity } = req.query;
+        await model.updateCartItem([Number(quantity), cartId, itemId]);
+        await model.updateCart([new Date().toISOString(), customerId]);
+        next();
+    } catch (err) {
+        next(err);
+    }
+}
+
+customer.deleteCartItem = async (req, res, next) => {
+    try {
+        const { customerId, cartId, itemId } = req.params;
+        await model.deleteCartItem([cartId, itemId]);
+        await model.updateCart([new Date().toISOString(), customerId]);
+        res.status(200).json({message: 'Item deleted from cart.'});
+    } catch (err) {
+        next(err);
+    }
+}
 
 const products = {};
 
@@ -224,11 +351,11 @@ products.get = async (req, res, next) => {
             } else if (sort === 'price-desc') {
                 sort = `ORDER BY MAX(item.price) DESC`
             } else if (sort === 'top-rated') {
-                sort = `ORDER BY AVG(rating) DESC`
+                sort = `ORDER BY CASE WHEN AVG(rating) IS NULL THEN 1 ELSE 0 END, AVG(rating) DESC`
             } else if (sort === 'most-viewed') {
-                sort = `ORDER BY AVG(views) DESC`
+                sort = `ORDER BY CASE WHEN AVG(views) IS NULL THEN 1 ELSE 0 END, AVG(views) DESC`
             } else if (sort === 'popular') {
-                sort = `ORDER BY AVG(ordered) DESC`
+                sort = `ORDER BY CASE WHEN AVG(ordered) IS NULL THEN 1 ELSE 0 END, AVG(ordered) DESC`
             }
         }
         const productsSelect = `SELECT product.id, is_active, views, favourites, seller_id`;
@@ -401,36 +528,29 @@ products.getById = async (req, res, next) => {
     };
 };
 
+products.getByItemId = async (req, res, next) => {
+    try {
+        const product = await model.selectProductByItemId([req.params.itemId]);
+        req.products = product;
+        next();
+    } catch(err) {
+        next(err);
+    };
+};
+
+products.getByCartItemId = async (req, res, next) => {
+    try {
+        const product = await model.selectProductByCartItemId([req.params.itemId, req.query.cart_id]);
+        req.products = product;
+        next();
+    } catch(err) {
+        next(err);
+    };
+};
+
 products.getDataAndItems = async (req, res, next) => {
     try {
-        const products = await Promise.all(req.products.map(async product => {
-            const categories = await model.selectProductCategories([product.id]);
-            product.categories = categories.map(category => category.category_name);
-            product.reviews = await model.selectProductReviews([product.id]);
-            const stats = await model.selectProductStats([product.id]);
-            product.stats = stats[0];
-            const sale = await model.selectProductSales([product.id]);
-            product.sale = sale[0];
-            const seller = await model.selectSellerByProduct([product.id]);
-            product.seller = seller[0];
-            const sellerStats = await model.selectSellerStats([seller.id]);
-            product.seller.stats = sellerStats[0];
-            delete product.seller_id;
-            const items = await model.selectItemsByProductId([product.id]);
-            product.items = await Promise.all(items.map(async item => {
-                const attributes = await model.selectItemAttributeValues([item.id]);
-                item.attributes = {};
-                attributes.forEach(attribute => item.attributes = {
-                    ...item.attributes,
-                    [attribute.attribute]: attribute.value
-                });
-                item.images = await model.selectItemImages([item.id])
-                const sale = await model.selectItemSales([item.id]);
-                item.sale = sale[0] || {};
-                return item;
-            }));
-            return product;
-        }));
+        const products = await helper.getProductsById(req.products);
         res.status(200).json(products);
     } catch(err) {
         next(err);
@@ -455,7 +575,6 @@ products.create = async (req, res, next) => {
 products.createItems = async (req, res, next) => {
     try {
         const id = req.params.productId;
-        console.log(req.body.items, id)
         await Promise.all(req.body.items.map(async item => {
             const { attributes, name, description, price, in_stock, src } = item;
             const itemId = uuid();
@@ -514,15 +633,10 @@ products.edit = async (req, res, next) => {
     }
 }
 
-
-const user = {};
-
-
-
 const cart = {};
 
 
 
 module.exports = {
-    auth, categories, attributes, products, user, cart
+    attributes, auth, categories, customer, products, cart
 }

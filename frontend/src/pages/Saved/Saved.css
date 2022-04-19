@@ -1,0 +1,80 @@
+.saved {
+    width: 100%;
+}
+
+.saved .header h2 {
+    max-width: 1440px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 20px auto;
+    padding: 0 16px;
+}
+
+.saved .products {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.saved .main {
+    width: 100%;
+    padding: 48px 16px;
+    background-color: white;
+}
+
+.saved .main .no-saved {
+    width: 100%;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.saved .main .login {
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    font-size: .8rem;
+}
+
+.saved .main .login a {
+    margin: 0 auto;
+    display: block;
+    background-color: #efefef;
+    width: 100%;
+    max-width: 256px;
+    padding: 12px;
+    margin-top: 16px;
+    font-weight: 500;
+    font-size: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: .2s;
+}
+
+.saved .main .login a:hover {
+    background-color: #6464ff;
+    color: white;
+}
+
+.saved .main .login a:active {
+    background-color: #4747ff;
+}
+
+.saved .main .login svg {
+    height: 36px;
+    width: 36px;
+    transition: .3s;
+}
+
+.saved .main:hover svg {
+    fill: #4747ff;
+    animation: rotate 1s linear 0s infinite forwards;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}

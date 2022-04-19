@@ -50,12 +50,9 @@ const Filter = props => {
         }
     }
 
-    console.log(selected)
-
     const handleClick = e => {
         const value = Number(e.target.value);
         const height = e.target.parentElement.children[1].clientHeight;
-        console.log(value, height)
         if (selected[value] > 0) {
             setSelected(selected.map((x, i) => {
                 if (i === value) {
