@@ -10,7 +10,6 @@ import api from '../utils/api';
 import Menu from '../template/Menu';
 import { CSSTransition } from 'react-transition-group';
 import AddToModal from '../components/AddToModal';
-import process from 'process';
 
 function App() {
 
@@ -26,8 +25,6 @@ function App() {
     rejected: false,
     message: ''
   })
-
-  console.log(window)
 
   // Attempt to restore user session if available
   useEffect(() => {

@@ -56,6 +56,7 @@
   },
   "scripts": {
     "start": "npm-run-all -p nodemon webpack",
+    "build": "webpack",
     "nodemon": "nodemon --watch backend/ app.js --ignore frontend/",
     "webpack": "npx webpack",
     "test": "react-scripts test",
