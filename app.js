@@ -62,12 +62,12 @@ app.use((err, req, res, next) => {
 
 const server = https.createServer(credentials, app);
 
-// server.listen(PORT, () => {
-//     console.log(`HTTPS server listeneing on PORT: ${PORT}.`);
-// })
+server.listen(3000, () => {
+    console.log(`HTTPS server listeneing on PORT: ${3000}.`);
+})
 
 // app.use(errorHandler());
 
-app.listen(PORT, () => {
-    console.log(`Server listening on PORT: ${PORT}`)
+app.listen(PORT || 3001, () => {
+    console.log(`Server listening on PORT: ${PORT || 3001}`)
 })

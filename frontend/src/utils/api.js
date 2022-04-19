@@ -102,6 +102,7 @@ const categories = {};
 
 categories.getMain = async setter => {
     const [ cat, setCat ] = setter;
+    console.log(`${baseUrl}/api/categories/main`)
     let categories = await fetch(`${baseUrl}/api/categories/main`);
     categories = await categories.json();
     setCat({

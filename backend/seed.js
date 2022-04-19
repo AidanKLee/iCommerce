@@ -1,4 +1,4 @@
-const model = require('./model')
+const model = require('./model');
 // const { v4: uuid } = require('uuid');
 
 // console.log(uuid())

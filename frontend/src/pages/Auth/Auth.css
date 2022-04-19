@@ -130,7 +130,7 @@
 }
 
 .auth.form.subscribe {
-    padding: 16px 0;
+    margin: 16px 0;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -163,6 +163,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-end;
+    margin-top: 16px;
 }
 
 .auth.form.actions.login {

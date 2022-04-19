@@ -40,8 +40,6 @@ route.post('/registerShop', parser.json, auth.registerShop, helper.getAllUserDat
 
 passport.use(new LocalStrategy({usernameField: 'email'}, auth.login));
 
-console.log(`${process.env['BASE_URL']}/oauth2/google`)
-
 passport.use(new GoogleStrategy({
     clientID: process.env['GOOGLE_CLIENT'],
     clientSecret: process.env['GOOGLE_SECRET'],

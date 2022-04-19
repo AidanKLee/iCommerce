@@ -85,6 +85,7 @@ const NewProduct = props => {
     }, [attributes])
 
     useEffect(() => {
+        
         c.getMain([categories, setCategories]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
