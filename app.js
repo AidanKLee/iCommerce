@@ -12,10 +12,11 @@ require('dotenv').config();
 
 const key = fs.readFileSync('./ssl/cert.key', 'utf-8');
 const cert = fs.readFileSync('./ssl/cert.pem', 'utf-8');
-const credentials = {key, cert};
+const passphrase = process.env['SSL_PASSPHRASE'];
+const credentials = {key, cert, passphrase};
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 app.use(logger('dev'));
 

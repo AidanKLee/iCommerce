@@ -24,6 +24,8 @@ const Menu = props => {
     let categories = useSelector(selectCategories);
     categories = useMemo(() => categories.data || [], [categories]);
 
+    console.log(categories)
+
     const { open: [open, setOpen] } = props;
     const [ menu, setMenu ] = useState(false);
 

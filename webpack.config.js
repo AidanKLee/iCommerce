@@ -1,4 +1,5 @@
 const path = require('path');
+
 module.exports = {
     mode: `development`,
     entry: `./frontend/src/index.js`,
@@ -21,6 +22,7 @@ module.exports = {
                         ],
                         "plugins": [
                             "@babel/plugin-transform-runtime"
+                            
                         ],
                         "comments": false
                     }
