@@ -1,10 +1,33 @@
 const bodyParser = require('body-parser');
 const { v4: uuid } = require('uuid');
 const model = require('../../model');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 const parser = {};
 parser.json = bodyParser.json();
 parser.urlEncoded = bodyParser.urlencoded({ extended: false });
+parser.multi = multer.diskStorage({
+    destination: (req, file, next) => {
+        if (!req.params.productId) {
+            req.params.productId = uuid();
+        }
+        let dir = path.join(__dirname, `../../../frontend/public/images/products/${req.params.userId}`);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }
+        dir = `${dir}/${req.params.productId}`;
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }
+        next(null, dir);
+      },
+      filename: (req, file, next) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        next(null, file.fieldname + '-' + uniqueSuffix + '.' + file.mimetype.split('/')[1]);
+      }
+})
 
 const helper = {};
 

@@ -50,10 +50,14 @@ const queries = [
         conditions: ['WHERE id =']
     },
     {
-        name: 'deleteItemImage',
+        name: 'deleteItemImages',
         type: 'delete',
         tables: {name: 'item_image'},
-        conditions: ['WHERE image_id']
+        conditions: ['WHERE item_id =']
+    },
+    {
+        name: 'selectUnusedImages',
+        custom: 'SELECT image.id, image.src FROM image FULL OUTER JOIN item_image ON image.id = image_id WHERE item_image.item_id IS NULL'
     },
     {
         name: 'selectAllCustomers',

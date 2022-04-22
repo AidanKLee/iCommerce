@@ -9,6 +9,7 @@ import { CSSTransition } from 'react-transition-group';
 import LoadingModal from '../LoadingModal';
 import { useSelector } from 'react-redux';
 import { NewItem } from '.';
+import ImageInput from './ImageInput';
 
 const { categories: c, seller: s } = api;
 
@@ -26,6 +27,7 @@ const EditProduct = props => {
             two: []
         },
         items: [],
+        images: [],
         is_active: is_active
     }
 
@@ -41,6 +43,35 @@ const EditProduct = props => {
     let [ attributes, setAttributes ] = useState([]);
     const [ form, setForm ] = useState(initialState);
     const [ submitting, setSubmitting ] = useState(false);
+
+    const images = useMemo(() => {
+        let imageArray = form.images.map(image => {
+            return <img src={URL.createObjectURL(image)} title={image.name} alt={image.name}/>
+        })
+        return imageArray;
+    }, [form])
+
+    const currentImages = useMemo(() => {
+        const current = [];
+        product.items.forEach(item => {
+            item.images.forEach(image => {
+                const inCurrent = current.filter(img => {
+                    return img.id === image.id;
+                }).length > 0;
+                if (!inCurrent) {
+                    current.push(image);
+                }
+            })
+        })
+        return current;
+    }, [product]);
+
+    useEffect(() => {
+        if (currentImages.length > 0) {
+            setForm({...form, currentImages})
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentImages])
 
     const oneCategories = useMemo(() => (form.categories.one.length > 0 && categories[form.categories.one[form.categories.one.length - 1]].length > 0) || form.categories.one.length === 0 , [form, categories]);
     const selectedCategories = useMemo(() => form.categories.one.concat(form.categories.two), [form.categories]);
@@ -159,7 +190,13 @@ const EditProduct = props => {
                 for (let key in item.attributes) {
                     attributes.push({key: key, value: item.attributes[key]})
                 }
-                let src = item.images.map(image => image.src.split('/').at(-1)).join(' ');
+                let src = item.images.map(image => {
+                    return image.src.split('/').at(-1);
+                });
+                const src_primary = item.images.filter(image => {
+                    return image.primary;
+                })[0].src.split('/').at(-1);
+
                 return {
                     id: item.id,
                     name: item.name,
@@ -168,6 +205,7 @@ const EditProduct = props => {
                     in_stock: item.in_stock,
                     images: item.images,
                     src,
+                    src_primary,
                     attributes
                 }
             })
@@ -262,6 +300,31 @@ const EditProduct = props => {
         setSubmitting(false);
     }
 
+    const handleImages = e => {
+        const key = e.target.name;
+        const value = e.target.files;
+        setForm({...form, [key]: [...form[key], ...Array.from(value)]})
+    }
+
+    const handleRemoveImage = e => {
+        const [ key, index ] = e.target.id.split('-');
+        const images = form.images.filter((img, i) => {
+            return i !== Number(index);
+        })
+        form.items = form.items.map(item => {
+            item.src = item.src.filter(name => name !== e.target.title)
+            if (item.src_primary === e.target.title) {
+                if (item.src.length > 0) {
+                    item.src_primary = item.src[0]
+                } else {
+                    item.src_primary = ''
+                }
+            }
+            return item;
+        })
+        setForm({...form, [key]: images})
+    }
+
     return (
         <div className='new-product'>
             <div className='card'>
@@ -309,6 +372,35 @@ const EditProduct = props => {
                             }
                         </div>
                     </div>
+                    <div className='images'>
+                        <h2>
+                            Images
+                        </h2>
+                        <ul className='current'>
+                            {
+                                currentImages.map(img => {
+                                    const name = img.src.split('/').at(-1);
+                                    return (
+                                        <li key={name} title={name}>
+                                            <img src={img.src} alt={name}/>
+                                            <div className='overlay'>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg>
+                                            </div>
+                                        </li>
+                                    )
+                                })
+                            }
+                        </ul>
+                        <ImageInput 
+                            accept='.jpg, .jpeg, .png'
+                            files={form.images}
+                            handleRemove={handleRemoveImage}
+                            images={images}
+                            multiple={true}
+                            name='images'
+                            onChange={handleImages}
+                        />
+                    </div>
                     <div className='items'>
                         <h2>
                             Item & Variations
@@ -319,7 +411,7 @@ const EditProduct = props => {
                             return (
                                 <div key={i}>
                                     {i > 0 ? <br className='break'/> : undefined}
-                                    <NewItem key={i} attributes={attributes} form={[form, setForm]} index={i} item={item}/>
+                                    <NewItem key={i} attributes={attributes} current={currentImages} form={[form, setForm]} index={i} item={item}/>
                                 </div>
                             )
                         })

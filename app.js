@@ -61,7 +61,6 @@ app.use((err, req, res, next) => {
 })
 
 const server = https.createServer(credentials, app);
-
 server.listen(3000, () => {
     console.log(`HTTPS server listeneing on PORT: ${3000}.`);
 })

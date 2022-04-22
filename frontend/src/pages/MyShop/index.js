@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 import { selectUser } from '../../app/appSlice';
@@ -6,7 +6,10 @@ import LoadingModal from '../../components/LoadingModal';
 import RegisterShop from '../Auth/RegisterShop';
 import Redirect from '../Redirect';
 import ManageShop from './ManageShop';
+import api from '../../utils/api';
 import './MyShop.css';
+
+const { seller } = api;
 
 const MyShop = props => {
 
@@ -17,6 +20,12 @@ const MyShop = props => {
 
     const shop = useMemo(() => user.shop, [user]);
     const isShop = useMemo(() => shop && 'id' in shop, [shop]);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            seller.purgeUnusedImages(user.id);
+        }
+    }, [isLoggedIn, user])
 
     return (
         <section className='my-shop'>

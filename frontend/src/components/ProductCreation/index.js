@@ -9,13 +9,15 @@ import { selectUser } from '../../app/appSlice';
 import { CSSTransition } from 'react-transition-group';
 import LoadingModal from '../LoadingModal';
 import { useSelector } from 'react-redux';
+import ImageInput from './ImageInput';
 
 const { categories: c, seller: s } = api;
 
 const item = {
     name: '',
     description: '',
-    src: '',
+    src: [],
+    src_primary: '',
     price: '',
     in_stock: '',
     attributes: []
@@ -26,6 +28,7 @@ const initialState = {
         one: [],
         two: []
     },
+    images: [],
     items: [item],
     is_active: false
 }
@@ -42,6 +45,13 @@ const NewProduct = props => {
     let [ attributes, setAttributes ] = useState([]);
     const [ form, setForm ] = useState(initialState);
     const [ submitting, setSubmitting ] = useState(false);
+
+    const images = useMemo(() => {
+        let imageArray = form.images.map(image => {
+            return <img src={URL.createObjectURL(image)} title={image.name} alt={image.name}/>
+        })
+        return imageArray;
+    }, [form])
 
     const oneCategories = useMemo(() => (form.categories.one.length > 0 && categories[form.categories.one[form.categories.one.length - 1]].length > 0) || form.categories.one.length === 0 , [form, categories]);
     const selectedCategories = useMemo(() => form.categories.one.concat(form.categories.two), [form.categories]);
@@ -85,7 +95,6 @@ const NewProduct = props => {
     }, [attributes])
 
     useEffect(() => {
-        
         c.getMain([categories, setCategories]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -186,6 +195,31 @@ const NewProduct = props => {
         setSubmitting(false);
     }
 
+    const handleImages = e => {
+        const key = e.target.name;
+        const value = e.target.files;
+        setForm({...form, [key]: [...form[key], ...Array.from(value)]})
+    }
+
+    const handleRemoveImage = e => {
+        const [ key, index ] = e.target.id.split('-');
+        const images = form.images.filter((img, i) => {
+            return i !== Number(index);
+        })
+        form.items = form.items.map(item => {
+            item.src = item.src.filter(name => name !== e.target.title)
+            if (item.src_primary === e.target.title) {
+                if (item.src.length > 0) {
+                    item.src_primary = item.src[0]
+                } else {
+                    item.src_primary = ''
+                }
+            }
+            return item;
+        })
+        setForm({...form, [key]: images})
+    }
+
     return (
         <div className='new-product'>
             <div className='card'>
@@ -199,7 +233,7 @@ const NewProduct = props => {
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
                     </button>
                 </header>
-                <form className='form' onSubmit={handleSubmit} onReset={handleReset}>
+                <form className='form' onSubmit={handleSubmit} onReset={handleReset} encType="multipart/form-data">
                     <h2>
                         Categories
                     </h2>
@@ -232,6 +266,21 @@ const NewProduct = props => {
                                 ) : undefined
                             }
                         </div>
+                    </div>
+                    <div className='images'>
+                        <h2>
+                            Images
+                        </h2>
+
+                        <ImageInput 
+                            accept='.jpg, .jpeg, .png'
+                            files={form.images}
+                            handleRemove={handleRemoveImage}
+                            images={images}
+                            multiple={true}
+                            name='images'
+                            onChange={handleImages}
+                        />
                     </div>
                     <div className='items'>
                         <h2>
@@ -284,11 +333,25 @@ const NewProduct = props => {
 
 export const NewItem = props => {
 
-    const { attributes, form: [form, setForm], index, item } = props;
+    const { attributes, current, form: [form, setForm], index, item } = props;
+
+    const srcSelect = useMemo(() => {
+        let imgs = [];
+        if (form.images && form.images.length > 0) {
+            imgs = [...form.images]
+        }
+        if (current && current.length > 0) {
+            const currentImgs = current.map(img => {
+                return {...img, name: img.src.split('/').at(-1)}
+            })
+            imgs = [...imgs, ...currentImgs]
+        }
+        return imgs;
+    }, [current, form.images])
 
     const handleChange = e => {
         const key = e.target.name;
-        const value = e.target.value;
+        let value = e.target.value;
         let items = [...form.items];
         items[index] = {
             ...items[index],
@@ -300,11 +363,72 @@ export const NewItem = props => {
         })
     }
 
+    const handleImageSelect = e => {
+        const value = e.target.value;
+        const items = [...form.items];
+        if (items[index].src.includes(value)) {
+            items[index] = {
+                ...items[index],
+                src: items[index].src.filter(name => {
+                    return name !== value
+                })
+            }
+            if (items[index].src.length === 1) {
+                items[index].src_primary = '';
+            } else if (value === items[index].src_primary) {
+                items[index].src_primary = items[index].src[0]
+            }
+        } else {
+            items[index] = {
+                ...items[index],
+                src: [...items[index].src, value]
+            }
+        }
+        if (items[index].src.length === 1) {
+            items[index].src_primary = items[index].src[0];
+        }
+        setForm({
+            ...form,
+            items
+        })        
+    }
+
+    console.log(form)
+
+    const handlePrimaryImageSelect = e => {
+        const value = e.target.value;
+        const items = [...form.items];
+        items[index] = {
+            ...items[index], src_primary: value
+        }
+        setForm({
+            ...form,
+            items
+        })
+    }
+
     return (
         <div className='new-item'>
             <input onChange={handleChange} type='text' name='name' placeholder='Item Name' value={item.name} required maxLength={192}/>
             <textarea onChange={handleChange} type='text' name='description' placeholder='Item Description' value={item.description} required></textarea>
-            <input onChange={handleChange} type='text' name='src' placeholder='Image Source' value={item.src} required/>
+            {
+                srcSelect && srcSelect > 0 ? (
+                    <p className='head'>Select Images</p>
+                ) : undefined
+            }
+            <div className='src'>
+                {
+                    srcSelect ? srcSelect.map(image => {
+                        return (
+                            <div className='checkbox' key={`${image.name}-${index}`}>
+                                <input onChange={handlePrimaryImageSelect} type='radio' name={`src_primary-${index}`} checked={form.items[index].src_primary === image.name} value={image.name} disabled={!form.items[index].src.includes(image.name)}/>
+                                <input onChange={handleImageSelect} type='checkbox' name={`${image.name}-${index}`} id={`${image.name}-${index}`} value={image.name} checked={form.items[index].src.includes(image.name)}/>
+                                <label htmlFor={`${image.name}-${index}`}>{image.name}</label>
+                            </div>
+                        )
+                    }) : undefined
+                }
+            </div>
             <div className='numbers'>
                 <input onChange={handleChange} type='number' name='price' placeholder='Price (99.99)' value={item.price} required step={.01}/>
                 <input onChange={handleChange} type='number' name='in_stock' placeholder='Stock Count' value={item.in_stock} required min={0} step={1}/>

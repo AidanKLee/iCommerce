@@ -219,36 +219,55 @@ const seller = {};
 seller.createProduct = async form => {
     const categories = form.categories.one.concat(form.categories.two);
     form = { ...form, categories };
+    const images = form.images;
+    delete form.images;
+    const formData = new FormData();
+    images.forEach(image => {
+        formData.append('images', image);
+    })
+    formData.append('form', JSON.stringify(form));
     await fetch(`${baseUrl}/api/seller/${form.userId}/products`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-          },
-        body: JSON.stringify(form)
+        body: formData
     })
 }
 
 seller.createItems = async form => {
+    const images = form.images;
+    delete form.images;
+    delete form.categories;
+    const formData = new FormData();
+    images.forEach(image => {
+        formData.append('images', image);
+    })
+    formData.append('form', JSON.stringify(form));
     await fetch(`${baseUrl}/api/seller/${form.userId}/products/${form.id}/items`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-          },
-        body: JSON.stringify(form)
+        body: formData
     })
 }
 
 seller.editProduct = async form => {
     const categories = form.categories.one.concat(form.categories.two);
     form = { ...form, categories };
+    const images = form.images;
+    delete form.images;
+    const formData = new FormData();
+    images.forEach(image => {
+        formData.append('images', image);
+    })
+    formData.append('form', JSON.stringify(form));
     await fetch(`${baseUrl}/api/seller/${form.userId}/products/${form.id}`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-          },
-        body: JSON.stringify(form)
+        body: formData
     })
     return categories;
+}
+
+seller.purgeUnusedImages = async (userId) => {
+    await fetch(`${baseUrl}/api/seller/${userId}/products/images`, {
+        method: 'DELETE'
+    })
 }
 
 const api = {

@@ -7,33 +7,66 @@ import { selectUser } from '../../app/appSlice';
 import { CSSTransition } from 'react-transition-group';
 import LoadingModal from '../LoadingModal';
 import { useSelector } from 'react-redux';
+import ImageInput from './ImageInput';
 
 const { categories: c, seller: s } = api;
 
 const item = {
     name: '',
     description: '',
-    src: '',
+    src: [],
     price: '',
     in_stock: '',
     attributes: []
 }
 
 const AddItems = props => {
-    
 
     const user = useSelector(selectUser);
 
-    const {categories, id, open: [ open, setOpen ], refresh} = props;
+    const {categories, id, open: [ open, setOpen ], product, refresh} = props;
 
     const initialState = {
         categories,
+        images: [],
         items: [item]
     }
 
     let [ attributes, setAttributes ] = useState([]);
     const [ form, setForm ] = useState(initialState);
-    const [ submitting, setSubmitting ] = useState(false)
+    const [ submitting, setSubmitting ] = useState(false);
+
+    const images = useMemo(() => {
+        let imageArray = form.images.map(image => {
+            return <img src={URL.createObjectURL(image)} title={image.name} alt={image.name}/>
+        })
+        return imageArray;
+    }, [form])
+
+    const currentImages = useMemo(() => {
+        const current = [];
+        product.items.forEach(group => {
+            group.forEach(item => {
+                item.images.forEach(image => {
+                    const inCurrent = current.filter(img => {
+                        return img.id === image.id;
+                    }).length > 0;
+                    if (!inCurrent) {
+                        current.push(image);
+                    }
+                })
+            })
+        })
+        return current;
+    }, [product]);
+
+    useEffect(() => {
+        if (currentImages.length > 0) {
+            setForm({...form, currentImages})
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentImages])
+
     attributes = useMemo(() => {
         if (attributes.length > 0) {
             let newAttributes = [];
@@ -74,7 +107,11 @@ const AddItems = props => {
     }, [attributes])
 
     useEffect(() => {
-        c.getAttributes(setAttributes, categories);
+        let cats = [...categories[0]]
+        if (categories[1] && categories[1].length > 0) {
+            cats = [...cats, ...categories[1]];
+        }
+        c.getAttributes(setAttributes, cats.map(cat => cat.name));
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -107,7 +144,6 @@ const AddItems = props => {
                     ...form.items, form.items.at(-1)
                 ]
             }
-            
         } else if (form.items.length > 1) {
             newForm.items.pop();
         }
@@ -134,6 +170,31 @@ const AddItems = props => {
         setSubmitting(false);
     }
 
+    const handleImages = e => {
+        const key = e.target.name;
+        const value = e.target.files;
+        setForm({...form, [key]: [...form[key], ...Array.from(value)]})
+    }
+
+    const handleRemoveImage = e => {
+        const [ key, index ] = e.target.id.split('-');
+        const images = form.images.filter((img, i) => {
+            return i !== Number(index);
+        })
+        form.items = form.items.map(item => {
+            item.src = item.src.filter(name => name !== e.target.title)
+            if (item.src_primary === e.target.title) {
+                if (item.src.length > 0) {
+                    item.src_primary = item.src[0]
+                } else {
+                    item.src_primary = ''
+                }
+            }
+            return item;
+        })
+        setForm({...form, [key]: images})
+    }
+
     return (
         <div className='new-product'>
             <div className='card'>
@@ -147,7 +208,36 @@ const AddItems = props => {
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
                     </button>
                 </header>
-                <form className='form' onSubmit={handleSubmit} onReset={handleReset}>
+                <form className='form' onSubmit={handleSubmit} onReset={handleReset} encType="multipart/form-data">
+                    <div className='images'>
+                        <h2>
+                            Images
+                        </h2>
+                        <ul className='current'>
+                            {
+                                currentImages.map(img => {
+                                    const name = img.src.split('/').at(-1);
+                                    return (
+                                        <li key={name} title={name}>
+                                            <img src={img.src} alt={name}/>
+                                            <div className='overlay'>
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg>
+                                            </div>
+                                        </li>
+                                    )
+                                })
+                            }
+                        </ul>
+                        <ImageInput 
+                            accept='.jpg, .jpeg, .png'
+                            files={form.images}
+                            handleRemove={handleRemoveImage}
+                            images={images}
+                            multiple={true}
+                            name='images'
+                            onChange={handleImages}
+                        />
+                    </div>
                     <div className='items'>
                         <h2>
                             Item & Variations
@@ -167,7 +257,7 @@ const AddItems = props => {
                             return (
                                 <div key={i}>
                                     {i > 0 ? <br className='break'/> : undefined}
-                                    <NewItem key={i} attributes={attributes} form={[form, setForm]} index={i} item={item}/>
+                                    <NewItem key={i} attributes={attributes} current={currentImages} form={[form, setForm]} index={i} item={item}/>
                                 </div>
                             )
                         })

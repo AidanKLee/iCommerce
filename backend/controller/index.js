@@ -2,11 +2,12 @@ const model = require('../model');
 const middleware = require('./middleware');
 const bcrypt = require('bcrypt');
 const { v4: uuid } = require('uuid');
+const path = require('path');
+const fs = require('fs/promises');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 require('dotenv').config();
-// const { google: g } = require('./middleware/fetch.js');
 const { helper } = middleware;
-const imageUrl = `${process.env.BASE_URL}/images/products/`;
+const imageUrl = `${process.env.BASE_URL}/images/products`;
 
 const attributes = {};
 
@@ -559,11 +560,15 @@ products.getDataAndItems = async (req, res, next) => {
 
 products.create = async (req, res, next) => {
     try {
-        const id = uuid();
-        req.params.productId = id;
-        await model.insertProduct([id, req.body.is_active]);
+        req.form = JSON.parse(req.body.form);
+        let id = req.params.productId;
+        if (!req.params.productId) {
+            id = uuid();
+            req.params.productId = id;
+        }
+        await model.insertProduct([id, req.form.is_active]);
         await model.insertSellerProduct([req.params.userId, id]);
-        await req.body.categories.map(async category => {
+        await req.form.categories.map(async category => {
             return await model.insertProductCategory([id, category]);
         })
         next();
@@ -574,9 +579,23 @@ products.create = async (req, res, next) => {
 
 products.createItems = async (req, res, next) => {
     try {
+        req.files = req.files.map(file => {
+            return {
+                ...file,
+                id: uuid(),
+                src: `${imageUrl}/${req.params.userId}/${req.params.productId}/${file.filename}`
+            }
+        })
+        await req.files.map(async image => {
+            return await model.insertImage([image.id, image.src]); 
+        })
+        if (!req.form) {
+            console.log(req.body)
+            req.form = JSON.parse(req.body.form);
+        }
         const id = req.params.productId;
-        await Promise.all(req.body.items.map(async item => {
-            const { attributes, name, description, price, in_stock, src } = item;
+        await Promise.all(req.form.items.map(async item => {
+            const { attributes, name, description, price, in_stock, src, src_primary } = item;
             const itemId = uuid();
             await model.insertItem([itemId, id, name, description, price, in_stock]);
             let removeAttributes = [];
@@ -593,12 +612,21 @@ products.createItems = async (req, res, next) => {
                     return await model.insertItemAttributeValues([itemId, attribute.key, attribute.value]);
                 });
             };
-            if (src.length !== '') {
-                await src.split(' ').map(async (image, i) => {
-                    const imageId = uuid();
-                    await model.insertImage([imageId, `${imageUrl}${image}`]);
-                    await model.insertItemImage([itemId, imageId, i === 0 ? true : false]);
-                });
+            if (src.length > 0) {
+                await Promise.all(src.map(async (image, i) => {
+                    let imgToAdd = req.files.filter(img => {
+                        return img.originalname === image;
+                    });
+                    if (imgToAdd.length === 0) {
+                        imgToAdd = req.form.currentImages.filter(img => {
+                            img.name = img.src.split('/').at(-1);
+                            return img.name === image
+                        })
+                        imgToAdd[0] = {...imgToAdd[0], originalname: imgToAdd[0].name}
+                    }
+                    imgToAdd = imgToAdd[0];
+                    await model.insertItemImage([itemId, imgToAdd.id, imgToAdd.originalname === src_primary]);
+                }));
             };
         }));
         res.sendStatus(201);
@@ -609,27 +637,67 @@ products.createItems = async (req, res, next) => {
 
 products.edit = async (req, res, next) => {
     try {
+        req.files = req.files.map(file => {
+            return {
+                ...file,
+                id: uuid(),
+                src: `${imageUrl}/${req.params.userId}/${req.params.productId}/${file.filename}`
+            }
+        })
+        await req.files.map(async image => {
+            return await model.insertImage([image.id, image.src]); 
+        })
         const { productId: id } = req.params;
-        const { categories, is_active, items } = req.body;
+        const { categories, is_active, items } = JSON.parse(req.body.form);
         await model.updateProduct([is_active, id]);
         await model.deleteProductCategories([id]);
         await Promise.all(categories.map(async category => {
             return await model.insertProductCategory([id, category]);
         }));
+        let allImages = [];
+        items.forEach(item => {
+            allImages = [...allImages, ...item.images]
+        })
         await Promise.all(items.map(async item => {
-            const { attributes, description, id: itemId, name, price/*, images, src*/ } = item;
+            const { attributes, description, id: itemId, name, price, src, src_primary } = item;
             await model.updateItem([name, description, price, itemId]);
             await Promise.all(attributes.map(async attribute => {
                 return await model.updateItemAttributeValue([attribute.value, itemId, attribute.key]);
             }));
-            // await Promise.all(images.map(async (image, i) => {
-            //     await model.updateImage([`${imageUrl}${src.split(' ')[i]}`, image.id]);
-            //     await model.updateItemImage([image.primary, image.id]);
-            // }));
+            await model.deleteItemImages([itemId]);
+            await Promise.all(src.map(async src => {
+                let imgToAdd = req.files.filter(img => {
+                    return img.originalname === src;
+                });
+                if (imgToAdd.length === 0) {
+                    imgToAdd = allImages.filter(img => {
+                        return img.src.split('/').at(-1) === src; 
+                    });
+                };
+                imgToAdd = imgToAdd[0];
+                await model.insertItemImage([itemId, imgToAdd.id, imgToAdd.src.split('/').at(-1) === src_primary]);
+            }))
         }));
         res.status(200).json({message: 'updated'});
     } catch (err) {
         next(err);
+    }
+}
+
+products.purgeUnusedImages = async (req, res, next) => {
+    try {
+        const unusedImages = await model.selectUnusedImages();
+        await Promise.all(unusedImages.map(async image => {
+            const filePath = path.join(__dirname, ['../../frontend/public/images/products', ...image.src.split('/').slice(5)].join('/'));
+            if (image.src.split('/').at(-3) === req.params.userId) {
+                await model.deleteImage([image.id]);
+                await fs.unlink(filePath);
+            }
+            
+        }))
+        res.sendStatus(204);
+    } catch (err) {
+        next(err)
     }
 }
 

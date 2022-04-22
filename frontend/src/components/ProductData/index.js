@@ -15,6 +15,8 @@ const ProductData = props => {
 
     const { index, product, products, type, refresh } = props;
 
+    console.log(products)
+
     const categories = useSelector(selectCategories);
     const user = useSelector(selectUser);
 
@@ -91,6 +93,9 @@ const ProductData = props => {
         };
     }, [items, selected])
 
+    console.log(items)
+    console.log(items[0][0].images.filter(image => image.primary)[0].src)
+
     const handleSelect = e => {
         const name = Number(e.target.name);
         setSelected(name);
@@ -124,6 +129,7 @@ const ProductData = props => {
         }).length > 0
         return saved;
     }, [items, selected, user.saved])
+    
 
     return (
         <div className='product'>
@@ -229,7 +235,7 @@ const ProductData = props => {
                 </div>
             </div>
             <CSSTransition timeout={500} classNames='fade' in={addItems} mountOnEnter={true} unmountOnExit={true}>
-                <AddItems open={[addItems, setAddItems]} categories={categories} id={id} refresh={refresh}/>
+                <AddItems open={[addItems, setAddItems]} categories={selectedCategories} id={id} product={product} refresh={refresh}/>
             </CSSTransition>
             <CSSTransition timeout={500} classNames='fade' in={editProduct} mountOnEnter={true} unmountOnExit={true}>
                 <EditProduct open={[editProduct, setEditProduct]} product={products[index]} refresh={refresh}/>
