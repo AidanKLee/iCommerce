@@ -190,9 +190,9 @@ const EditProduct = props => {
                 for (let key in item.attributes) {
                     attributes.push({key: key, value: item.attributes[key]})
                 }
-                let src = item.images.map(image => {
-                    return image.src.split('/').at(-1);
-                });
+                // let src = item.images.map(image => {
+                //     return image.src.split('/').at(-1);
+                // });
                 const src_primary = item.images.filter(image => {
                     return image.primary;
                 })[0].src.split('/').at(-1);
@@ -204,7 +204,7 @@ const EditProduct = props => {
                     price: Number(item.price.slice(1).split(',').join('')),
                     in_stock: item.in_stock,
                     images: item.images,
-                    src,
+                    src: item.src,
                     src_primary,
                     attributes
                 }

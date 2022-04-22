@@ -502,7 +502,8 @@ products.get = async (req, res, next) => {
                         ...item.attributes,
                         [attribute.attribute]: attribute.value
                     });
-                    item.images = await model.selectItemImages([item.id])
+                    item.images = await model.selectItemImages([item.id]);
+                    item.src = item.images.map(image => image.src.split('/').at(-1));
                     const sale = await model.selectItemSales([item.id]);
                     item.sale = sale[0] || {};
                     return item;
