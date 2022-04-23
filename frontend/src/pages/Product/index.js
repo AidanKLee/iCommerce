@@ -212,12 +212,15 @@ const Top = props => {
     }, [items, selected])
 
     const isSavedItem = useMemo(() => {
-        const savedItem = 'saved' in user ? user.saved.filter(item => {
-            return items[selected].filter(item => {
-                return item.item_id === item.id
-            });
-        }) : [];
-        return savedItem.length > 0 ? true : false;
+        const saved = items[selected].filter(item => {
+            return user.saved ? user.saved.map(it => {
+                if (it.item_id === item.id) {
+                    return true;
+                }
+                return false;
+            }).includes(true) : false;
+        }).length > 0
+        return saved;
     }, [items, selected, user])
 
     const handleChange = e => {
