@@ -299,7 +299,7 @@ const EditProduct = props => {
             image.id = uuid();
             return image;
         }))
-        setForm({...form, [key]: [...form[key], value[0]]})
+        setForm({...form, [key]: [...form[key], ...value]})
     }
 
     const handleRemoveImage = e => {
