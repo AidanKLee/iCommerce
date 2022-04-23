@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import api from "../utils/api";
 import baseUrl from '../utils/baseUrl';
 
-const { customer: c, products: p } = api;
+const { customer: c } = api;
 
 export const fetchCategories = createAsyncThunk(
     'app/fetchCategories',
@@ -15,50 +15,45 @@ export const fetchCategories = createAsyncThunk(
 
 export const saveItem = createAsyncThunk(
     'app/saveItem',
-    async({customerId, itemId, login}) => {
+    async({customerId, itemId: item_id, login}) => {
         if (customerId) {
-            await c.saveItem(customerId, itemId, login);
+            await c.saveItem(customerId, item_id, login);
         }
-        const product = await p.getByItemId(itemId);
-        return product;
+        return {item_id};
     }
 )
 
 export const addToBag = createAsyncThunk(
     'app/addToBag',
-    async({customerId, bagId, itemId, quantity, login}, {getState}) => {
+    async({customerId, bagId, itemId: item_id, quantity, login}, {getState}) => {
         let prevQuantity = getState().app.user.cart.items.filter(item => {
-            return itemId === item.selected_item_id
+            return item_id === item.item_id
         })
         prevQuantity = prevQuantity.length > 0 ? prevQuantity[0].item_quantity : 0;
         if (customerId && bagId) {
-            await c.addItemToBag(customerId, bagId, itemId, quantity, login);
+            await c.addItemToBag(customerId, bagId, item_id, quantity, login);
         }
-        const product = await p.getByItemId(itemId, bagId);
-        if (customerId && bagId) {
-            return product;
-        }
-        return {...product, item_quantity: quantity + prevQuantity};
+        return {item_id, item_quantity: Number(quantity) + Number(prevQuantity)};
     }
 )
 
 export const updateItemBagQuantity = createAsyncThunk(
     'app/updateItemBagQuantity',
-    async({customerId, bagId, itemId, quantity}) => {
+    async({customerId, bagId, itemId: item_id, quantity}) => {
         if (customerId && bagId) {
-            await c.updateItemBagQuantity(customerId, bagId, itemId, quantity);
+            await c.updateItemBagQuantity(customerId, bagId, item_id, quantity);
         }
-        return {selected_item_id: itemId, quantity: quantity}
+        return {item_id, item_quantity: Number(quantity)}
     }
 )
 
 export const deleteFromBag = createAsyncThunk(
     'app/deleteFromBag',
-    async({customerId, bagId, itemId}) => {
+    async({customerId, bagId, itemId: item_id}) => {
         if (customerId && bagId) {
-            c.deleteItemFromBag(customerId, bagId, itemId)
+            c.deleteItemFromBag(customerId, bagId, item_id)
         }
-        return itemId;
+        return item_id;
     }
 )
 
@@ -124,11 +119,11 @@ const appSlice = createSlice({
             state.user.cart.message = 'Item Added To Shopping Bag';
             const cart = current(state.user.cart);
             const itemInBag = cart.items.filter(item => {
-                return item.selected_item_id === action.payload.selected_item_id;
+                return item.item_id === action.payload.item_id;
             }).length > 0;
             if (itemInBag) {
                 state.user.cart.items = cart.items.map(item => {
-                    if (item.selected_item_id === action.payload.selected_item_id) {
+                    if (item.item_id === action.payload.item_id) {
                         return action.payload;
                     }
                     return item;
@@ -157,8 +152,8 @@ const appSlice = createSlice({
             state.user.cart.message = 'Quantity Updated';
             const cart = current(state.user.cart);
             state.user.cart.items = cart.items.map(item => {
-                if (item.selected_item_id === action.payload.selected_item_id) {
-                    return {...item, item_quantity: action.payload.quantity};
+                if (item.item_id === action.payload.item_id) {
+                    return action.payload;
                 }
                 return item;
             })
@@ -183,7 +178,7 @@ const appSlice = createSlice({
             state.user.cart.message = 'Item Removed From Shopping Bag';
             const cart = current(state.user.cart);
             state.user.cart.items = cart.items.filter(item => {
-                return item.selected_item_id !== action.payload;
+                return item.item_id !== action.payload;
             })
         },
         [deleteFromBag.rejected]: (state) => {
@@ -205,12 +200,12 @@ const appSlice = createSlice({
             state.user.savedStatus.rejected = false;
             const saved = current(state.user.saved);
             const itemInSaved = saved.filter(item => {
-                return item.selected_item_id === action.payload.selected_item_id;
+                return item.item_id === action.payload.item_id;
             }).length > 0;
             if (itemInSaved) {
                 state.user.savedStatus.message = 'Removed From Saved Items';
                 state.user.saved = saved.filter(item => {
-                    return item.selected_item_id !== action.payload.selected_item_id; 
+                    return item.item_id !== action.payload.item_id; 
                 })
             } else {
                 state.user.savedStatus.message = 'Item Saved';

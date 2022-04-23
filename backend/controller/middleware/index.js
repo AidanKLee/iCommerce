@@ -64,9 +64,9 @@ helper.getAllUserData = async (req, res, next) => {
         }
         customer.cart = cart[0];
         customer.cart.items = await model.selectCartProducts([customer.cart.id]);
-        customer.cart.items = await helper.getProductsById(customer.cart.items);
+        // customer.cart.items = await helper.getProductsById(customer.cart.items);
         customer.saved = await model.selectCustomerSavedProducts([customer.id]);
-        customer.saved = await helper.getProductsById(customer.saved);
+        // customer.saved = await helper.getProductsById(customer.saved);
         const shop = await model.selectSellerById([customer.id]);
         customer.shop = shop.length > 0 ? shop[0] : {};
         if (!req.oauth) {

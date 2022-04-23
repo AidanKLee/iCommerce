@@ -91,8 +91,6 @@ const ProductData = props => {
         };
     }, [items, selected])
 
-    console.log(items)
-
     const handleSelect = e => {
         const name = Number(e.target.name);
         setSelected(name);

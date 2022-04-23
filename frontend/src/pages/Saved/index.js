@@ -1,14 +1,30 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { selectUser } from '../../app/appSlice';
 import ProductTile from '../../components/ProductTile';
+import api from '../../utils/api';
 import './Saved.css';
+
+const { products: p } = api;
 
 const Saved = props => {
 
     const user = useSelector(selectUser);
-    const saved = useMemo(() => user.saved || [], [user]);
+    
+    const [ saved, setSaved ] = useState([]);
+
+    useEffect(() => {
+        const getItems = async () => {
+            let products = await p.getByItemIdList(user.saved);
+            setSaved(products)
+        }
+        if (user.saved.length > 0) {
+            getItems();
+        } else {
+            setSaved([]);
+        }
+    }, [user.saved])
 
     return (
         <section className='saved'>

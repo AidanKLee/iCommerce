@@ -537,10 +537,42 @@ products.getByItemId = async (req, res, next) => {
     };
 };
 
+products.getByItemIdList = async (req, res, next) => {
+    try {
+        await Promise.all(req.body.map(async item => {
+            const product = await model.selectProductByItemId([item.item_id]);
+            if (!req.products) {
+                req.products = product;
+            } else {
+                req.products = [...req.products, ...product]
+            }
+        }))
+        next();
+    } catch(err) {
+        next(err);
+    };
+};
+
 products.getByCartItemId = async (req, res, next) => {
     try {
         const product = await model.selectProductByCartItemId([req.params.itemId, req.query.cart_id]);
         req.products = product;
+        next();
+    } catch(err) {
+        next(err);
+    };
+};
+
+products.getByCartItemIdList = async (req, res, next) => {
+    try {
+        await Promise.all(req.body.map(async item => {
+            const product = await model.selectProductByCartItemId([item.item_id, req.query.cart_id]);
+            if (!req.products) {
+                req.products = product;
+            } else {
+                req.products = [...req.products, ...product]
+            }
+        }))
         next();
     } catch(err) {
         next(err);

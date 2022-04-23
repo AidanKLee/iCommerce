@@ -168,7 +168,7 @@ const queries = [
     },
     {
         name: 'selectCartProducts',
-        custom: 'SELECT product.id AS id, item.id AS selected_item_id, is_active, views, favourites, item_quantity FROM product LEFT JOIN item ON product.id = product_id LEFT JOIN cart_item ON item.id = item_id WHERE cart_id = $1'
+        custom: 'SELECT item_id, item_quantity FROM cart_item WHERE cart_id = $1'
     },
     {
         name: 'selectCartItems',
@@ -489,7 +489,7 @@ const queries = [
     },
     {
         name: 'selectCustomerSavedProducts',
-        custom: 'SELECT product.id AS id, item.id AS selected_item_id, is_active, views, favourites FROM product LEFT JOIN item ON product.id = product_id LEFT JOIN customer_saved_item ON item.id = item_id WHERE customer_id = $1'
+        custom: 'SELECT item_id FROM customer_saved_item WHERE customer_id = $1'
     },
     {
         name: 'selectCustomerSavedItems',

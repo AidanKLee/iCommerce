@@ -69,11 +69,12 @@ auth.login = async ({form, saved, bag}) => {
 };
 
 auth.syncItems = async (user, saved = [], bag = []) => {
+    console.log(saved, bag)
     await Promise.all(saved.map(async item => {
-        return await customer.saveItem(user.id, item.selected_item_id, true);
+        return await customer.saveItem(user.id, item.item_id, true);
     }));
     await Promise.all(bag.map(async item => {
-        return await customer.addItemToBag(user.id, user.cart.id, item.selected_item_id, item.item_quantity, true);
+        return await customer.addItemToBag(user.id, user.cart.id, item.item_id, item.item_quantity, true);
     }));
 }
 
@@ -218,9 +219,21 @@ products.getById = async (productId) => {
 
 products.getByItemId = async (itemId, bagId) => {
     bagId = bagId ? `?cart_id=${bagId}` : '';
-    let product = await fetch(`${baseUrl}/api/products/item/${itemId}${bagId}`);
+    let product = await fetch(`${baseUrl}/api/products/items/${itemId}${bagId}`);
     product = await product.json();
     return product[0];
+}
+
+products.getByItemIdList = async (itemList, bagId) => {
+    bagId = bagId ? `?cart_id=${bagId}` : '';
+    let products = await fetch(`${baseUrl}/api/products/items${bagId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(itemList)
+    });
+    return await products.json();
 }
 
 const seller = {};

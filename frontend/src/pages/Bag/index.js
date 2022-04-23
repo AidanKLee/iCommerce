@@ -1,24 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { selectUser } from '../../app/appSlice';
 import ProductTile from '../../components/ProductTile';
 import api from '../../utils/api';
 import './Bag.css';
-const { helper } = api;
+const { helper, products: p } = api;
 
 const Bag = props => {
 
     const user = useSelector(selectUser);
-    const bag = useMemo(() => user.cart || {}, [user]);
-    const bagItems = useMemo(() => bag.items ? bag.items.map(product => {
-        return {
-            ...product, 
-            price_total: helper.currencyFormatter(Number(product.items.filter(item => {
-                return item.id === product.selected_item_id
-            })[0].price.slice(1).replace(',', '')) * product.item_quantity)
-        }
-    }) : [], [bag]);
 
     const shippingOptions = useMemo(() => {
         return {
@@ -29,11 +20,34 @@ const Bag = props => {
     }, []) 
 
     const [ shipping, setShipping ] = useState('Next Day');
+    const [ bagItems, setBagItems ] = useState([]);
+
+    useEffect(() => {
+        const getItems = async () => {
+            let products = await p.getByItemIdList(user.cart.items, user.cart.id);
+            products = products.map(product => {
+                const item_quantity = Number(user.cart.items.filter(it => {
+                    return it.item_id === product.selected_item_id
+                })[0].item_quantity);
+                let price_total = Number(product.items.filter(item => {
+                    return item.id === product.selected_item_id
+                })[0].price.slice(1).replace(',', ''));
+                price_total *= item_quantity;
+                return {...product, item_quantity, price_total}
+            })
+            setBagItems(products)
+        }
+        if (user.cart.items.length > 0) {
+            getItems();
+        } else {
+            setBagItems([]);
+        }
+    }, [user.cart])
 
     const prices = useMemo(() => {
         let total = shippingOptions[shipping];
         bagItems.forEach(product => {
-            total += Number(product.price_total.slice(1).replace(',', ''));
+            total += product.price_total;
         })
         return {
             shipping: helper.currencyFormatter(shippingOptions[shipping]),
