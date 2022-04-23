@@ -7,14 +7,16 @@ import { selectUser } from '../../app/appSlice';
 import { CSSTransition } from 'react-transition-group';
 import LoadingModal from '../LoadingModal';
 import { useSelector } from 'react-redux';
+import { v4 as uuid } from 'uuid';
 import ImageInput from './ImageInput';
 
-const { categories: c, seller: s } = api;
+const { categories: c, helper, seller: s } = api;
 
 const item = {
     name: '',
     description: '',
-    src: [],
+    image_ids: [],
+    image_id_primary: '',
     price: '',
     in_stock: '',
     attributes: []
@@ -38,7 +40,7 @@ const AddItems = props => {
 
     const images = useMemo(() => {
         let imageArray = form.images.map(image => {
-            return <img src={URL.createObjectURL(image)} title={image.name} alt={image.name}/>
+            return <img id={image.id} src={image.src} title={image.name} alt={image.name}/>
         })
         return imageArray;
     }, [form])
@@ -170,29 +172,39 @@ const AddItems = props => {
         setSubmitting(false);
     }
 
-    const handleImages = e => {
+    const handleImages = async e => {
         const key = e.target.name;
-        const value = e.target.files;
-        setForm({...form, [key]: [...form[key], ...Array.from(value)]})
+        let value = e.target.files;
+        value = await Promise.all(Array.from(value).map(async image => {
+            const base64 = await helper.fileToBase64(image);
+            image.src = base64;
+            image.id = uuid();
+            return image;
+        }))
+        setForm({...form, [key]: [...form[key], value[0]]})
     }
 
     const handleRemoveImage = e => {
-        const [ key, index ] = e.target.id.split('-');
+        const [ , index ] = e.target.id.split('-');
+        let id;
         const images = form.images.filter((img, i) => {
+            if (i === Number(index)) {
+                id = img.id;
+            }
             return i !== Number(index);
         })
-        form.items = form.items.map(item => {
-            item.src = item.src.filter(name => name !== e.target.title)
-            if (item.src_primary === e.target.title) {
-                if (item.src.length > 0) {
-                    item.src_primary = item.src[0]
+        const items = form.items.map(item => {
+            item.image_ids = item.image_ids.filter(id => id !== e.target.id)
+            if (item.image_id_primary === id) {
+                if (item.image_ids.length > 0) {
+                    item.image_id_primary = item.image_ids[0]
                 } else {
-                    item.src_primary = ''
+                    item.image_id_primary = ''
                 }
             }
             return item;
         })
-        setForm({...form, [key]: images})
+        setForm({...form, items, images})
     }
 
     return (
@@ -216,7 +228,7 @@ const AddItems = props => {
                         <ul className='current'>
                             {
                                 currentImages.map(img => {
-                                    const name = img.src.split('/').at(-1);
+                                    const name = img.name;
                                     return (
                                         <li key={name} title={name}>
                                             <img src={img.src} alt={name}/>

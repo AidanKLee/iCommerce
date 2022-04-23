@@ -5,7 +5,9 @@ const tables = [
         name: 'image',
         columns: [
             'id UUID NOT NULL PRIMARY KEY',
-            'src varchar(512) NOT NULL'
+            'name varchar NOT NULL',
+            'src varchar NOT NULL',
+            'type varchar(20) NOT NULL'
         ]
     },
     { 

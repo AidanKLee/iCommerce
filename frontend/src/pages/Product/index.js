@@ -174,19 +174,19 @@ const Top = props => {
     }, [items, selected, itemId])
 
     const images = useMemo(() => {
-        let images = items[selected][selectedItem].images.map((image, i) => { return {src: image.src, primary: image.primary} });
+        let images = items[selected][selectedItem].images;
         images = images.sort((a, b) => {
             if (a.primary === true) {
                 return -1
-            } else if (a.src > b.src) {
+            } else if (a.name > b.name) {
                 return 1
-            } else if (!a.primary && !b.primary && b.src > a.src) {
+            } else if (!a.primary && !b.primary && b.name > a.name) {
                 return -1
             } else {
                 return 0
             }
         });
-        return images.map((image, i) => {return {...image, name: `${items[selected][selectedItem].name}_${i}`} });
+        return images;
     }, [items, selected, selectedItem])
 
     const selectableItems = useMemo(() => {
@@ -286,7 +286,7 @@ const Top = props => {
                                 items.map((item, i) => {
                                     return (
                                         <Link to={`/product/${productId}/${item[selectedItem].id}`} className={`item${selected === i ? ' selected' : ''}`} key={item[selectedItem].id}>
-                                            <img name={i} className={`image`} src={item[selectedItem].images.filter(image => image.primary)[0].src} alt={item[selectedItem].name}/>
+                                            <img name={i} className={`image`} src={item[selectedItem].images.filter(image => image.primary)[0].src} alt={item[selectedItem].name} title={item[selectedItem].name}/>
                                         </Link>
                                     )
                                 })

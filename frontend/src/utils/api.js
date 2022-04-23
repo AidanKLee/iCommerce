@@ -183,7 +183,16 @@ const helper = {};
 helper.currencyFormatter = numberToFormat => new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency: 'GBP',
-  }).format(numberToFormat);
+}).format(numberToFormat);
+
+helper.fileToBase64 = async file => {
+    return await new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => res(reader.result);
+        reader.onerror = err => rej(err);
+    });
+}
 
 const products = {};
 
@@ -219,47 +228,53 @@ const seller = {};
 seller.createProduct = async form => {
     const categories = form.categories.one.concat(form.categories.two);
     form = { ...form, categories };
-    const images = form.images;
-    delete form.images;
-    const formData = new FormData();
-    images.forEach(image => {
-        formData.append('images', image);
+    form.images = form.images.map(image => {
+        return {
+            id: image.id,
+            name: image.name,
+            src: image.src,
+            type: image.type
+        }
     })
-    formData.append('form', JSON.stringify(form));
     await fetch(`${baseUrl}/api/seller/${form.userId}/products`, {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
     })
 }
 
 seller.createItems = async form => {
-    const images = form.images;
-    delete form.images;
     delete form.categories;
-    const formData = new FormData();
-    images.forEach(image => {
-        formData.append('images', image);
+    form.images = form.images.map(image => {
+        return {
+            id: image.id,
+            name: image.name,
+            src: image.src,
+            type: image.type
+        }
     })
-    formData.append('form', JSON.stringify(form));
     await fetch(`${baseUrl}/api/seller/${form.userId}/products/${form.id}/items`, {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
     })
 }
 
 seller.editProduct = async form => {
     const categories = form.categories.one.concat(form.categories.two);
     form = { ...form, categories };
-    const images = form.images;
-    delete form.images;
-    const formData = new FormData();
-    images.forEach(image => {
-        formData.append('images', image);
+    form.images = form.images.map(image => {
+        return {
+            id: image.id,
+            name: image.name,
+            src: image.src,
+            type: image.type
+        }
     })
-    formData.append('form', JSON.stringify(form));
     await fetch(`${baseUrl}/api/seller/${form.userId}/products/${form.id}`, {
         method: 'PUT',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
     })
     return categories;
 }

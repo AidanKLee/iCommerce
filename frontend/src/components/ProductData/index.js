@@ -15,8 +15,6 @@ const ProductData = props => {
 
     const { index, product, products, type, refresh } = props;
 
-    console.log(products)
-
     const categories = useSelector(selectCategories);
     const user = useSelector(selectUser);
 
@@ -87,14 +85,13 @@ const ProductData = props => {
 
     const primaryImage = useMemo(() => {
         try {
-            return items[selected][0].images.filter(image => image.primary)[0].src;
+            return items[selected][0].images.filter(image => image.primary)[0];
         } catch (err) {
             return null;
         };
     }, [items, selected])
 
     console.log(items)
-    console.log(items[0][0].images.filter(image => image.primary)[0].src)
 
     const handleSelect = e => {
         const name = Number(e.target.name);
@@ -136,7 +133,7 @@ const ProductData = props => {
             <div className='main-image'>
                 {
                     primaryImage ? (
-                        <Link to={`/product/${id}/${items[selected][0].id}`}><img src={primaryImage} alt={product.items[selected][0].name}/></Link>
+                        <Link to={`/product/${id}/${items[selected][0].id}`}><img src={primaryImage.src} alt={primaryImage.name}/></Link>
                     ) : undefined
                 }
             </div>
@@ -150,7 +147,7 @@ const ProductData = props => {
                             items.map((item, i) => {
                                 return (
                                     <div key={item[0].id} className={`image${i === selected ? ' selected': ''}`}>
-                                        <img onClick={handleSelect} name={i} src={item[0].images.filter(image => image.primary)[0].src} alt={item[0].name}/>
+                                        { item[0].images.length > 0 ?<img onClick={handleSelect} name={i} src={item[0].images.filter(image => image.primary)[0].src} alt={item[0].name}/> : undefined }
                                     </div>
                                 )
                             })

@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 
 const parser = {};
-parser.json = bodyParser.json();
+parser.json = bodyParser.json({limit: 100000000});
 parser.urlEncoded = bodyParser.urlencoded({ extended: false });
 parser.multi = multer.diskStorage({
     destination: (req, file, next) => {

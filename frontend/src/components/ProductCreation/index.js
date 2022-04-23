@@ -10,14 +10,15 @@ import { CSSTransition } from 'react-transition-group';
 import LoadingModal from '../LoadingModal';
 import { useSelector } from 'react-redux';
 import ImageInput from './ImageInput';
+import { v4 as uuid } from 'uuid';
 
-const { categories: c, seller: s } = api;
+const { categories: c, helper, seller: s } = api;
 
 const item = {
     name: '',
     description: '',
-    src: [],
-    src_primary: '',
+    image_ids: [],
+    image_id_primary: '',
     price: '',
     in_stock: '',
     attributes: []
@@ -48,7 +49,7 @@ const NewProduct = props => {
 
     const images = useMemo(() => {
         let imageArray = form.images.map(image => {
-            return <img src={URL.createObjectURL(image)} title={image.name} alt={image.name}/>
+            return <img id={image.id} src={image.src} title={image.name} alt={image.name}/>
         })
         return imageArray;
     }, [form])
@@ -195,30 +196,42 @@ const NewProduct = props => {
         setSubmitting(false);
     }
 
-    const handleImages = e => {
+    const handleImages = async e => {
         const key = e.target.name;
-        const value = e.target.files;
-        setForm({...form, [key]: [...form[key], ...Array.from(value)]})
+        let value = e.target.files;
+        value = await Promise.all(Array.from(value).map(async image => {
+            const base64 = await helper.fileToBase64(image);
+            image.src = base64;
+            image.id = uuid();
+            return image;
+        }))
+        setForm({...form, [key]: [...form[key], value[0]]})
     }
 
     const handleRemoveImage = e => {
-        const [ key, index ] = e.target.id.split('-');
+        const [ , index ] = e.target.id.split('-');
+        let id;
         const images = form.images.filter((img, i) => {
+            if (i === Number(index)) {
+                id = img.id;
+            }
             return i !== Number(index);
         })
-        form.items = form.items.map(item => {
-            item.src = item.src.filter(name => name !== e.target.title)
-            if (item.src_primary === e.target.title) {
-                if (item.src.length > 0) {
-                    item.src_primary = item.src[0]
+        const items = form.items.map(item => {
+            item.image_ids = item.image_ids.filter(id => id !== e.target.id)
+            if (item.image_id_primary === id) {
+                if (item.image_ids.length > 0) {
+                    item.image_id_primary = item.image_ids[0]
                 } else {
-                    item.src_primary = ''
+                    item.image_id_primary = ''
                 }
             }
             return item;
         })
-        setForm({...form, [key]: images})
+        setForm({...form, items, images})
     }
+
+    console.log(form)
 
     return (
         <div className='new-product'>
@@ -341,10 +354,7 @@ export const NewItem = props => {
             imgs = [...form.images]
         }
         if (current && current.length > 0) {
-            const currentImgs = current.map(img => {
-                return {...img, name: img.src.split('/').at(-1)}
-            })
-            imgs = [...imgs, ...currentImgs]
+            imgs = [...imgs, ...current]
         }
         return imgs;
     }, [current, form.images])
@@ -366,26 +376,26 @@ export const NewItem = props => {
     const handleImageSelect = e => {
         const value = e.target.value;
         const items = [...form.items];
-        if (items[index].src.includes(value)) {
+        if (items[index].image_ids.includes(value)) {
             items[index] = {
                 ...items[index],
-                src: items[index].src.filter(name => {
-                    return name !== value
+                image_ids: items[index].image_ids.filter(id => {
+                    return id !== value
                 })
             }
-            if (items[index].src.length === 1) {
-                items[index].src_primary = '';
-            } else if (value === items[index].src_primary) {
-                items[index].src_primary = items[index].src[0]
+            if (items[index].image_ids.length === 1) {
+                items[index].image_id_primary = '';
+            } else if (value === items[index].image_id_primary) {
+                items[index].image_id_primary = items[index].image_ids[0]
             }
         } else {
             items[index] = {
                 ...items[index],
-                src: [...items[index].src, value]
+                image_ids: [...items[index].image_ids, value]
             }
         }
-        if (items[index].src.length === 1) {
-            items[index].src_primary = items[index].src[0];
+        if (items[index].image_ids.length === 1) {
+            items[index].image_id_primary = items[index].image_ids[0];
         }
         setForm({
             ...form,
@@ -393,13 +403,11 @@ export const NewItem = props => {
         })        
     }
 
-    console.log(form)
-
     const handlePrimaryImageSelect = e => {
         const value = e.target.value;
         const items = [...form.items];
         items[index] = {
-            ...items[index], src_primary: value
+            ...items[index], image_id_primary: value
         }
         setForm({
             ...form,
@@ -412,7 +420,7 @@ export const NewItem = props => {
             <input onChange={handleChange} type='text' name='name' placeholder='Item Name' value={item.name} required maxLength={192}/>
             <textarea onChange={handleChange} type='text' name='description' placeholder='Item Description' value={item.description} required></textarea>
             {
-                srcSelect && srcSelect > 0 ? (
+                srcSelect && srcSelect.length > 0 ? (
                     <p className='head'>Select Images</p>
                 ) : undefined
             }
@@ -420,10 +428,10 @@ export const NewItem = props => {
                 {
                     srcSelect ? srcSelect.map(image => {
                         return (
-                            <div className='checkbox' key={`${image.name}-${index}`}>
-                                <input onChange={handlePrimaryImageSelect} type='radio' name={`src_primary-${index}`} checked={form.items[index].src_primary === image.name} value={image.name} disabled={!form.items[index].src.includes(image.name)}/>
-                                <input onChange={handleImageSelect} type='checkbox' name={`${image.name}-${index}`} id={`${image.name}-${index}`} value={image.name} checked={form.items[index].src.includes(image.name)}/>
-                                <label htmlFor={`${image.name}-${index}`}>{image.name}</label>
+                            <div className='checkbox' key={`${image.id}-${index}`}>
+                                <input onChange={handlePrimaryImageSelect} type='radio' name={`image_id_primary-${index}`} checked={form.items[index].image_id_primary === image.id} value={image.id} disabled={!form.items[index].image_ids.includes(image.id)}/>
+                                <input onChange={handleImageSelect} type='checkbox' name={`${image.name}-${index}`} id={`${image.id}-${index}`} value={image.id} checked={form.items[index].image_ids.includes(image.id)}/>
+                                <label htmlFor={`${image.id}-${index}`}>{image.name}</label>
                             </div>
                         )
                     }) : undefined

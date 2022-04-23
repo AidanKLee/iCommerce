@@ -13,7 +13,7 @@ const queries = [
         name: 'selectItemImages',
         type: 'select',
         tables: [
-            {name: 'image', columns: ['id' ,'src']},
+            {name: 'image', columns: ['id', '"name"' ,'src', 'type']},
             {name: 'item_image', columns: ['"primary"']}
         ],
         conditions: ['WHERE item_id ='],
@@ -24,7 +24,7 @@ const queries = [
     {
         name: 'insertImage',
         type: 'insert',
-        tables: {name: 'image', columns: ['id', 'src']}
+        tables: {name: 'image', columns: ['id', '"name"', 'src', 'type']}
     },
     {
         name: 'insertItemImage',

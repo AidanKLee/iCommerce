@@ -2,12 +2,9 @@ const model = require('../model');
 const middleware = require('./middleware');
 const bcrypt = require('bcrypt');
 const { v4: uuid } = require('uuid');
-const path = require('path');
-const fs = require('fs/promises');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 require('dotenv').config();
 const { helper } = middleware;
-const imageUrl = `${process.env.BASE_URL}/images/products`;
 
 const attributes = {};
 
@@ -503,7 +500,7 @@ products.get = async (req, res, next) => {
                         [attribute.attribute]: attribute.value
                     });
                     item.images = await model.selectItemImages([item.id]);
-                    item.src = item.images.map(image => image.src.split('/').at(-1));
+                    item.image_ids = item.images.map(image => image.id);
                     const sale = await model.selectItemSales([item.id]);
                     item.sale = sale[0] || {};
                     return item;
@@ -561,17 +558,16 @@ products.getDataAndItems = async (req, res, next) => {
 
 products.create = async (req, res, next) => {
     try {
-        req.form = JSON.parse(req.body.form);
         let id = req.params.productId;
         if (!req.params.productId) {
             id = uuid();
             req.params.productId = id;
         }
-        await model.insertProduct([id, req.form.is_active]);
+        await model.insertProduct([id, req.body.is_active]);
         await model.insertSellerProduct([req.params.userId, id]);
-        await req.form.categories.map(async category => {
+        await Promise.all(req.body.categories.map(async category => {
             return await model.insertProductCategory([id, category]);
-        })
+        }))
         next();
     } catch (err) {
         next(err);
@@ -580,23 +576,12 @@ products.create = async (req, res, next) => {
 
 products.createItems = async (req, res, next) => {
     try {
-        req.files = req.files.map(file => {
-            return {
-                ...file,
-                id: uuid(),
-                src: `${imageUrl}/${req.params.userId}/${req.params.productId}/${file.filename}`
-            }
-        })
-        await req.files.map(async image => {
-            return await model.insertImage([image.id, image.src]); 
-        })
-        if (!req.form) {
-            console.log(req.body)
-            req.form = JSON.parse(req.body.form);
-        }
+        await Promise.all(req.body.images.map(async image => {
+            return await model.insertImage([image.id, image.name, image.src, image.type]); 
+        }))
         const id = req.params.productId;
-        await Promise.all(req.form.items.map(async item => {
-            const { attributes, name, description, price, in_stock, src, src_primary } = item;
+        await Promise.all(req.body.items.map(async item => {
+            const { attributes, name, description, price, in_stock, image_ids, image_id_primary } = item;
             const itemId = uuid();
             await model.insertItem([itemId, id, name, description, price, in_stock]);
             let removeAttributes = [];
@@ -609,24 +594,22 @@ products.createItems = async (req, res, next) => {
                 attributes.splice(attribute, 1);
             });
             if (attributes.length > 0) {
-                await attributes.map(async attribute => {
+                await Promise.all(attributes.map(async attribute => {
                     return await model.insertItemAttributeValues([itemId, attribute.key, attribute.value]);
-                });
+                }));
             };
-            if (src.length > 0) {
-                await Promise.all(src.map(async (image, i) => {
-                    let imgToAdd = req.files.filter(img => {
-                        return img.originalname === image;
+            if (image_ids.length > 0) {
+                await Promise.all(image_ids.map(async (id, i) => {
+                    let imgToAdd = req.body.images.filter(img => {
+                        return img.id === id;
                     });
-                    if (imgToAdd.length === 0) {
-                        imgToAdd = req.form.currentImages.filter(img => {
-                            img.name = img.src.split('/').at(-1);
-                            return img.name === image
+                    if (imgToAdd.length === 0 && req.body.currentImages) {
+                        imgToAdd = req.body.currentImages.filter(img => {
+                            return img.id === id
                         })
-                        imgToAdd[0] = {...imgToAdd[0], originalname: imgToAdd[0].name}
                     }
                     imgToAdd = imgToAdd[0];
-                    await model.insertItemImage([itemId, imgToAdd.id, imgToAdd.originalname === src_primary]);
+                    await model.insertItemImage([itemId, imgToAdd.id, imgToAdd.id === image_id_primary]);
                 }));
             };
         }));
@@ -638,18 +621,11 @@ products.createItems = async (req, res, next) => {
 
 products.edit = async (req, res, next) => {
     try {
-        req.files = req.files.map(file => {
-            return {
-                ...file,
-                id: uuid(),
-                src: `${imageUrl}/${req.params.userId}/${req.params.productId}/${file.filename}`
-            }
-        })
-        await req.files.map(async image => {
-            return await model.insertImage([image.id, image.src]); 
-        })
+        await Promise.all(req.body.images.map(async image => {
+            return await model.insertImage([image.id, image.name, image.src, image.type]); 
+        }))
         const { productId: id } = req.params;
-        const { categories, is_active, items } = JSON.parse(req.body.form);
+        const { categories, is_active, items } = req.body;
         await model.updateProduct([is_active, id]);
         await model.deleteProductCategories([id]);
         await Promise.all(categories.map(async category => {
@@ -660,23 +636,23 @@ products.edit = async (req, res, next) => {
             allImages = [...allImages, ...item.images]
         })
         await Promise.all(items.map(async item => {
-            const { attributes, description, id: itemId, name, price, src, src_primary } = item;
+            const { attributes, description, id: itemId, name, price, image_ids, image_id_primary } = item;
             await model.updateItem([name, description, price, itemId]);
             await Promise.all(attributes.map(async attribute => {
                 return await model.updateItemAttributeValue([attribute.value, itemId, attribute.key]);
             }));
             await model.deleteItemImages([itemId]);
-            await Promise.all(src.map(async src => {
-                let imgToAdd = req.files.filter(img => {
-                    return img.originalname === src;
+            await Promise.all(image_ids.map(async id => {
+                let imgToAdd = req.body.images.filter(img => {
+                    return img.id === id;
                 });
                 if (imgToAdd.length === 0) {
                     imgToAdd = allImages.filter(img => {
-                        return img.src.split('/').at(-1) === src; 
+                        return img.id === id; 
                     });
                 };
                 imgToAdd = imgToAdd[0];
-                await model.insertItemImage([itemId, imgToAdd.id, imgToAdd.src.split('/').at(-1) === src_primary]);
+                await model.insertItemImage([itemId, imgToAdd.id, imgToAdd.id === image_id_primary]);
             }))
         }));
         res.status(200).json({message: 'updated'});
@@ -689,11 +665,11 @@ products.purgeUnusedImages = async (req, res, next) => {
     try {
         const unusedImages = await model.selectUnusedImages();
         await Promise.all(unusedImages.map(async image => {
-            const filePath = path.join(__dirname, ['../../frontend/public/images/products', ...image.src.split('/').slice(5)].join('/'));
-            if (image.src.split('/').at(-3) === req.params.userId) {
+            // const filePath = path.join(__dirname, ['../../frontend/public/images/products', ...image.src.split('/').slice(5)].join('/'));
+            // if (image.src.split('/').at(-3) === req.params.userId) {
                 await model.deleteImage([image.id]);
-                await fs.unlink(filePath);
-            }
+                // await fs.unlink(filePath);
+            // }
             
         }))
         res.sendStatus(204);

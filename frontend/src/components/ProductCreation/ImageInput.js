@@ -3,7 +3,7 @@ import './ImageInput.css';
 
 const ImageInput = props => {
 
-    const { accept, files, handleRemove, id, images = [], multiple, name, onChange, ref } = props;
+    const { accept, handleRemove, id, images = [], multiple, name, onChange, ref } = props;
     const [ dragOver, setDragOver ] = useState(false);
 
     const handleDrag = e => {

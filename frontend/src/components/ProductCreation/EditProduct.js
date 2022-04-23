@@ -9,9 +9,10 @@ import { CSSTransition } from 'react-transition-group';
 import LoadingModal from '../LoadingModal';
 import { useSelector } from 'react-redux';
 import { NewItem } from '.';
+import { v4 as uuid } from 'uuid';
 import ImageInput from './ImageInput';
 
-const { categories: c, seller: s } = api;
+const { categories: c, helper, seller: s } = api;
 
 const EditProduct = props => {
 
@@ -46,7 +47,7 @@ const EditProduct = props => {
 
     const images = useMemo(() => {
         let imageArray = form.images.map(image => {
-            return <img src={URL.createObjectURL(image)} title={image.name} alt={image.name}/>
+            return <img src={image.src} title={image.name} alt={image.name}/>
         })
         return imageArray;
     }, [form])
@@ -131,15 +132,7 @@ const EditProduct = props => {
                     subs = {...subs, [cat]: sub}
                 }
                 setCategories({...categories, ...subs})
-                // const matchCategory = (cats, categories) => {
-                //     let match;
-                //     cats.forEach(cat => {
-                //         categories.forEach(category => {
-
-                //         })
-                //     })
             }
-                // let catsLength = cats.length;
             
             
             getStartingCategories()
@@ -190,12 +183,9 @@ const EditProduct = props => {
                 for (let key in item.attributes) {
                     attributes.push({key: key, value: item.attributes[key]})
                 }
-                // let src = item.images.map(image => {
-                //     return image.src.split('/').at(-1);
-                // });
-                const src_primary = item.images.filter(image => {
+                const image_id_primary = item.images.filter(image => {
                     return image.primary;
-                })[0].src.split('/').at(-1);
+                })[0].id;
 
                 return {
                     id: item.id,
@@ -204,8 +194,8 @@ const EditProduct = props => {
                     price: Number(item.price.slice(1).split(',').join('')),
                     in_stock: item.in_stock,
                     images: item.images,
-                    src: item.src,
-                    src_primary,
+                    image_ids: item.image_ids,
+                    image_id_primary,
                     attributes
                 }
             })
@@ -300,29 +290,39 @@ const EditProduct = props => {
         setSubmitting(false);
     }
 
-    const handleImages = e => {
+    const handleImages = async e => {
         const key = e.target.name;
-        const value = e.target.files;
-        setForm({...form, [key]: [...form[key], ...Array.from(value)]})
+        let value = e.target.files;
+        value = await Promise.all(Array.from(value).map(async image => {
+            const base64 = await helper.fileToBase64(image);
+            image.src = base64;
+            image.id = uuid();
+            return image;
+        }))
+        setForm({...form, [key]: [...form[key], value[0]]})
     }
 
     const handleRemoveImage = e => {
-        const [ key, index ] = e.target.id.split('-');
+        const [ , index ] = e.target.id.split('-');
+        let id;
         const images = form.images.filter((img, i) => {
+            if (i === Number(index)) {
+                id = img.id;
+            }
             return i !== Number(index);
         })
-        form.items = form.items.map(item => {
-            item.src = item.src.filter(name => name !== e.target.title)
-            if (item.src_primary === e.target.title) {
-                if (item.src.length > 0) {
-                    item.src_primary = item.src[0]
+        const items = form.items.map(item => {
+            item.image_ids = item.image_ids.filter(id => id !== e.target.id)
+            if (item.image_id_primary === id) {
+                if (item.image_ids.length > 0) {
+                    item.image_id_primary = item.image_ids[0]
                 } else {
-                    item.src_primary = ''
+                    item.image_id_primary = ''
                 }
             }
             return item;
         })
-        setForm({...form, [key]: images})
+        setForm({...form, items, images})
     }
 
     return (
@@ -379,10 +379,9 @@ const EditProduct = props => {
                         <ul className='current'>
                             {
                                 currentImages.map(img => {
-                                    const name = img.src.split('/').at(-1);
                                     return (
-                                        <li key={name} title={name}>
-                                            <img src={img.src} alt={name}/>
+                                        <li key={img.name} title={img.name}>
+                                            <img src={img.src} alt={img.name}/>
                                             <div className='overlay'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg>
                                             </div>
