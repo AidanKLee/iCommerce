@@ -116,7 +116,7 @@ const ProductData = props => {
     const isSavedItem = useMemo(() => {
         const saved = items[selected].filter(item => {
             return user.saved ? user.saved.map(it => {
-                if (it.selected_item_id === item.id) {
+                if (it.item_id === item.id) {
                     return true;
                 }
                 return false;

@@ -10,8 +10,7 @@ const Gallery = props => {
     const [ displayDirection, setDisplayDirection ] = useState('next');
 
     const selectImage = e => {
-        let i = e.target.id;
-        i = Number(i.split('_')[1]);
+        let i = Number(e.target.id);
         if (i > selectedImage && displayDirection !== 'next') {
             setDisplayDirection('next')
         } else if (i < selectedImage && displayDirection !== 'back') {
@@ -97,7 +96,7 @@ const Gallery = props => {
                 {
                     images.map((img, i) => {
                         return (
-                            <li onClick={selectImage} id={img.name} key={img.name} style={i === selectedImage ? {outline: '4px solid rgba(100, 100, 255, .6)'} : {}}>
+                            <li onClick={selectImage} id={i} key={img.name} style={i === selectedImage ? {outline: '4px solid rgba(100, 100, 255, .6)'} : {}}>
                                 <img src={img.src} alt={`${img.name}`}/>
                             </li>
                         )

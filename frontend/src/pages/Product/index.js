@@ -213,11 +213,12 @@ const Top = props => {
 
     const isSavedItem = useMemo(() => {
         const savedItem = 'saved' in user ? user.saved.filter(item => {
-            return item.selected_item_id === items[selected][selectedItem].id;
+            return items[selected].filter(item => {
+                return item.item_id === item.id
+            });
         }) : [];
-
         return savedItem.length > 0 ? true : false;
-    }, [items, selected, selectedItem, user])
+    }, [items, selected, user])
 
     const handleChange = e => {
         const value = e.target.value;
@@ -229,7 +230,11 @@ const Top = props => {
         setCart(value);
     }
 
-    const handleItemSave = async () => {
+    const handleItemSave = async itemId => {
+        const its = user.saved.filter(it => items[selected].map(item => item.id).includes(it.item_id))
+        if (its.length > 0) {
+            itemId = its[0].item_id;
+        }
         dispatch(saveItem({customerId: user.id, itemId}));
     }
 
@@ -339,7 +344,7 @@ const Top = props => {
                             <Button
                                 design='invert'
                                 primary='#1f1f1f'
-                                onClick={handleItemSave}
+                                onClick={() => handleItemSave(itemId)}
                                 secondary='white'
                                 title='Save Product'
                                 style={{borderRadius: '50%'}}
@@ -382,7 +387,7 @@ const Bottom = props => {
     const { reviews } = product;
 
     const selectedItem = useMemo(() => {
-        return items && selected ? items[selected].findIndex(item => {
+        return items && Number.isInteger(selected) ? items[selected].findIndex(item => {
             return itemId === item.id;
         }) : 0
     }, [items, selected, itemId])
