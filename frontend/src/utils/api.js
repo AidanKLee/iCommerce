@@ -89,7 +89,7 @@ auth.logout = async (dispatcher, method) => {
             fulfilled: false,
             rejected: false
         },
-        pending: true,
+        pending: false,
         saved: [],
         savedStatus: {
             pending: false,

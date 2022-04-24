@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { CSSTransition } from 'react-transition-group';
 import { selectUser } from '../../app/appSlice';
+import LoadingModal from '../../components/LoadingModal';
 import ProductTile from '../../components/ProductTile';
 import api from '../../utils/api';
 import './Bag.css';
@@ -21,9 +23,11 @@ const Bag = props => {
 
     const [ shipping, setShipping ] = useState('Next Day');
     const [ bagItems, setBagItems ] = useState([]);
+    const [ loading, setLoading ] = useState(false);
 
     useEffect(() => {
         const getItems = async () => {
+            setLoading(true);
             let products = await p.getByItemIdList(user.cart.items, user.cart.id);
             products = products.map(product => {
                 const item_quantity = Number(user.cart.items.filter(it => {
@@ -35,7 +39,8 @@ const Bag = props => {
                 price_total *= item_quantity;
                 return {...product, item_quantity, price_total}
             })
-            setBagItems(products)
+            setBagItems(products);
+            setLoading(false);
         }
         if (user.cart.items.length > 0) {
             getItems();
@@ -129,6 +134,15 @@ const Bag = props => {
                     </div>
                 ) : undefined
             }
+            <CSSTransition 
+                    timeout={500}
+                    classNames={'fade'}
+                    in={loading}
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                >
+                <LoadingModal />
+            </CSSTransition>
         </section>
     )
 }

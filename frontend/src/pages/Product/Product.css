@@ -19,13 +19,20 @@
 
 .product-page .top .left .categories {
     list-style: none;
-    display: flex;
+    display: block;
     font-size: .6rem;
-    flex-wrap: wrap;
+    white-space: normal;
+}
+
+.product-page .top .left .categories span {
+    display: inline;
+    white-space: normal;
 }
 
 .product-page .top .left .categories li {
-    white-space: nowrap;
+    /* white-space: nowrap; */
+    display: inline;
+    white-space: normal;
 }
 
 .product-page .top .left .categories li span {

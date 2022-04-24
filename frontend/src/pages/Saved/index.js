@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { CSSTransition } from 'react-transition-group';
 import { selectUser } from '../../app/appSlice';
+import LoadingModal from '../../components/LoadingModal';
 import ProductTile from '../../components/ProductTile';
 import api from '../../utils/api';
 import './Saved.css';
@@ -12,12 +14,15 @@ const Saved = props => {
 
     const user = useSelector(selectUser);
     
+    const [ loading, setLoading ] = useState(false);
     const [ saved, setSaved ] = useState([]);
 
     useEffect(() => {
         const getItems = async () => {
+            setLoading(true);
             let products = await p.getByItemIdList(user.saved);
-            setSaved(products)
+            setSaved(products);
+            setLoading(false);
         }
         if (user.saved.length > 0) {
             getItems();
@@ -66,6 +71,15 @@ const Saved = props => {
                     </div>
                 ) : undefined
             }
+            <CSSTransition 
+                    timeout={500}
+                    classNames={'fade'}
+                    in={loading}
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                >
+                <LoadingModal />
+            </CSSTransition>
         </section>
     )
 }

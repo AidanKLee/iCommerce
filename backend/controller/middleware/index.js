@@ -36,7 +36,11 @@ helper.isAuthenticated = (req, res, next) => {
         if (req.isAuthenticated()) {
             next();
         } else {
-            res.status(401).json({message: 'Not authorized.'});
+            if (req.baseUrl === '/api/auth') {
+                res.status(200).json({message: 'No session.'});
+            } else {
+                res.status(401).json({message: 'Not authorized.'});
+            }
         }
     } catch (err) {
         next(err);

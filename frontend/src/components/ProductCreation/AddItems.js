@@ -286,8 +286,8 @@ const AddItems = props => {
                     mountOnEnter={true}
                     unmountOnExit={true}
                 >
-                <LoadingModal />
-            </CSSTransition>
+                    <LoadingModal />
+                </CSSTransition>
             </div>
         </div>
     )
