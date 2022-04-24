@@ -265,7 +265,7 @@ const Top = props => {
                                 {
                                     categories.map((category, i) => {
                                         return (
-                                            <li>
+                                            <li key={category.name}>
                                                 <span>/</span>
                                                 <Link to={`/products${category.href}`}>
                                                     {category.name}

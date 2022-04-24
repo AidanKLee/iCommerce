@@ -1,8 +1,5 @@
 import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
-import api from "../utils/api";
 import baseUrl from '../utils/baseUrl';
-
-const { customer: c } = api;
 
 export const fetchCategories = createAsyncThunk(
     'app/fetchCategories',
@@ -15,44 +12,32 @@ export const fetchCategories = createAsyncThunk(
 
 export const saveItem = createAsyncThunk(
     'app/saveItem',
-    async({customerId, itemId: item_id, login}) => {
-        if (customerId) {
-            await c.saveItem(customerId, item_id, login);
-        }
+    async({itemId: item_id}) => {
         return {item_id};
     }
 )
 
 export const addToBag = createAsyncThunk(
     'app/addToBag',
-    async({customerId, bagId, itemId: item_id, quantity, login}, {getState}) => {
+    async({itemId: item_id, quantity}, {getState}) => {
         let prevQuantity = getState().app.user.cart.items.filter(item => {
             return item_id === item.item_id
         })
         prevQuantity = prevQuantity.length > 0 ? prevQuantity[0].item_quantity : 0;
-        if (customerId && bagId) {
-            await c.addItemToBag(customerId, bagId, item_id, quantity, login);
-        }
         return {item_id, item_quantity: Number(quantity) + Number(prevQuantity)};
     }
 )
 
 export const updateItemBagQuantity = createAsyncThunk(
     'app/updateItemBagQuantity',
-    async({customerId, bagId, itemId: item_id, quantity}) => {
-        if (customerId && bagId) {
-            await c.updateItemBagQuantity(customerId, bagId, item_id, quantity);
-        }
+    async({itemId: item_id, quantity}) => {
         return {item_id, item_quantity: Number(quantity)}
     }
 )
 
 export const deleteFromBag = createAsyncThunk(
     'app/deleteFromBag',
-    async({customerId, bagId, itemId: item_id}) => {
-        if (customerId && bagId) {
-            c.deleteItemFromBag(customerId, bagId, item_id)
-        }
+    async({itemId: item_id}) => {
         return item_id;
     }
 )

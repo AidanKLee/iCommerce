@@ -24,30 +24,45 @@ const Bag = props => {
     const [ shipping, setShipping ] = useState('Next Day');
     const [ bagItems, setBagItems ] = useState([]);
     const [ loading, setLoading ] = useState(false);
+    const [ initialLoad, setInitialLoad ] = useState(false);
 
     useEffect(() => {
         const getItems = async () => {
+            console.log('getting items')
+            setInitialLoad(true);
             setLoading(true);
             let products = await p.getByItemIdList(user.cart.items, user.cart.id);
-            products = products.map(product => {
-                const item_quantity = Number(user.cart.items.filter(it => {
-                    return it.item_id === product.selected_item_id
-                })[0].item_quantity);
-                let price_total = Number(product.items.filter(item => {
-                    return item.id === product.selected_item_id
-                })[0].price.slice(1).replace(',', ''));
-                price_total *= item_quantity;
-                return {...product, item_quantity, price_total}
-            })
+            products = getProductQuantityPrice(products);
             setBagItems(products);
             setLoading(false);
         }
-        if (user.cart.items.length > 0) {
+        if (user.cart.items.length > 0 && !initialLoad) {
             getItems();
+        } else if (user.cart.items.length > 0) {
+            let products = bagItems.filter(product => {
+                const inBag = user.cart.items.map(item => item.item_id);
+                return inBag.includes(product.selected_item_id);
+            })
+            products = getProductQuantityPrice(products);
+            setBagItems(products)
         } else {
             setBagItems([]);
         }
-    }, [user.cart])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user.cart, initialLoad])
+
+    const getProductQuantityPrice = products => {
+        return products.map(product => {
+            const item_quantity = Number(user.cart.items.filter(it => {
+                return it.item_id === product.selected_item_id
+            })[0].item_quantity);
+            let price_total = Number(product.items.filter(item => {
+                return item.id === product.selected_item_id
+            })[0].price.slice(1).replace(',', ''));
+            price_total *= item_quantity;
+            return {...product, item_quantity, price_total}
+        })
+    }
 
     const prices = useMemo(() => {
         let total = shippingOptions[shipping];

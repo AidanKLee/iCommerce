@@ -5,7 +5,7 @@ import { addToBag, deleteFromBag, saveItem, selectUser, updateItemBagQuantity } 
 import api from '../../utils/api';
 import Rating from '../Rating';
 import './ProductTile.css';
-const { helper } = api;
+const { customer: c, helper } = api;
 
 const ProductTile = props => {
     
@@ -42,49 +42,61 @@ const ProductTile = props => {
         if (changed) {
             const timer = setTimeout(() => {
                 dispatch(updateItemBagQuantity({
-                    customerId: user.id,
-                    bagId: user.cart.id,
                     itemId: item.id,
                     quantity
                 }))
+                updateQuantity();
             }, 500)
             return () => clearTimeout(timer);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quantity])
 
+    const updateQuantity = async () => {
+        if (user.id && user.cart.id) {
+            await c.updateItemBagQuantity(user.id, user.cart.id, item.id, quantity);
+        }
+    }
+
     const handleItemDelete = async () => {
-        dispatch(saveItem({customerId: user.id, itemId: item.id}));
+        dispatch(saveItem({itemId: item.id}));
+        if (user.id) {
+            await c.saveItem(user.id, item.id);
+        }
     }
 
     const handleBagDelete = async () => {
         dispatch(deleteFromBag({
-            customerId: user.id,
-            bagId: user.cart.id,
-            itemId: item.id,
+            itemId: item.id
         }));
+        if (user.id && user.cart.id) {
+            await c.deleteItemFromBag(user.id, user.cart.id, item.id)
+        }
     }
 
     const handleMoveToSaved = async () => {
-        dispatch(saveItem({
-            customerId: user.id,
+        dispatch(deleteFromBag({
             itemId: item.id
         }));
-        dispatch(deleteFromBag({
-            customerId: user.id,
-            bagId: user.cart.id,
-            itemId: item.id,
+        dispatch(saveItem({
+            itemId: item.id
         }));
+        if (user.id && user.cart.id) {
+            await c.deleteItemFromBag(user.id, user.cart.id, item.id);
+            await c.saveItem(user.id, item.id);
+        }
     }
 
     const handleAddToBag = async () => {
+        dispatch(saveItem({itemId: item.id}));
         dispatch(addToBag({
-            customerId: user.id,
-            bagId: user.cart.id, 
             itemId: item.id, 
             quantity: 1
         }))
-        dispatch(saveItem({customerId: user.id, itemId: item.id}));
+        if (user.id && user.cart.id) {
+            await c.saveItem(user.id, item.id);
+            await c.addItemToBag(user.id, user.cart.id, item.id, 1);
+        }
     }
 
     return (

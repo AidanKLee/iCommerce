@@ -16,20 +16,28 @@ const Saved = props => {
     
     const [ loading, setLoading ] = useState(false);
     const [ saved, setSaved ] = useState([]);
+    const [ initialLoad, setInitialLoad ] = useState(false);
 
     useEffect(() => {
         const getItems = async () => {
+            setInitialLoad(true);
             setLoading(true);
             let products = await p.getByItemIdList(user.saved);
             setSaved(products);
             setLoading(false);
         }
-        if (user.saved.length > 0) {
+        if (user.saved.length > 0 && !initialLoad) {
             getItems();
+        } else if (user.saved.length > 0) {
+            setSaved(saved.filter(product => {
+                const inSaved = user.saved.map(item => item.item_id);
+                return inSaved.includes(product.selected_item_id);
+            }))
         } else {
             setSaved([]);
         }
-    }, [user.saved])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user.saved, initialLoad])
 
     return (
         <section className='saved'>
