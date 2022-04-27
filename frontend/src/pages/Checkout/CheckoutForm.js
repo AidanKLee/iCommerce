@@ -28,7 +28,7 @@ const CheckoutForm = props => {
 
     const orderBody = useMemo(() => {
         return {
-            deliveryAddressId: addresses[selected].id ? addresses[selected].id : null,
+            deliveryAddressId: addresses.length > 0 ? addresses[selected].id : null,
             cartId: user.cart.id,
             items: items && items.length > 0 ? items.map(item => {
                 return {
