@@ -35,8 +35,8 @@ const tables = [
             'county varchar(64) NOT NULL',
             'postcode varchar(8) NOT NULL',
             'is_primary boolean NOT NULL DEFAULT false',
-            'customer_id UUID NOT NULL REFERENCES customer(id)',
-            'seller_id UUID NOT NULL REFERENCES seller(id)',
+            'customer_id UUID REFERENCES customer(id)',
+            'seller_id UUID REFERENCES seller(id)',
             'CONSTRAINT user_id_chk CHECK (customer_id IS NOT NULL OR seller_id IS NOT NULL)'
         ]
     },
