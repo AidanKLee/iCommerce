@@ -120,12 +120,13 @@ helper.getProductsById = async (productsArray) => {
 helper.prepareSellerTransfers = async (req, res, next) => {
     try {
         let order = await model.selectPendingTransfersByOrderId([req.params.orderId]);
-        order = order.map(item => {
+        order = await Promise.all(order.map(async item => {
             item.amount = Number(item.price.slice(1).replace(',','')) * Number(item.item_quantity);
+            await model.itemSold([item.item_quantity, ])
             delete item.price;
             delete item.item_quantity;
             return item;
-        })
+        }))
         let pendingTransfers = [];
         order.forEach(item => {
             const index = pendingTransfers.findIndex(it => it.seller_id === item.seller_id);

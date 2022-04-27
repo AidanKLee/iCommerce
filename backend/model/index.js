@@ -757,7 +757,7 @@ const queries = [
     },
     {
         name: 'selectPendingTransfersByOrderId',
-        custom: 'SELECT order_item.id, order_id, item_quantity, price, seller_id, stripe_id FROM order_item LEFT JOIN "order" on "order".id = order_id LEFT JOIN item ON item.id = item_id LEFT JOIN seller ON seller.id = seller_id WHERE payment_complete = true AND order_id = $1'
+        custom: 'SELECT order_item.id, item_id, order_id, item_quantity, price, seller_id, stripe_id FROM order_item LEFT JOIN "order" on "order".id = order_id LEFT JOIN item ON item.id = item_id LEFT JOIN seller ON seller.id = seller_id WHERE payment_complete = true AND order_id = $1'
     },
     {
         name: 'markSellerAsPaid',

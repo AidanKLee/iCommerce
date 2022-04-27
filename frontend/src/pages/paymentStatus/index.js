@@ -61,19 +61,19 @@ const PaymentStatus = props => {
         }
     }, [stripe, user])
     
-    // useEffect(() => {
-    //     if (status === 'succeeded' ) {
-    //         const timer = setTimeout(() => {
-    //             navigate('/', { replace: false })
-    //         }, 6000)
-    //         return () => clearTimeout(timer);
-    //     } else if (status !== 'processing' && status !== 'succeeded') {
-    //         const timer = setTimeout(() => {
-    //             navigate(-1);
-    //         }, 6000)
-    //         return () => clearTimeout(timer);
-    //     }
-    // }, [navigate, status])
+    useEffect(() => {
+        if (status === 'succeeded' ) {
+            const timer = setTimeout(() => {
+                navigate('/', { replace: false })
+            }, 6000)
+            return () => clearTimeout(timer);
+        } else if (status !== 'processing' && status !== 'succeeded') {
+            const timer = setTimeout(() => {
+                navigate(-1);
+            }, 6000)
+            return () => clearTimeout(timer);
+        }
+    }, [navigate, status])
 
     return (
         <section className='payment-status'>
