@@ -177,7 +177,7 @@ const tables = [
             'description varchar',
             'business_email varchar(256) NOT NULL',
             'business_phone varchar(24) NOT NULL',
-            'business_type varcher(24) NOT NULL',
+            'business_type varchar(24) NOT NULL',
             'stripe_id varchar NOT NULL'
         ]
     },
