@@ -5,7 +5,7 @@ const GoogleStrategy = require('passport-google-oauth2');
 const FacebookStrategy = require('passport-facebook');
 const route = express.Router();
 const { auth } = require('../controller/index.js');
-const { parser, helper } = require('../controller/middleware');
+const { parser, helper, stripe } = require('../controller/middleware');
 require('dotenv').config();
 
 route.get('/', helper.isAuthenticated, auth.restoreSession, helper.getAllUserData);
@@ -36,7 +36,11 @@ route.post('/logout', (req, res, next) => {
 
 route.post('/register', parser.json, auth.register);
 
-route.post('/registerShop', parser.json, auth.registerShop, helper.getAllUserData);
+route.post('/register/shop', parser.json, stripe.createAccount, auth.registerShop, stripe.getAccountLink);
+
+route.get('/stripe/account', stripe.retrieveAccount, stripe.sendAccount);
+
+route.post('/stripe/account', stripe.retrieveAccount, stripe.getAccountLink);
 
 passport.use(new LocalStrategy({usernameField: 'email'}, auth.login));
 

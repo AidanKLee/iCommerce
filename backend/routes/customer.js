@@ -1,6 +1,7 @@
 const express = require('express');
 const route = express.Router();
 const controller = require('../controller/index.js');
+const { parser } = require('../controller/middleware/index.js');
 const { customer, products } = controller;
 
 route.post('/:customerId/save-item/:itemId', customer.saveItem, products.getByItemId, products.getDataAndItems);
@@ -10,5 +11,13 @@ route.post('/:customerId/cart/:cartId/:itemId', customer.addCartItem, products.g
 route.put('/:customerId/cart/:cartId/:itemId', customer.updateCartItem, products.getByCartItemId, products.getDataAndItems);
 
 route.delete('/:customerId/cart/:cartId/:itemId', customer.deleteCartItem);
+
+route.get('/:customerId/addresses', customer.selectAddresses);
+
+route.post('/:customerId/addresses', parser.json, customer.insertAddress);
+
+route.post('/:customerId/orders/:orderId', parser.json, customer.submitOrder);
+
+route.put('/:customerId/orders/:orderId', customer.confirmPayment);
 
 module.exports = route;

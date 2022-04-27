@@ -10,7 +10,7 @@ import Button from '../../components/Button';
 import Paragraph from '../../components/Paragraph';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToBag, saveItem, selectCategories, selectUser } from '../../app/appSlice';
-const { products: p } = api;
+const { products: p, customer: c } = api;
 
 const Product = props => {
 
@@ -234,17 +234,21 @@ const Top = props => {
     }
 
     const handleItemSave = async itemId => {
+        if (user.id) {
+            c.saveItem(user.id, itemId)
+        }
         const its = user.saved.filter(it => items[selected].map(item => item.id).includes(it.item_id))
         if (its.length > 0) {
             itemId = its[0].item_id;
         }
-        dispatch(saveItem({customerId: user.id, itemId}));
+        dispatch(saveItem({itemId}));
     }
 
     const handleAddToCart = async () => {
+        if (user.id && user.cart.id) {
+            c.addItemToBag(user.id, user.cart.id, itemId, cart)
+        }
         dispatch(addToBag({
-            customerId: user.id,
-            bagId: user.cart.id, 
             itemId, 
             quantity: cart
         }))

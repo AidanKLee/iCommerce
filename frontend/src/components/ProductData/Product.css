@@ -7,9 +7,11 @@
 .rating-wrapper p {
     margin-left: 4px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     font-size: .8rem;
     font-weight: 500;
+    height:fit-content;
+    transform: translateY(1px);
 }
 
 .rating-wrapper .rating {

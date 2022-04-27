@@ -1,0 +1,72 @@
+.address {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+}
+
+.address .form {
+    background-color: white;
+    width: 100%;
+    max-width: 660px;
+    padding: 16px;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.address .form .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgb(255, 40, 40);
+    fill: white;
+    height: 24px;
+    width: 24px;
+    padding: 4px;
+    transition: .3s;
+}
+
+.address .form .close:hover {
+    background-color: rgb(220, 0, 0);
+}
+
+.address .form h4 {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.address .form label {
+    font-weight: 500;
+    font-size: .8rem;
+}
+
+.address .form input {
+    display: block;
+    width: 100%;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 8px;
+}
+
+.address .form .primary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.address .form button {
+    background-color: #6464ff;
+    color: white;
+    padding: 8px 12px;
+    font-weight: 500;
+    border-radius: 4px;
+}

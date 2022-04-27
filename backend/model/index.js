@@ -129,7 +129,7 @@ const queries = [
     {
         name: 'insertAddress',
         type: 'insert',
-        tables: {name: 'address', columns: ['id', 'line_1', 'line_2', 'county', 'postcode', 'is_primary', 'customer_id', 'seller_id']},
+        tables: {name: 'address', columns: ['id', 'line_1', 'line_2', 'city', 'county', 'postcode', 'is_primary', 'customer_id', 'seller_id']},
     },
     {
         name: 'updateAddress',
@@ -426,6 +426,16 @@ const queries = [
         conditions: ['WHERE product_id =']
     },
     {
+        name: 'selectItemById',
+        type: 'select',
+        tables: {name: 'item', columns: ['id', 'product_id', 'name', 'description', 'price', 'in_stock', 'ordered', 'awards']},
+        conditions: 'WHERE id =',
+    },
+    {
+        name: 'selectItemPrimaryImage',
+        custom: 'SELECT image.id, image.name, image.src, image.type FROM image LEFT JOIN item_image on image.id = item_image.image_id WHERE item_image.item_id = $1'
+    },
+    {
         name: 'selectItemsByProductId',
         type: 'select',
         tables: {name: 'item', columns: ['id', 'name', 'description', 'price', 'in_stock', 'ordered', 'awards']},
@@ -623,7 +633,13 @@ const queries = [
     {
         name: 'insertSeller',
         type: 'insert',
-        tables: {name: 'seller', columns: ['id', 'shop_name', 'image_id', 'description', 'business_email', 'business_phone']}
+        tables: {name: 'seller', columns: ['id', 'shop_name', 'image_id', 'description', 'business_email', 'business_phone', 'business_type', 'stripe_id']}
+    },
+    {
+        name: 'updateStripeId',
+        type: 'update',
+        tables: {name: 'seller', columns: ['stripe_id']},
+        conditions: ['WHERE id =']
     },
     {
         name: 'updateSeller',
@@ -663,18 +679,18 @@ const queries = [
     {
         name: 'selectCustomerOrders',
         type: 'select',
-        tables: {name: 'order', columns: '*'},
+        tables: {name: '"order"', columns: '*'},
         conditions: ['WHERE customer_id =']
     },
     {
         name: 'insertCustomerOrder',
         type: 'insert',
-        tables: {name: 'order', columns: ['id', 'customer_id', 'date', 'delivery_address_id']}
+        tables: {name: '"order"', columns: ['id', 'customer_id', 'date', 'delivery_address_id']}
     },
     {
         name: 'updateCustomerOrder',
         type: 'update',
-        tables: {name: 'order', columns: ['delivery_address_id']},
+        tables: {name: '"order"', columns: ['delivery_address_id']},
         conditions: ['WHERE id =']
     },
     {
@@ -682,7 +698,7 @@ const queries = [
         type: 'select',
         tables: [
             {name: 'order_item', columns: ['id', 'order_id', 'seller_id', 'item_id', 'item_quantity', 'dispatch_date', 'delivery_date', 'cancelled', 'reviewed_item', 'reviewed_seller', 'reviewed_customer']},
-            {name: 'order'}
+            {name: '"order"'}
         ],
         conditions: ['WHERE customer_id ='],
         params: {
@@ -708,9 +724,20 @@ const queries = [
         conditions: 'WHERE seller_id ='
     },
     {
+        name: 'insertOrder',
+        type: 'insert',
+        tables: {name: '"order"', columns: ['id', 'customer_id', 'delivery_address_id']}
+    },
+    {
+        name: 'updateOrder',
+        type: 'update',
+        tables: {name: '"order"', columns: ['payment_complete']},
+        conditions: ['WHERE id =']
+    },
+    {
         name: 'insertOrderItem', 
         type: 'insert',
-        tables: {name: 'order_item', columns: ['id', 'order_id', 'seller_id', 'item_id', 'item_quantity', 'dispatch_date', 'delivery_date', 'cancelled', 'reviewed_item', 'reviewed_seller', 'reviewed_customer']}
+        tables: {name: 'order_item', columns: ['id', 'order_id', 'seller_id', 'item_id', 'item_quantity']}
     },
     {
         name: 'updateOrderItemSeller',
@@ -727,6 +754,14 @@ const queries = [
     {
         name: 'deleteOrderItemCustomer',
         custom: 'UPDATE order_item SET cancelled = true WHERE id = $1'
+    },
+    {
+        name: 'selectPendingTransfersByOrderId',
+        custom: 'SELECT order_item.id, order_id, item_quantity, price, seller_id, stripe_id FROM order_item LEFT JOIN "order" on "order".id = order_id LEFT JOIN item ON item.id = item_id LEFT JOIN seller ON seller.id = seller_id WHERE payment_complete = true AND order_id = $1'
+    },
+    {
+        name: 'markSellerAsPaid',
+        custom: 'UPDATE order_item SET seller_paid = true, transfer_id = $1 WHERE id = $2'
     },
     {
         name: 'selectProductReviews',

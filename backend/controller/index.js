@@ -114,12 +114,9 @@ auth.facebook = async (accessToken, refreshToken, profile, next) => {
 }
 
 auth.registerShop = async (req, res, next) => {
-    const { shop_name, description, business_email, business_phone } = req.body;
     try {
-        await model.insertSeller([req.session.passport.user.id, shop_name, null, description, business_email, business_phone]);
-        let user = await model.selectCustomerByEmail([req.session.passport.user.email]);
-        delete user[0].password;
-        req.user = user[0];
+        const { shop_name, description, business_email, business_phone, business_type = 'individual' } = req.body;
+        await model.insertSeller([req.session.passport.user.id, shop_name, null, description, business_email, business_phone, business_type, req.stripe.id]);
         next();
     } catch (err) {
         next(err);
@@ -241,12 +238,69 @@ customer.updateCartItem = async (req, res, next) => {
     }
 }
 
+customer.selectAddresses = async (req, res, next) => {
+    try {
+        const { customerId } = req.params;
+        const addresses = await model.selectCustomerAddresses([customerId]);
+        delete addresses.customer_id;
+        delete addresses.seller_id;
+        res.status(200).json(addresses);
+    } catch (err) {
+        next(err);
+    }
+}
+
+customer.insertAddress = async (req, res, next) => {
+    try {
+        const { customerId } = req.params;
+        const {
+            city, county, is_primary,
+            line_1, line_2, postcode
+        } = req.body;
+        await model.insertAddress([uuid(), line_1, line_2, city, county, postcode, is_primary, customerId, undefined])
+        const addressList = await model.selectCustomerAddresses([customerId]);
+        res.status(201).json(addressList);
+
+    } catch (err) {
+        next(err);
+    }
+}
+
 customer.deleteCartItem = async (req, res, next) => {
     try {
         const { customerId, cartId, itemId } = req.params;
         await model.deleteCartItem([cartId, itemId]);
         await model.updateCart([new Date().toISOString(), customerId]);
         res.status(200).json({message: 'Item deleted from cart.'});
+    } catch (err) {
+        next(err);
+    }
+}
+
+customer.submitOrder = async (req, res, next) => {
+    try {
+        const { orderId, customerId } = req.params;
+        const { deliveryAddressId, items, cartId } = req.body;
+        await model.insertOrder([orderId, customerId, deliveryAddressId]);
+        await Promise.all(items.map(async item => {
+            const { seller_id, item_id, item_quantity } = item;
+            await model.insertOrderItem([uuid(), orderId, seller_id, item_id, item_quantity, null, null, ]);
+            await model.deleteCartItem([cartId, item_id]);
+        }))
+        await model.deleteCart([customerId]);
+        await model.insertCart([uuid(), customerId]);
+        delete req.session.passport.user.intentId;
+        delete req.session.passport.user.prevTotal;
+        res.status(200).json({message: 'Order submitted. Awaiting payment confirmation.'})
+    } catch (err) {
+        next(err);
+    }
+}
+
+customer.confirmPayment = async (req, res, next) => {
+    try {
+        await model.updateOrder([true, req.params.orderId]);
+        res.status(200).json({message: 'Payment confirmed.'})
     } catch (err) {
         next(err);
     }

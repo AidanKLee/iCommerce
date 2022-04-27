@@ -32,10 +32,7 @@ const RegisterShop = props => {
         e.preventDefault();
         try {
             setRequesting(true);
-            const user = await auth.registerShop(form);
-            setRequesting(false);
-            dispatch(login(user));
-            navigate('/my-shop', {replace: false});
+            await auth.registerShop(form);
         } catch (err) {
             setRequesting(false);
             console.log('Registration Failed')

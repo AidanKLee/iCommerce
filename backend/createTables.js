@@ -37,7 +37,7 @@ const tables = [
             'is_primary boolean NOT NULL DEFAULT false',
             'customer_id UUID NOT NULL REFERENCES customer(id)',
             'seller_id UUID NOT NULL REFERENCES seller(id)',
-            'CHECK (NOT (customer_id, seller_id) IS NULL)'
+            'CONSTRAINT user_id_chk CHECK (customer_id IS NOT NULL OR seller_id IS NOT NULL)'
         ]
     },
     {
@@ -176,7 +176,9 @@ const tables = [
             'image_id UUID REFERENCES image(id)',
             'description varchar',
             'business_email varchar(256) NOT NULL',
-            'business_phone varchar(24) NOT NULL'
+            'business_phone varchar(24) NOT NULL',
+            'business_type varcher(24) NOT NULL',
+            'stripe_id varchar NOT NULL'
         ]
     },
     {
@@ -193,7 +195,8 @@ const tables = [
             'id UUID NOT NULL PRIMARY KEY',
             'customer_id UUID NOT NULL REFERENCES customer(id)',
             'date TIMESTAMP NOT NULL DEFAULT NOW()',
-            'delivery_address_id UUID NOT NULL'
+            'delivery_address_id UUID NOT NULL',
+            'payment_complete boolean NOT NULL DEFAULT false'
         ]
     },
     {
@@ -209,7 +212,9 @@ const tables = [
             'cancelled boolean NOT NULL DEFAULT false',
             'reviewed_item boolean NOT NULL DEFAULT false',
             'reviewed_seller boolean NOT NULL DEFAULT false',
-            'revieWed_customer boolean NOT NULL DEFAULT false'
+            'revieWed_customer boolean NOT NULL DEFAULT false',
+            'seller_paid boolean NOT NULL DEFAULT false',
+            'transfer_id varchar'
         ]
     },
     {

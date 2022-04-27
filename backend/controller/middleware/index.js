@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser');
 const { v4: uuid } = require('uuid');
+const s = require('stripe')(process.env.STRIPE_SECRET);
 const model = require('../../model');
 const multer = require('multer');
 const path = require('path');
@@ -68,11 +69,12 @@ helper.getAllUserData = async (req, res, next) => {
         }
         customer.cart = cart[0];
         customer.cart.items = await model.selectCartProducts([customer.cart.id]);
-        // customer.cart.items = await helper.getProductsById(customer.cart.items);
         customer.saved = await model.selectCustomerSavedProducts([customer.id]);
-        // customer.saved = await helper.getProductsById(customer.saved);
         const shop = await model.selectSellerById([customer.id]);
         customer.shop = shop.length > 0 ? shop[0] : {};
+        if ('stripe_id' in customer.shop) {
+            delete customer.shop.stripe_id;
+        }
         if (!req.oauth) {
             res.status(200).json(customer);
         } else {
@@ -115,6 +117,184 @@ helper.getProductsById = async (productsArray) => {
     }));
 }
 
+helper.prepareSellerTransfers = async (req, res, next) => {
+    try {
+        let order = await model.selectPendingTransfersByOrderId([req.params.orderId]);
+        order = order.map(item => {
+            item.amount = Number(item.price.slice(1).replace(',','')) * Number(item.item_quantity);
+            delete item.price;
+            delete item.item_quantity;
+            return item;
+        })
+        let pendingTransfers = [];
+        order.forEach(item => {
+            const index = pendingTransfers.findIndex(it => it.seller_id === item.seller_id);
+            if (index === -1) {
+                pendingTransfers.push(item);
+            } else {
+                pendingTransfers[index] = {
+                    ...pendingTransfers[index],
+                    amount: pendingTransfers[index].amount + item.amount
+                }
+            }
+        });
+        req.order = order;
+        req.pendingTransfers = pendingTransfers;
+        next();
+    } catch (err) {
+        next(err);
+    }
+}
+
+const stripe = {};
+
+stripe.retrieveAccount = async (req, res, next) => {
+    try {
+        const seller = await model.selectSellerById([req.session.passport.user.id]);
+        const account = await s.accounts.retrieve(seller[0].stripe_id);
+        req.stripe = account;
+        next();
+    } catch(err) {
+        next(err);
+    }
+}
+
+stripe.createAccount = async (req, res, next) => {
+    try {
+        const { shop_name, description, business_email, business_phone, business_type = 'individual' } = req.body;
+        const account = await s.accounts.create({
+            country: 'GB',
+            type: 'express',
+            email: business_email,
+            capabilities: {
+                card_payments: { requested: true },
+                transfers: { requested: true }
+            },
+            business_type: business_type,
+            business_profile: {
+                // url: `${process.env.BASE_URL}/shop/${shop_name.replace(' ', '_')}`,
+                product_description: description,
+                support_phone: business_phone,
+                support_email: business_email
+            }
+        });
+        req.stripe = account;
+        next();
+    } catch (err) {
+        next(err);
+    }
+}
+
+stripe.getAccountLink = async (req, res, next) => {
+    try {
+        const accountLink = await s.accountLinks.create({
+            account: req.stripe.id,
+            refresh_url: `${process.env.BASE_URL}/my-shop?redirect=stripe`,
+            return_url: `${process.env.BASE_URL}/my-shop`,
+            type: 'account_onboarding'
+        });
+        res.status(200).json({url: accountLink.url});
+    } catch (err) {
+        next(err);
+    }
+}
+
+stripe.sendAccount = (req, res, next) => {
+    const { charges_enabled, details_submitted } = req.stripe;
+    res.status(200).json({charges_enabled, details_submitted});
+}
+
+stripe.generatePaymentIntent = async (req, res, next) => {
+    let { items, shipping } = req.body;
+    if (shipping === 'Next Day') {
+        shipping = 3.99
+    } else if (shipping === 'Standard') {
+        shipping = 1.99
+    } else {
+        shipping = 0
+    }
+    try {
+        items = await Promise.all(items.map(async item => {
+            const itemData = await model.selectItemById([item.item_id]);
+            item = {...itemData[0], item_quantity: item.item_quantity};
+            if (item.in_stock < item.item_quantity) {
+                const itemDiff = item.item_quantity - item.in_stock;
+                item.item_quantity = item.in_stock
+                item.message = `Since adding this item to the cart we have sold ${itemDiff} of them. Please check the new amount is okay before proceeding with your order.`
+            }
+            item.total = Number(item.item_quantity) * Number(item.price.slice(1).replace(',',''));
+            const primaryImage = await model.selectItemPrimaryImage([item.id]);
+            item.image = primaryImage[0];
+            const seller = await model.selectSellerByProduct([item.product_id]);
+            item.seller = seller[0];
+            return item;
+        }))
+        let total = shipping;
+        items.forEach(item => total += item.total);
+        let paymentIntent;
+        const order_id = uuid();
+        if (!req.session.passport.user.intentId || req.session.passport.user.prevTotal !== total) {
+            paymentIntent = await s.paymentIntents.create({
+                amount: Math.round(total * 100),
+                currency: 'gbp',
+                automatic_payment_methods: {
+                    enabled: true,
+                },
+                description: JSON.stringify({order_id}),
+                metadata: {
+                    order_id
+                }, 
+                // application_fee_amount: Math.floor(total * 100 * .05),
+                transfer_group: order_id
+            })
+            req.session.passport.user.intentId = paymentIntent.id
+            req.session.passport.user.prevTotal = total
+        } else {
+            paymentIntent = await s.paymentIntents.update(
+                req.session.passport.user.intentId,
+                {
+                    amount: Math.round(total * 100),
+                    currency: 'gbp',
+                    // automatic_payment_methods: {
+                    //     enabled: true,
+                    // },
+                    // application_fee_amount: Math.floor(total * 100 * .05),
+                    // transfer_group: uuid()
+                }
+            )
+        }
+        res.status(200).json({items, total, paymentIntent});
+    } catch (err) {
+        next(err);
+    }
+}
+
+stripe.fulfillTransfersToSellers = async (req, res, next) => {
+    try {
+        const transferred =  await Promise.all(req.pendingTransfers.map(async transfer => {
+            const stripeTransfer = await s.transfers.create({
+                amount: 100 * (transfer.amount * .91),
+                currency: 'gbp',
+                destination: transfer.stripe_id,
+                transfer_group: req.params.orderId,
+            })
+            return {
+                ...transfer,
+                transfer_id: stripeTransfer.id
+            }
+        }))
+        await Promise.all(req.order.map(async item => {
+            const transferId = transferred.filter(transfer => {
+                return transfer.stripe_id === item.stripe_id;
+            })[0].transfer_id;
+            await model.markSellerAsPaid([transferId, item.id]);
+        }))
+        res.status(200).json({message: 'Transfers complete.'})
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
-    parser, helper
+    parser, helper, stripe
 }

@@ -1,0 +1,130 @@
+.payment-status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 16px;
+}
+
+.payment-status .message {
+    text-align: center;
+}
+
+.payment-status .success svg {
+    height: 256px;
+    width: 256px;
+    fill: rgba(0, 0, 0, 0.4);
+    transform-origin: bottom;
+    animation: jump 1.5s ease-in-out 0s infinite forwards;
+}
+
+.payment-status .processing svg {
+    height: 256px;
+    width: 256px;
+    fill: rgba(0, 0, 0, 0.4);
+    transform-origin: center;
+    animation: pulse 1.5s ease-in-out 0s infinite forwards;
+}
+
+.payment-status .requires svg {
+    height: 256px;
+    width: 256px;
+    fill: rgba(0, 0, 0, 0.4);
+    transform-origin: center;
+    animation: shake 2s ease-in 0s infinite forwards;
+}
+
+.payment-status .error svg {
+    height: 256px;
+    width: 256px;
+    fill: rgba(0, 0, 0, 0.4);
+    transform-origin: bottom;
+    animation: jump 1.5s ease-in-out 0s infinite forwards;
+}
+
+.payment-status .message p {
+    font-weight: 500;
+    line-height: 1.2;
+    color: rgba(0, 0, 0, 0.6);
+    max-width: 480px;
+}
+
+.payment-status .message .line1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.payment-status .message p:nth-child(4) {
+    font-size: .8rem;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+@keyframes jump {
+    0% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: scale(1.2, .6);
+    }
+    60% {
+        transform: translateY(-156px);
+    }
+    70% {
+        transform: translateY(0);
+    }
+    85% {
+        transform: scale(1.1, .8);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(.8);
+    }
+    50% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(.8);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+    10% {
+        transform: translateX(48px) rotate(-10deg);
+    }
+    20% {
+        transform: translateX(-44px) rotate(5deg);
+    }
+    25% {
+        transform: translateX(40px) rotate(-5deg);
+    }
+    30% {
+        transform: translateX(-44px) rotate(5deg);
+    }
+    35% {
+        transform: translateX(48px) rotate(-10deg);
+    }
+    40% {
+        transform: translateX(-40px) rotate(10deg);
+    }
+    45% {
+        transform: translateX(40px) rotate(-2deg);
+    }
+    55% {
+        transform: translateX(-32px) rotate(2deg);
+    }
+    65% {
+        transform: translateX(24px) rotate(-2deg);
+    }
+    75% {
+        transform: translateX(0);
+    }
+}

@@ -7,7 +7,10 @@ import Button from '../Button';
 import AddItems from '../ProductCreation/AddItems';
 import EditProduct from '../ProductCreation/EditProduct';
 import Rating from '../Rating';
+import api from '../../utils/api';
 import './Product.css';
+
+const { customer: c } = api;
 
 const ProductData = props => {
 
@@ -110,7 +113,10 @@ const ProductData = props => {
                 }
             })
         });
-        dispatch(saveItem({customerId: user.id, itemId: items[selected][index].id}));
+        if (user.id) {
+            c.saveItem(user.id, items[selected][index].id)
+        }
+        dispatch(saveItem({itemId: items[selected][index].id}));
     }
 
     const isSavedItem = useMemo(() => {

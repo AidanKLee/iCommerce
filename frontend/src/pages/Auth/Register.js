@@ -5,7 +5,7 @@ import Button from '../../components/Button';
 import ToggleSwitch from '../../components/ToggleSwitch';
 import ShowPassword from '../../components/ShowPassword';
 import api from '../../utils/api';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import LoadingModal from '../../components/LoadingModal';
 import Redirect from '../Redirect';
@@ -15,6 +15,11 @@ import { selectUser } from '../../app/appSlice';
 const Register = props => {
 
     const navigate = useNavigate();
+
+    const location = useLocation();
+    const redirect = useMemo(() => {
+        return location.search ? location.search.slice(1).split('&').filter(param => param.includes('redirect'))[0].split('=')[1] : undefined;
+    }, [location])
 
     const user = useSelector(selectUser);
     const isLoggedIn = useMemo(() => 'id' in user, [user]);
@@ -46,7 +51,7 @@ const Register = props => {
             setRequesting(true);
             await auth.register(form);
             setRequesting(false);
-            navigate('/login', {replace: false});
+            navigate(redirect ? `/login?redirect=${redirect}` : '/login', {replace: false});
         } catch (err) {
             setRequesting(false);
             console.log('Registration Failed')
@@ -164,7 +169,7 @@ const Register = props => {
                 <LoadingModal />
             </CSSTransition>
             {
-                isLoggedIn ? <Redirect to='/'/> : undefined
+                isLoggedIn ? <Redirect to={redirect ? `/${redirect}` : '/'}/> : undefined
             }
         </section>
     )

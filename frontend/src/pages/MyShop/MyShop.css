@@ -75,6 +75,37 @@
 
 .my-shop.manage.main {
     height: 100%;
+    position: relative;
+}
+
+.my-shop.manage.main .notifications {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+    max-width: 400px;
+}
+
+.my-shop.manage.main .notifications .item {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    margin: 8px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.05);
+}
+
+.my-shop.manage.main .notifications .item svg {
+    min-height: 36px;
+    min-width: 36px;
+    margin-right: 16px;
+}
+
+.my-shop.manage.main .notifications .item p {
+    font-size: .8rem;
+    font-weight: 500;
 }
 
 .shop {

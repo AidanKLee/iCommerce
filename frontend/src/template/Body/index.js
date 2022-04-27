@@ -10,6 +10,8 @@ import Product from '../../pages/Product';
 import Saved from '../../pages/Saved';
 import Bag from '../../pages/Bag';
 import Checkout from '../../pages/Checkout';
+import PaymentStatus from '../../pages/paymentStatus';
+import CheckoutForm from '../../pages/Checkout/CheckoutForm';
 
 const Body = props => {
 
@@ -25,7 +27,10 @@ const Body = props => {
                 <Route path='/product/:productId' element={<Product/>}>
                     <Route path='/product/:productId/:itemId' element={<Product/>}/>
                 </Route>
-                <Route path='/checkout' element={<Checkout/>}/>
+                <Route path='/checkout' element={<Checkout/>}>
+                    <Route path='/checkout' element={<CheckoutForm/>}/>
+                    <Route path='/checkout/status' element={<PaymentStatus/>}/>
+                </Route>
                 <Route path='/register' element={<Register/>}/>
                 <Route path='/login' element={<Login/>}/>
                 <Route path='/my-shop/*' element={<MyShop/>}/>

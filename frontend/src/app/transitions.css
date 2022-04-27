@@ -167,3 +167,37 @@
     transform: translateX(-100%) scale(0);
     opacity: 0;
 }
+
+
+
+.grow-enter {
+    height: 0px;
+    margin: 0 0 0;
+}
+
+.grow-enter-active {
+    height: 40px;
+    transition: .5s;
+    margin: 0 0 16px;
+}
+
+.grow-enter-done {
+    height: 40px;
+    margin: 0 0 16px;
+}
+
+.grow-exit {
+    height: 40px;
+    margin: 0 0 16px;
+}
+
+.grow-exit-active {
+    height: 0px;
+    transition: .5s;
+    margin: 0 0 0;
+}
+
+.grow-exit-done {
+    height: 0px;
+    margin: 0 0 0;
+}

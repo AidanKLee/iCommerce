@@ -12,6 +12,7 @@ const { helper, products: p } = api;
 const Bag = props => {
 
     const user = useSelector(selectUser);
+    const isLoggedIn = useMemo(() => 'id' in user, [user]);
 
     const shippingOptions = useMemo(() => {
         return {
@@ -82,6 +83,8 @@ const Bag = props => {
         setShipping(value);
     }
 
+    const checkoutObject = {items: user.cart.items, shipping}
+
     return (
         <section className='bag'>
             <header className='header'>
@@ -116,7 +119,7 @@ const Bag = props => {
                                     <p className='total'>Total:<b>{prices.total}</b></p>
                                 </div>
                                 <div className='actions'>
-                                    <Link to='/checkout' className='checkout'>Proceed To Checkout</Link>
+                                    <Link to={isLoggedIn ? '/checkout' : '/login?redirect=bag'} state={checkoutObject} className='checkout'>Proceed To Checkout</Link>
                                     <Link to='/' className='shop'>Return To Shopping</Link>
                                 </div>
                             </div>

@@ -40,14 +40,29 @@ auth.register = async form => {
 };
 
 auth.registerShop = async form => {
-    const data = await fetch(`${baseUrl}/api/auth/registerShop`, {
+    let data = await fetch(`${baseUrl}/api/auth/register/shop`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
           },
         body: JSON.stringify(form)
     });
-    return await data.json();
+    data = await data.json();
+    window.location.href = data.url;
+}
+
+auth.registerStripe = async () => {
+    let data = await fetch(`${baseUrl}/api/auth/stripe/account`, {
+        method: 'POST'
+    });
+    data = await data.json();
+    window.location.href = data.url;
+}
+
+auth.retrieveStripe = async setter => {
+    let data = await fetch(`${baseUrl}/api/auth/stripe/account`);
+    data = await data.json();
+    setter(data);
 }
 
 auth.login = async ({form, saved, bag}) => {
@@ -179,12 +194,74 @@ customer.deleteItemFromBag = async (customerId, bagId, itemId) => {
     });
 }
 
+customer.getAddresses = async (customerId, setter) => {
+    let addresses = await fetch(`${baseUrl}/api/customer/${customerId}/addresses`);
+    addresses = await addresses.json();
+    setter(addresses);
+}
+
+customer.postAddress = async (customerId, form, setter) => {
+    let addresses = await fetch(`${baseUrl}/api/customer/${customerId}/addresses`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(form)
+    });
+    addresses = await addresses.json();
+    setter(addresses);
+}
+
+const checkout = {};
+
+checkout.paymentIntent = async (data, clientSetter, dataSetter, orderIdSetter) => {
+    console.log('getting payment intent')
+    data = await fetch(`${baseUrl}/api/checkout/intent`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    data = await data.json();
+    clientSetter(data.paymentIntent.client_secret);
+    orderIdSetter(data.paymentIntent.metadata.order_id);
+    delete data.paymentIntent;
+    dataSetter(data);
+}
+
+checkout.submitOrder = async (customerId, orderId, body) => {
+    await fetch(`${baseUrl}/api/customer/${customerId}/orders/${orderId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    });
+}
+
+checkout.confirmPayment = async (customerId, orderId) => {
+    await fetch(`${baseUrl}/api/customer/${customerId}/orders/${orderId}`, {
+        method: 'PUT'
+    });
+}
+
+checkout.transferPaymentToSellers = async (orderId) => {
+    await fetch(`${baseUrl}/api/checkout/transfers/${orderId}`, {
+        method: 'POST'
+    });
+}
+
 const helper = {};
 
 helper.currencyFormatter = numberToFormat => new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency: 'GBP',
 }).format(numberToFormat);
+
+helper.currencyToInteger = currencyToFormat => {
+    return Number(currencyToFormat.slice(1).replace(',',''));
+}
 
 helper.fileToBase64 = async file => {
     return await new Promise((res, rej) => {
@@ -299,7 +376,7 @@ seller.purgeUnusedImages = async (userId) => {
 }
 
 const api = {
-    auth, categories, customer, helper, products, seller
+    auth, categories, checkout, customer, helper, products, seller
 };
 
 export default api;

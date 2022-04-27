@@ -4,7 +4,7 @@ import baseUrl from '../../utils/baseUrl';
 import Button from '../../components/Button';
 import ShowPassword from '../../components/ShowPassword';
 import api from '../../utils/api';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import LoadingModal from '../../components/LoadingModal'
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,10 +15,16 @@ const Login = props => {
 
     const dispatch = useDispatch();
 
+    const location = useLocation();
+    const redirect = useMemo(() => {
+        return location.search ? location.search.slice(1).split('&').filter(param => param.includes('redirect'))[0].split('=')[1] : undefined;
+    }, [location])
+
     const user = useSelector(selectUser);
     const isLoggedIn = useMemo(() => 'id' in user, [user]);
-    const saved = useMemo(() => user.saved, [user.saved])
-    const bag = useMemo(() => user.cart.items, [user.cart])
+    const saved = useMemo(() => user.saved, [user.saved]);
+    const bag = useMemo(() => user.cart.items, [user.cart]);
+
 
     const navigate = useNavigate();
     const { auth } = api;
@@ -47,7 +53,7 @@ const Login = props => {
                 return setIncorrect(user.message);
             }
             dispatch(login(user));
-            navigate('/', {replace: false});
+            navigate(redirect ? `/${redirect}` : '/', {replace: false});
         } catch (err) {
             setRequesting(false);
             setIncorrect(err.message);
@@ -115,7 +121,7 @@ const Login = props => {
             </form>
             <div className='link-wrapper login'>
                 <p>Don't have an account? </p>
-                <Link to='/register'>Sign up</Link>.
+                <Link to={`/register${redirect ? `?redirect=${redirect}` : ''}`}>Sign up</Link>.
             </div>
             <CSSTransition 
                 timeout={500}
@@ -127,7 +133,7 @@ const Login = props => {
                 <LoadingModal />
             </CSSTransition>
             {
-                isLoggedIn ? <Redirect to='/'/> : undefined
+                isLoggedIn ? <Redirect to={redirect ? `/${redirect}` : '/'}/> : undefined
             }
         </section>
     )
