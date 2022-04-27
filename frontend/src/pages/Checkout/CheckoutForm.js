@@ -47,7 +47,9 @@ const CheckoutForm = props => {
     const { 
         city, country = 'GB', line_1: line1, line_2: line2,
         county: state, postcode: postal_code
-    } = useMemo(() => addresses[selected], [addresses, selected])
+    } = useMemo(() => addresses.length > 0 ? addresses[selected] : (
+        {city: '', country: '', line_1: '', line_2: '', county: '', postcode: ''}
+    ), [addresses, selected])
 
     const handleSubmit = async e => {
         e.preventDefault();
