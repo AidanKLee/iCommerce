@@ -5,11 +5,13 @@ import { CSSTransition } from 'react-transition-group';
 import api from '../../utils/api';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../app/appSlice';
+import { useNavigate } from 'react-router-dom';
 
 const { checkout: c } = api;
 
 const PaymentStatus = props => {
 
+    const navigate = useNavigate();
     const stripe = useStripe();
 
     const user = useSelector(selectUser);
