@@ -212,6 +212,21 @@ customer.postAddress = async (customerId, form, setter) => {
     setter(addresses);
 }
 
+customer.getOrders = async (customerId, setter, params) => {
+    let orders = await fetch(`${baseUrl}/api/customer/${customerId}/orders${params ? params : ''}`);
+    orders = await orders.json();
+    orders = { ...orders, orders: helper.groupOrdersItemsBySeller(orders.orders) };
+    setter(orders);
+}
+
+customer.getOrderById = async (customerId, orderId, setter) => {
+    let orders = await fetch(`${baseUrl}/api/customer/${customerId}/orders/${orderId}`);
+    orders = await orders.json();
+    orders = { ...orders, orders: helper.groupOrdersItemsBySeller(orders.orders) };
+    const { orders: order } = orders;
+    setter(order[0]);
+}
+
 const checkout = {};
 
 checkout.paymentIntent = async (data, clientSetter, dataSetter, orderIdSetter) => {
@@ -270,6 +285,29 @@ helper.fileToBase64 = async file => {
         reader.onload = () => res(reader.result);
         reader.onerror = err => rej(err);
     });
+}
+
+helper.groupOrdersItemsBySeller = orders => {
+    return orders.map(order => {
+        let itemsByShop = [];
+        order.items.forEach(item => {
+            let { seller } = item;
+            const index = itemsByShop.findIndex(shop => {
+                return shop.id === seller.id;
+            })
+            const itemWithoutSeller = {...item};
+            delete itemWithoutSeller.seller;
+            if (index === -1) {
+                seller = {...seller, items: [itemWithoutSeller]}
+                itemsByShop.push(seller);
+            } else {
+                itemsByShop[index].items.push(itemWithoutSeller);
+            }
+        })
+        delete order.items;
+        order.sellers = itemsByShop;
+        return order;
+    })
 }
 
 const products = {};

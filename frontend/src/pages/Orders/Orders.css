@@ -1,0 +1,11 @@
+.orders {
+    width: 100%;
+}
+
+.orders .header h2 {
+    max-width: 1440px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 20px auto;
+    padding: 0 16px;
+}

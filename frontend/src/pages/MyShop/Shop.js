@@ -1,8 +1,9 @@
 import React from 'react';
+import { useOutletContext } from 'react-router-dom';
 
 const Shop = props => {
 
-    const { shop } = props;
+    const shop = useOutletContext();
 
     return (
         <div className='shop'>

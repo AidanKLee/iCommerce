@@ -122,7 +122,6 @@ helper.prepareSellerTransfers = async (req, res, next) => {
         let order = await model.selectPendingTransfersByOrderId([req.params.orderId]);
         order = await Promise.all(order.map(async item => {
             item.amount = Number(item.price.slice(1).replace(',','')) * Number(item.item_quantity);
-            await model.itemSold([item.item_quantity, ])
             delete item.price;
             delete item.item_quantity;
             return item;
@@ -142,6 +141,34 @@ helper.prepareSellerTransfers = async (req, res, next) => {
         req.order = order;
         req.pendingTransfers = pendingTransfers;
         next();
+    } catch (err) {
+        next(err);
+    }
+}
+
+helper.getOrdersData = async (req, res, next) => {
+    try {
+        const { customerId } = req.params;
+        let orders = req.orders;
+        let years = await model.selectCustomerOrderYears([customerId]);
+        years = years.map(year => year.year);
+        orders = await Promise.all(orders.map(async order => {
+            order.items = await model.selectCustomerOrderItems([order.id]);
+            const address = await model.selectAddressById([order.delivery_address_id]);
+            order.delivery_address = address[0];
+            delete order.delivery_address_id;
+            order.items = await Promise.all(order.items.map(async item => {
+                const seller = await model.selectSellerById([item.seller_id]);
+                item.seller = seller[0]
+                delete item.seller_id;
+                const it = await model.selectItemById([item.item_id]);
+                item.item = it[0];
+                delete item.item_id;
+                return item;
+            }));
+            return order;
+        }));
+        res.status(200).json({orders, years});
     } catch (err) {
         next(err);
     }

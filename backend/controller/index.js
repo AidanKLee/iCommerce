@@ -280,13 +280,15 @@ customer.deleteCartItem = async (req, res, next) => {
 customer.submitOrder = async (req, res, next) => {
     try {
         const { orderId, customerId } = req.params;
-        const { deliveryAddressId, items, cartId } = req.body;
-        await model.insertOrder([orderId, customerId, deliveryAddressId]);
+        const { deliveryAddressId, postage, items, cartId } = req.body;
+        await model.insertOrder([orderId, customerId, deliveryAddressId, postage.option, postage.price]);
         await Promise.all(items.map(async item => {
-            const { seller_id, item_id, item_quantity } = item;
-            await model.insertOrderItem([uuid(), orderId, seller_id, item_id, item_quantity, null, null, ]);
+            const { seller_id, item_id, item_quantity, item_price } = item;
+            await model.itemsSold([item_quantity, item_id]);
+            await model.insertOrderItem([uuid(), orderId, seller_id, item_id, item_price, item_quantity]);
             await model.deleteCartItem([cartId, item_id]);
         }))
+        console.log('order submitted')
         await model.deleteCart([customerId]);
         await model.insertCart([uuid(), customerId]);
         delete req.session.passport.user.intentId;
@@ -301,6 +303,40 @@ customer.confirmPayment = async (req, res, next) => {
     try {
         await model.updateOrder([true, req.params.orderId]);
         res.status(200).json({message: 'Payment confirmed.'})
+    } catch (err) {
+        next(err);
+    }
+}
+
+customer.selectAllOrders = async (req, res, next) => {
+    try {
+        const { customerId } = req.params;
+        let from, to;
+        let { limit = 25, search = '', page = 1, year } = req.query;
+        if (!year) {
+            from = 0;
+            to = new Date().getFullYear();
+        } else {
+            from = year;
+            to = year;
+        }
+        if (page < 1) {
+            page = 1;
+        }
+        search = `%${search}%`;
+        const offset = limit * (page - 1);
+        req.orders = await model.selectCustomerOrders([customerId, from, to, search, limit, offset]);
+        next();
+    } catch (err) {
+        next(err);
+    }
+}
+
+customer.selectOrderById = async (req, res, next) => {
+    try {
+        const { orderId } = req.params;
+        req.orders = await model.selectOrderById([orderId]);
+        next();
     } catch (err) {
         next(err);
     }

@@ -252,12 +252,12 @@ const NewProduct = props => {
                     </h2>
                     <div className='columns'>
                         <div className='column'>
-                            <Select id='categories-one-0' onChange={handleChange} required={true} value={form.categories.one[0] || ''} options={categories.main.map(category => {return {name: category.name, value: category.name}})}/>
+                            <Select id='categories-one-0' onChange={handleChange} required={true} hidden='Select a category' value={form.categories.one[0] || ''} options={categories.main.map(category => {return {name: category.name, value: category.name}})}/>
                             {
                                 form.categories.one.length > 0 ? (
                                     form.categories.one.map((select, i) => {
                                         if (categories[select].length > 0) {
-                                            return <Select key={select} id={`categories-one-${i + 1}`} onChange={handleChange} required={true} value={form.categories.one[i + 1] || ''} options={categories[select].map(category => {return {name: category.name, value: category.name}})}/>
+                                            return <Select key={select} id={`categories-one-${i + 1}`} onChange={handleChange} required={true} hidden='Select a category' value={form.categories.one[i + 1] || ''} options={categories[select].map(category => {return {name: category.name, value: category.name}})}/>
                                         } else {
                                             return undefined
                                         }
@@ -266,12 +266,12 @@ const NewProduct = props => {
                             }
                         </div>
                         <div className='column'>
-                            <Select id='categories-two-0' onChange={handleChange} required={false} value={form.categories.two[0] || ''} options={categories.main.map(category => {return {name: category.name, value: category.name}})} disabled={oneCategories}/>
+                            <Select id='categories-two-0' onChange={handleChange} required={false} hidden='Select a category' value={form.categories.two[0] || ''} options={categories.main.map(category => {return {name: category.name, value: category.name}})} disabled={oneCategories}/>
                             {
                                 form.categories.two.length > 0 ? (
                                     form.categories.two.map((select, i) => {
                                         if (categories[select].length > 0) {
-                                            return <Select key={select} id={`categories-two-${i + 1}`} onChange={handleChange} required={true} value={form.categories.two[i + 1] || ''} options={categories[select].map(category => {return {name: category.name, value: category.name}})}/>
+                                            return <Select key={select} id={`categories-two-${i + 1}`} onChange={handleChange} required={true} hidden='Select a category' value={form.categories.two[i + 1] || ''} options={categories[select].map(category => {return {name: category.name, value: category.name}})}/>
                                         } else {
                                             return undefined
                                         }

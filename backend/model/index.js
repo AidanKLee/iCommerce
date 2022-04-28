@@ -115,6 +115,12 @@ const queries = [
         conditions: ['WHERE id =']
     },
     {
+        name: 'selectAddressById',
+        type: 'select',
+        tables: {name: 'address', columns: '*'},
+        conditions: 'WHERE id ='
+    },
+    {
         name: 'selectCustomerAddresses',
         type: 'select',
         tables: {name: 'address', columns: '*'},
@@ -429,7 +435,7 @@ const queries = [
         name: 'selectItemById',
         type: 'select',
         tables: {name: 'item', columns: ['id', 'product_id', 'name', 'description', 'price', 'in_stock', 'ordered', 'awards']},
-        conditions: 'WHERE id =',
+        conditions: ['WHERE id ='],
     },
     {
         name: 'selectItemPrimaryImage',
@@ -677,10 +683,18 @@ const queries = [
         conditions: ['WHERE seller_id =', 'AND product_id =']
     },
     {
-        name: 'selectCustomerOrders',
+        name: 'selectOrderById',
         type: 'select',
         tables: {name: '"order"', columns: '*'},
-        conditions: ['WHERE customer_id =']
+        conditions: ['WHERE id =']
+    },
+    {
+        name: 'selectCustomerOrders',
+        custom: `SELECT "order".id, customer_id, date, delivery_address_id, payment_complete, postage_option, postage_price FROM "order" LEFT JOIN order_item ON "order".id = order_id LEFT JOIN item ON item.id = item_id WHERE customer_id = $1 AND date_part('year', date) >= $2 AND date_part('year', date) <= $3 AND name ILIKE $4 GROUP BY "order".id ORDER BY date DESC LIMIT $5 OFFSET $6`
+    },
+    {
+        name: 'selectCustomerOrderYears',
+        custom: `SELECT DISTINCT(date_part('year', date)) AS year FROM "order" WHERE customer_id = $1 ORDER BY year DESC`
     },
     {
         name: 'insertCustomerOrder',
@@ -697,7 +711,7 @@ const queries = [
         name: 'selectAllCustomerOrderedItem',
         type: 'select',
         tables: [
-            {name: 'order_item', columns: ['id', 'order_id', 'seller_id', 'item_id', 'item_quantity', 'dispatch_date', 'delivery_date', 'cancelled', 'reviewed_item', 'reviewed_seller', 'reviewed_customer']},
+            {name: 'order_item', columns: '*'},
             {name: '"order"'}
         ],
         conditions: ['WHERE customer_id ='],
@@ -726,7 +740,7 @@ const queries = [
     {
         name: 'insertOrder',
         type: 'insert',
-        tables: {name: '"order"', columns: ['id', 'customer_id', 'delivery_address_id']}
+        tables: {name: '"order"', columns: ['id', 'customer_id', 'delivery_address_id', 'postage_option', 'postage_price']}
     },
     {
         name: 'updateOrder',
@@ -737,7 +751,7 @@ const queries = [
     {
         name: 'insertOrderItem', 
         type: 'insert',
-        tables: {name: 'order_item', columns: ['id', 'order_id', 'seller_id', 'item_id', 'item_quantity']}
+        tables: {name: 'order_item', columns: ['id', 'order_id', 'seller_id', 'item_id', 'item_price', 'item_quantity']}
     },
     {
         name: 'updateOrderItemSeller',

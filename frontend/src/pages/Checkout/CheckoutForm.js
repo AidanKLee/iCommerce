@@ -16,7 +16,7 @@ const CheckoutForm = props => {
         addressSelect: [addressSelect, setAddressSelect],
         confirmAddress, handleAddressSelect,
         handleAddressSubmit, items, openAddressForm,
-        order_id, prices, selected, user 
+        order_id, prices, selected, shippingOption, user 
     } = useOutletContext();
 
     const stripe = useStripe();
@@ -24,21 +24,24 @@ const CheckoutForm = props => {
 
     const [ error, setError ] = useState('');
 
-    console.log(items)
-
     const orderBody = useMemo(() => {
         return {
             deliveryAddressId: addresses.length > 0 ? addresses[selected].id : null,
             cartId: user.cart.id,
+            postage: {
+                option: shippingOption,
+                price: prices.shipping
+            },
             items: items && items.length > 0 ? items.map(item => {
                 return {
                     seller_id: item.seller.id,
                     item_id: item.id,
-                    item_quantity: item.item_quantity
+                    item_quantity: item.item_quantity,
+                    item_price: item.price
                 }
             }) : []
         }
-    }, [items, user.cart, addresses, selected])
+    }, [addresses, selected, user.cart.id, shippingOption, prices.shipping, items])
 
     const submitDisabled = useMemo(() => {
         return !stripe || !elements

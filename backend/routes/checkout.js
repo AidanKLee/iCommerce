@@ -6,6 +6,4 @@ route.post('/intent', parser.json, stripe.generatePaymentIntent);
 
 route.post('/transfers/:orderId', helper.prepareSellerTransfers, stripe.fulfillTransfersToSellers);
 
-// const retrievePaymentIntent = async () => await stripe.paymentIntents.retrieve('client_secret')
-
 module.exports = route;

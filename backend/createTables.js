@@ -196,6 +196,8 @@ const tables = [
             'customer_id UUID NOT NULL REFERENCES customer(id)',
             'date TIMESTAMP NOT NULL DEFAULT NOW()',
             'delivery_address_id UUID NOT NULL',
+            "postage_option varchar(64) NOT NULL",
+            'postage_price money NOT NULL',
             'payment_complete boolean NOT NULL DEFAULT false'
         ]
     },
@@ -206,6 +208,7 @@ const tables = [
             'order_id UUID NOT NULL REFERENCES "order"(id)',
             'seller_id UUID NOT NULL REFERENCES seller(id)',
             'item_id UUID NOT NULL REFERENCES item(id)',
+            'item_price money NOT NULL',
             'item_quantity integer NOT NULL',
             'dispatch_date TIMESTAMP',
             'delivery_date TIMESTAMP',

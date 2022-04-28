@@ -136,8 +136,8 @@ const Checkout = props => {
                             addressForm: [ addressForm, setAddressesForm ],
                             addressSelect: [addressSelect, setAddressSelect],
                             confirmAddress, handleAddressSelect,
-                            handleAddressSubmit, items, openAddressForm,
-                            order_id, prices, selected, user
+                            handleAddressSubmit, items, openAddressForm, order_id,
+                            prices, selected, shippingOption: bag ? bag.shipping : null, user
                         }}
                     />
                 </Elements>
