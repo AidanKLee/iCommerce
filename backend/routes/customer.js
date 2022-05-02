@@ -24,4 +24,6 @@ route.post('/:customerId/orders/:orderId', parser.json, customer.submitOrder);
 
 route.put('/:customerId/orders/:orderId', customer.confirmPayment);
 
+route.delete('/:customerId/orders/:orderId', customer.cancelOrderItems);
+
 module.exports = route;

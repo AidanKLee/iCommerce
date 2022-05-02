@@ -752,6 +752,18 @@ const queries = [
         conditions: 'WHERE seller_id ='
     },
     {
+        name: 'selectOrderItemsIdBySeller',
+        type: 'select',
+        tables: {name: 'order_item', columns: ['id']},
+        conditions: ['WHERE order_id =', 'AND seller_id =']
+    },
+    {
+        name: 'selectOrderItemsIdByOrder',
+        type: 'select',
+        tables: {name: 'order_item', columns: ['id']},
+        conditions: ['WHERE order_id =']
+    },
+    {
         name: 'insertOrder',
         type: 'insert',
         tables: {name: '"order"', columns: ['id', 'customer_id', 'delivery_address_id', 'postage_option', 'postage_price']}
@@ -768,19 +780,37 @@ const queries = [
         tables: {name: 'order_item', columns: ['id', 'order_id', 'seller_id', 'item_id', 'item_price', 'item_quantity']}
     },
     {
-        name: 'updateOrderItemSeller',
+        name: 'updateItemDispatchDate',
         type: 'update',
-        tables: {name: 'order_item', columns: ['dispatch_date', 'delivery_date', 'reviewed_customer']},
+        tables: {name: 'order_item', columns: ['dispatch_date']},
         conditions: ['WHERE id =']
     },
     {
-        name: 'updateOrderItemCustomer',
+        name: 'updateItemDeliveryDate',
         type: 'update',
-        tables: {name: 'order_item', columns: ['reviewed_item', 'reviewed_seller']},
+        tables: {name: 'order_item', columns: ['delivery_date']},
         conditions: ['WHERE id =']
     },
     {
-        name: 'deleteOrderItemCustomer',
+        name: 'updateItemCustomerReviewed',
+        type: 'update',
+        tables: {name: 'order_item', columns: ['reviewed_customer']},
+        conditions: ['WHERE id =']
+    },
+    {
+        name: 'updateItemReviewed',
+        type: 'update',
+        tables: {name: 'order_item', columns: ['reviewed_item']},
+        conditions: ['WHERE id =']
+    },
+    {
+        name: 'updateItemSellerReviewed',
+        type: 'update',
+        tables: {name: 'order_item', columns: ['reviewed_seller']},
+        conditions: ['WHERE id =']
+    },
+    {
+        name: 'cancelOrderItemCustomer',
         custom: 'UPDATE order_item SET cancelled = true WHERE id = $1'
     },
     {

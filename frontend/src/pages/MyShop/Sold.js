@@ -31,7 +31,8 @@ const Sold = props => {
 
     return (
         <div className='page'>
-            <Outlet context={{ isLoggedIn, orders, user, years }}/>
+            <Outlet context={{ isLoggedIn, location, orders, setOrders, user, years }}/>
+            {/* //location, orders = [], setOrders, years = [], user */}
             {
                 !loginPending && !isLoggedIn ? <Redirect to='/login'/> : undefined
             }

@@ -227,6 +227,20 @@ customer.getOrderById = async (customerId, orderId, setter) => {
     setter(order[0]);
 }
 
+customer.cancelOrder = async (customerId, orderId, sellerId, orderItemId) => {
+    let url;
+    if (orderId && sellerId) {
+        url = `${baseUrl}/api/customer/${customerId}/orders/${orderId}/?seller=${sellerId}`;
+    } else if (orderId && !orderItemId) {
+        url = `${baseUrl}/api/customer/${customerId}/orders/${orderId}`;
+    } else if (orderId && orderItemId) {
+        url = `${baseUrl}/api/customer/${customerId}/orders/${orderId}?item=${orderItemId}`;
+    } else {
+        return;
+    }
+    await fetch(url, { method: 'DELETE' });
+}
+
 const checkout = {};
 
 checkout.paymentIntent = async (data, clientSetter, dataSetter, orderIdSetter) => {
@@ -418,6 +432,38 @@ seller.getOrders = async (userId, setter, params) => {
     orders = await orders.json();
     orders = { ...orders, orders: helper.groupOrdersItemsBySeller(orders.orders) };
     setter(orders);
+}
+
+seller.updateOrder = async (userId, orderId, orderItemId, dispatched, delivered, reviewed) => {
+    let url;
+    let params = [];
+
+    if (orderId && userId) {
+        url = `${baseUrl}/api/seller/${userId}/orders/${orderId}`;
+    } else {
+        return;
+    }
+
+    if (orderItemId) {
+        params.push(`item=${orderItemId}`);
+    }
+    if (dispatched === true || dispatched === false) {
+        params.push(`dispatched=${dispatched}`);
+    }
+    if (delivered === true || delivered === false) {
+        params.push(`delivered=${delivered}`);
+    }
+    if (reviewed === true || reviewed === false) {
+        params.push(`reviewed=${reviewed}`);
+    }
+
+    if (params.length > 0) {
+        params = `?${params.join('&')}`;
+    } else {
+        params = '';
+    }
+
+    await fetch(url + params, { method: 'PUT' });
 }
 
 const api = {

@@ -2,11 +2,11 @@ import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
 
-const { helper } = api;
+const { customer: c, helper, seller: s } = api;
 
 const OrderTile = props => {
 
-    const { order, type } = props;
+    const { location, order, setOrders, type, user } = props;
     
     let { 
         date, delivery_address, id, payment_complete,
@@ -35,7 +35,7 @@ const OrderTile = props => {
                 if (item.reviewed_seller) {
                     reviewed = true;
                 }
-                if (!item.item.cancelled) {
+                if (!item.cancelled) {
                     cancelled = false;
                 }
                 total += (item.item_quantity * helper.currencyToInteger(item.item_price))
@@ -77,6 +77,17 @@ const OrderTile = props => {
         })
         return helper.currencyFormatter(total);
     }, [postage_price, sellers])
+
+    const handleCancel = (sellerId, orderItemId) => {
+        c.cancelOrder(user.id, id, sellerId, orderItemId)
+        .then(() => c.getOrders(user.id, setOrders, location.search))
+    }
+
+    const handleUpdateOrderSeller = (orderItemId, { dispatched, delivered, reviewed }) => {
+        console.log('updating item')
+        s.updateOrder(user.id, id, orderItemId, dispatched, delivered, reviewed)
+        .then(() => s.getOrders(user.id, setOrders, location.search))
+    }
 
     return (
         <li className='item'>
@@ -123,7 +134,7 @@ const OrderTile = props => {
                                         <div className='dropdown'>
                                             <div className='arrow'></div>
                                             <ul className='actions'>
-                                                <li>
+                                                <li onClick={() => handleCancel()}>
                                                     Cancel order
                                                 </li>
                                             </ul>
@@ -169,7 +180,7 @@ const OrderTile = props => {
                                                             <ul className='actions'>
                                                                 {
                                                                     !cancelled && !dispatched ? (
-                                                                        <li>Cancel order from this seller</li>
+                                                                        <li onClick={() => handleCancel(sellerId)}>Cancel order from this seller</li>
                                                                     ) : !cancelled && delivered && !reviewed ? (
                                                                         <li>Review Seller</li>
                                                                     ) : undefined
@@ -178,7 +189,7 @@ const OrderTile = props => {
                                                         </div>
                                                     ) : undefined
                                                 ) : (
-                                                    !cancelled ? (
+                                                    !cancelled && payment_complete ? (
                                                         <div className='dropdown'>
                                                             <div className='arrow'></div>
                                                             <ul className='actions'>
@@ -189,17 +200,17 @@ const OrderTile = props => {
                                                                 }
                                                                 {
                                                                     !dispatched ? (
-                                                                        <li>Mark order as dispatched</li>
+                                                                        <li onClick={() => handleUpdateOrderSeller(null, {dispatched: true})}>Mark order as dispatched</li>
                                                                     ) : !delivered ? (
-                                                                        <li>Mark order as delivered</li>
+                                                                        <li onClick={() => handleUpdateOrderSeller(null, {delivered: true})}>Mark order as delivered</li>
                                                                     ) : undefined
                                                                 }
                                                                 {
                                                                     !reviewed ? (
                                                                         delivered ? (
-                                                                            <li>Unmark order as delivered</li>
+                                                                            <li onClick={() => handleUpdateOrderSeller(null, {delivered: false})}>Unmark order as delivered</li>
                                                                         ) : dispatched ? (
-                                                                            <li>Unmark order as dispatched</li>
+                                                                            <li onClick={() => handleUpdateOrderSeller(null, {dispatched: false})}>Unmark order as dispatched</li>
                                                                         ) : undefined
                                                                     ) : undefined
                                                                     
@@ -216,8 +227,8 @@ const OrderTile = props => {
                                     {
                                         items.map(i => {
                                             const { 
-                                                cancelled, delivery_date, dispatch_date, item,
-                                                item_price, item_quantity, reviewed_item
+                                                cancelled, delivery_date, dispatch_date, id: orderItemId,
+                                                item, item_price, item_quantity, reviewed_item
                                             } = i;
                                             return (
                                                 <li key={item.id} className='item'>
@@ -255,7 +266,7 @@ const OrderTile = props => {
                                                                             <ul className='actions'>
                                                                                 {
                                                                                     !cancelled && !dispatch_date && !delivery_date ? (
-                                                                                        <li>Cancel item</li>
+                                                                                        <li onClick={() => handleCancel(sellerId, orderItemId)}>Cancel item</li>
                                                                                     ) : !cancelled && delivery_date && !reviewed_item ? (
                                                                                         <li>Review item</li>
                                                                                     ) : undefined
@@ -264,23 +275,23 @@ const OrderTile = props => {
                                                                         </div>
                                                                     ) : undefined
                                                                 ) : (
-                                                                    !cancelled ? (
+                                                                    !cancelled && payment_complete ? (
                                                                         <div className='dropdown'>
                                                                             <div className='arrow'></div>
                                                                             <ul className='actions'>
                                                                                 {
                                                                                     !dispatch_date ? (
-                                                                                        <li>Mark item as dispatched</li>
+                                                                                        <li onClick={() => handleUpdateOrderSeller(orderItemId, {dispatched: true})}>Mark item as dispatched</li>
                                                                                     ) : !delivery_date ? (
-                                                                                        <li>Mark item as delivered</li>
+                                                                                        <li onClick={() => handleUpdateOrderSeller(orderItemId, {delivered: true})}>Mark item as delivered</li>
                                                                                     ) : undefined
                                                                                 }
                                                                                 {
                                                                                     !reviewed_item ? (
                                                                                         delivery_date ? (
-                                                                                            <li>Unmark item as delivered</li>
+                                                                                            <li onClick={() => handleUpdateOrderSeller(orderItemId, {delivered: false})}>Unmark item as delivered</li>
                                                                                         ) : dispatch_date ? (
-                                                                                            <li>Unmark item as dispatched</li>
+                                                                                            <li onClick={() => handleUpdateOrderSeller(orderItemId, {dispatched: false})}>Unmark item as dispatched</li>
                                                                                         ) : undefined
                                                                                     ) : undefined
                                                                                 }

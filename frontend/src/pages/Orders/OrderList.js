@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { useLocation, useOutletContext, useSearchParams } from 'react-router-dom';
+import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import Select from '../../components/ProductCreation/Select';
 import OrderTile from './OrderTile';
@@ -8,7 +8,7 @@ const OrderList = props => {
 
     const { type } = props;
 
-    const location = useLocation();
+    // const location = useLocation();
     const searchTimer = useRef(null);
 
     const limits = useMemo(() => [
@@ -18,7 +18,7 @@ const OrderList = props => {
         { name: 100, value: 100 }
     ], []);
 
-    let { orders, years = [] } = useOutletContext();
+    let { location, orders = [], setOrders, years = [], user } = useOutletContext();
 
     years = useMemo(() => {
         const y = [{name: 'All Time', value: null}];
@@ -95,7 +95,7 @@ const OrderList = props => {
                 <ul className='list'>
                     {
                         orders.map(order => {
-                            return <OrderTile key={order.id} order={order} type={type}/>
+                            return <OrderTile key={order.id} location={location} order={order} setOrders={setOrders} type={type} user={user}/>
                         })
                     }
                 </ul>

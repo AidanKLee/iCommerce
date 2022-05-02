@@ -16,4 +16,6 @@ route.delete('/:userId/products/images', products.purgeUnusedImages);
 
 route.get('/:userId/orders', seller.selectAllOrders, helper.getOrdersData);
 
+route.put('/:userId/orders/:orderId', seller.updateSellerOrder);
+
 module.exports = route;

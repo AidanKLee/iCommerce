@@ -37,7 +37,7 @@ const Orders = props => {
                     Orders
                 </h2>
             </header>
-            <Outlet context={{ isLoggedIn, orders, user, years }}/>
+            <Outlet context={{ isLoggedIn, location, orders, setOrders, user, years }}/>
             {
                 !loginPending && !isLoggedIn ? <Redirect to='/login'/> : undefined
             }

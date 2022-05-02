@@ -287,8 +287,7 @@ customer.submitOrder = async (req, res, next) => {
             await model.itemsSold([item_quantity, item_id]);
             await model.insertOrderItem([uuid(), orderId, seller_id, item_id, item_price, item_quantity]);
             await model.deleteCartItem([cartId, item_id]);
-        }))
-        console.log('order submitted')
+        }));
         await model.deleteCart([customerId]);
         await model.insertCart([uuid(), customerId]);
         delete req.session.passport.user.intentId;
@@ -337,6 +336,32 @@ customer.selectOrderById = async (req, res, next) => {
         const { orderId } = req.params;
         req.orders = await model.selectOrderById([orderId]);
         next();
+    } catch (err) {
+        next(err);
+    }
+}
+
+customer.cancelOrderItems = async (req, res, next) => {
+    try {
+        const { orderId } = req.params;
+        const { item, sellerId } = req.query;
+        let items;
+        let message = {message: 'Item cancelled.'}
+        if (orderId && sellerId) {
+            items = await model.selectOrderItemsIdBySeller([orderId, sellerId]);
+            message = {message: 'Seller order cancelled.'}
+        } else if (orderId && !item) {
+            items = await model.selectOrderItemsIdByOrder([orderId]);
+            message = {message: 'Order cancelled.'}
+        } else if (item) {
+            items = [{id: item}];
+        } else {
+            return;
+        }
+        await Promise.all(items.map(async item => {
+            await model.cancelOrderItemCustomer([item.id]);
+        }))
+        res.status(200).json(message);
     } catch (err) {
         next(err);
     }
@@ -822,17 +847,82 @@ seller.selectAllOrders = async (req, res, next) => {
             page = 1;
         }
         search = `%${search}%`;
-        // console.log(limit, search, page, year)
         const offset = limit * (page - 1);
         req.orders = await model.selectSellerOrders([userId, from, to, search, limit, offset]);
-        console.log(req.orders)
         next();
     } catch (err) {
         next(err);
     }
 }
 
+seller.updateSellerOrder = async(req, res, next) => {
+    try {
+        const { userId, orderId } = req.params;
+        let { item, dispatched, delivered, reviewed } = req.query;
+        dispatched = dispatched!== undefined ? dispatched === 'true' : undefined;
+        delivered = delivered!== undefined ? delivered === 'true' : undefined;
+        reviewed = reviewed!== undefined ? reviewed === 'true' : undefined;
+        const date = new Date().toISOString();
+        let items;
+        let updating;
+        let message;
 
+        if (!userId || !orderId) {
+            return;
+        }
+
+        if (!item) {
+            items = await model.selectOrderItemsIdBySeller([orderId, userId]);
+            updating = 'order';
+        } else if (item) {
+            items = [{id: item}];
+            updating = 'item';
+        } else {
+            return;
+        }
+
+        if (dispatched === true) {
+            await Promise.all(items.map(async item => {
+                return await model.updateItemDispatchDate([date, item.id]);
+            }));
+            message = `Marked ${updating} as dispatched.`
+        } else if (dispatched === false) {
+            await Promise.all(items.map(async item => {
+                return await model.updateItemDispatchDate([null, item.id]);
+            }));
+            message = `Unmarked ${updating} as dispatched.`
+        }
+
+        if (delivered === true) {
+            console.log(userId, orderId, dispatched, delivered, reviewed)
+            await Promise.all(items.map(async item => {
+                return await model.updateItemDeliveryDate([date, item.id]);
+            }));
+            message = `Marked ${updating} as delivered.`
+        } else if (delivered === false) {
+            await Promise.all(items.map(async item => {
+                return await model.updateItemDeliveryDate([null, item.id]);
+            }));
+            message = `Unmarked ${updating} as dispatched.`
+        }
+
+        if (reviewed === true) {
+            await Promise.all(items.map(async item => {
+                return await model.updateItemCustomerReviewed([true, item.id]);
+            }));
+            message = `Marked ${updating} as reviewed.`
+        } else if (reviewed === false) {
+            await Promise.all(items.map(async item => {
+                return await model.updateItemCustomerReviewed([false, item.id]);
+            }));
+            message = `Unmarked ${updating} as reviewed.`
+        }
+
+        res.status(200).json(message)
+    } catch (err) {
+        next(err);
+    }
+}
 
 module.exports = {
     attributes, auth, cart, categories, customer, products, seller
