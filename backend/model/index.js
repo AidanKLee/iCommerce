@@ -697,6 +697,14 @@ const queries = [
         custom: `SELECT DISTINCT(date_part('year', date)) AS year FROM "order" WHERE customer_id = $1 ORDER BY year DESC`
     },
     {
+        name: 'selectSellerOrders',
+        custom: `SELECT "order".id, customer_id, date, delivery_address_id, payment_complete, postage_option, postage_price FROM "order" LEFT JOIN order_item ON "order".id = order_id LEFT JOIN item ON item.id = item_id WHERE seller_id = $1 AND date_part('year', date) >= $2 AND date_part('year', date) <= $3 AND name ILIKE $4 GROUP BY "order".id ORDER BY date DESC LIMIT $5 OFFSET $6`
+    },
+    {
+        name: 'selectSellerOrderYears',
+        custom: `SELECT DISTINCT(date_part('year', date)) AS year FROM "order" LEFT JOIN order_item ON "order".id = order_id WHERE seller_id = $1 ORDER BY year DESC`
+    },
+    {
         name: 'insertCustomerOrder',
         type: 'insert',
         tables: {name: '"order"', columns: ['id', 'customer_id', 'date', 'delivery_address_id']}
@@ -724,6 +732,12 @@ const queries = [
         type: 'select',
         tables: {name: 'order_item', columns: '*'},
         conditions: ['WHERE order_id =']
+    },
+    {
+        name: 'selectSellerOrderItems',
+        type: 'select',
+        tables: {name: 'order_item', columns: '*'},
+        conditions: ['WHERE order_id =', 'AND seller_id =']
     },
     {
         name: 'selectCustomerOrderItem',

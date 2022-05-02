@@ -44,7 +44,9 @@ const Body = props => {
                     <Route path='/my-shop/products' element={<Products type='my-shop'/>}>
                         <Route path='/my-shop/products/:category' element={<Products type='my-shop'/>}/>
                     </Route>
-                    <Route path='/my-shop/sold' element={<Sold />}/>
+                    <Route path='/my-shop/sold' element={<Sold />}>
+                        <Route path='/my-shop/sold' element={<OrderList type='my-shop'/>}/>
+                    </Route>
                     <Route path='/my-shop/sales' element={<Sales />}/>
                 </Route>
                 <Route path='/saved' element={<Saved/>}/>

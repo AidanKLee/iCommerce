@@ -413,6 +413,13 @@ seller.purgeUnusedImages = async (userId) => {
     })
 }
 
+seller.getOrders = async (userId, setter, params) => {
+    let orders = await fetch(`${baseUrl}/api/seller/${userId}/orders${params ? params : ''}`);
+    orders = await orders.json();
+    orders = { ...orders, orders: helper.groupOrdersItemsBySeller(orders.orders) };
+    setter(orders);
+}
+
 const api = {
     auth, categories, checkout, customer, helper, products, seller
 };

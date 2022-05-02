@@ -187,7 +187,7 @@ const CheckoutForm = props => {
                                                     </figure>
                                                     <div>
                                                         <p>{helper.currencyFormatter(item.total)}</p>
-                                                        <p>{`${item.price} each`}</p>
+                                                        { item.total / helper.currencyToInteger(item.price) > 1 ? <p>{`${item.price} each`}</p> : undefined }
                                                     </div>
                                                 </li>
                                             )

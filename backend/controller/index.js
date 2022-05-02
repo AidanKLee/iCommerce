@@ -804,6 +804,36 @@ const cart = {};
 
 
 
+const seller = {};
+
+seller.selectAllOrders = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        let from, to;
+        let { limit = 25, search = '', page = 1, year } = req.query;
+        if (!year) {
+            from = 0;
+            to = new Date().getFullYear();
+        } else {
+            from = year;
+            to = year;
+        }
+        if (page < 1) {
+            page = 1;
+        }
+        search = `%${search}%`;
+        // console.log(limit, search, page, year)
+        const offset = limit * (page - 1);
+        req.orders = await model.selectSellerOrders([userId, from, to, search, limit, offset]);
+        console.log(req.orders)
+        next();
+    } catch (err) {
+        next(err);
+    }
+}
+
+
+
 module.exports = {
-    attributes, auth, categories, customer, products, cart
+    attributes, auth, cart, categories, customer, products, seller
 }

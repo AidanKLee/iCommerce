@@ -148,21 +148,33 @@ helper.prepareSellerTransfers = async (req, res, next) => {
 
 helper.getOrdersData = async (req, res, next) => {
     try {
-        const { customerId } = req.params;
+        let years;
+        const { customerId, userId } = req.params;
         let orders = req.orders;
-        let years = await model.selectCustomerOrderYears([customerId]);
+        if (customerId) {
+            years = await model.selectCustomerOrderYears([customerId]);
+        } else {
+            years = await model.selectSellerOrderYears([userId]);
+        }
+        
         years = years.map(year => year.year);
         orders = await Promise.all(orders.map(async order => {
-            order.items = await model.selectCustomerOrderItems([order.id]);
+            if (customerId) {
+                order.items = await model.selectCustomerOrderItems([order.id]);
+            } else {
+                order.items = await model.selectSellerOrderItems([order.id, userId]);
+            }
             const address = await model.selectAddressById([order.delivery_address_id]);
             order.delivery_address = address[0];
             delete order.delivery_address_id;
             order.items = await Promise.all(order.items.map(async item => {
                 const seller = await model.selectSellerById([item.seller_id]);
-                item.seller = seller[0]
+                item.seller = seller[0];
                 delete item.seller_id;
                 const it = await model.selectItemById([item.item_id]);
                 item.item = it[0];
+                const image = await model.selectItemPrimaryImage([item.item.id]);
+                item.item.image = image[0];
                 delete item.item_id;
                 return item;
             }));

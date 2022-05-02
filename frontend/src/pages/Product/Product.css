@@ -96,10 +96,12 @@
 
 .product-page .top .right-wrapper .item-select .item {
     display: flex;
+    align-items: center;
+    width: 56px;
+    height: 56px;
     border: 2px solid rgba(0, 0, 0, 0.2);
     border-radius: 50%;
     overflow: hidden;
-    padding: 8px;
     margin: 4px 8px;
     outline: 4px solid rgba(230, 150, 0, 0);
     transition: .3s;
@@ -114,11 +116,11 @@
 }
 
 .product-page .top .right-wrapper .item-select .item img {
-    width: 40px;
-    height: 40px;
     object-fit: cover;
     border-radius: 50%;
     pointer-events: none;
+    height: 100%;
+    width: 100%;
 }
 
 .product-page .top .right-wrapper .attributes {

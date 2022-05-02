@@ -1,8 +1,8 @@
 const express = require('express');
 const route = express.Router();
 const controller = require('../controller/index.js');
-const { products } = controller;
-const { parser } = require('../controller/middleware')
+const { products, seller } = controller;
+const { helper, parser } = require('../controller/middleware')
 
 route.get('/:userId/products/:category', products.get);
 
@@ -13,5 +13,7 @@ route.post('/:userId/products/:productId/items', parser.json, products.createIte
 route.put('/:userId/products/:productId', parser.json, products.edit);
 
 route.delete('/:userId/products/images', products.purgeUnusedImages);
+
+route.get('/:userId/orders', seller.selectAllOrders, helper.getOrdersData);
 
 module.exports = route;

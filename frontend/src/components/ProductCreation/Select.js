@@ -2,10 +2,10 @@ import React from 'react';
 
 const Select = props => {
 
-    const { defaultValue, hidden, disabled = false, id, onChange, options, required = false, value } = props;
+    const { className, defaultValue, hidden, disabled = false, id, onChange, options, required = false, value } = props;
 
     return (
-        <select id={id} name={id} onChange={onChange} required={required} disabled={disabled} defaultValue={defaultValue} value={value}>
+        <select id={id} className={className} name={id} onChange={onChange} required={required} disabled={disabled} defaultValue={defaultValue} value={value}>
             { hidden ? <option default hidden value=''>{hidden}</option> : undefined }
             {
                 options.length > 0 ? (

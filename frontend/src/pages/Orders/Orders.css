@@ -2,10 +2,418 @@
     width: 100%;
 }
 
+.orders ul {
+    list-style: none;
+}
+
 .orders .header h2 {
     max-width: 1440px;
     font-weight: 600;
     font-size: 1.2rem;
     margin: 20px auto;
     padding: 0 16px;
+}
+
+.orders .main {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto 16px;
+}
+
+.orders .no-orders {
+    text-align: center;
+    width: 100%;
+    padding: 48px 0;
+    font-size: 1.2rem;
+    font-weight: 500;
+    background-color: white;
+}
+
+.orders .main .filter-wrapper {
+    padding: 8px;
+    background-color: #f1f1f1;
+    position: sticky;
+    top: 49px;
+    z-index: 10;
+}
+
+.orders .main .filter {
+    display: flex;
+    height: 48px;
+    padding: 0 8px;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.0);
+    transition: .3s;
+}
+
+.orders .main .filter:hover {
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.orders .main .filter select {
+    padding: 8px;
+}
+
+.orders .main .filter .limit {
+    border-left: 1px solid rgba(0, 0, 0, 0.1);;
+}
+
+.orders .main .filter .search {
+    flex: 1 1;
+    display: flex;
+    align-items: center;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+.orders .main .filter .search input {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+    padding: 0 8px;
+}
+
+.orders .main .filter .search input:focus + label {
+    transform: scale(1.4);
+    fill: rgba(0, 0, 0, 0.6);
+}
+
+.orders .main .filter label {
+    display: flex;
+    fill: rgba(0, 0, 0, 0.2);
+    margin-right: 8px;
+    transition: .3s;
+}
+
+.orders .main .filter label svg {
+    pointer-events: none;
+}
+
+.orders .main .filter input:focus, .orders .main .filter select:focus {
+    outline: 0 transparent none;
+}
+
+.orders .main .list {
+    margin: 0 16px;
+    list-style: none;
+}
+
+.orders .main .list .item {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.orders .main .list .item .top {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    font-size: .8rem;
+    margin-bottom: 8px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.orders .main .list .item .top.blue {
+    background-color: #6464ff;
+    color: white;
+}
+
+.orders .main .list .item .top figure, .orders .main .list .item .top figure figcaption, .orders .main .list .item .top figure figcaption a {
+    color: inherit;
+}
+
+.orders .main .list .item .top .left {
+    display: flex;
+    flex: 1 1;
+    color: inherit;
+}
+
+.orders .main .list .item .top .right {
+    display: flex;
+    align-items: center;
+    text-align: right;
+    color: inherit;
+    margin-left: 16px;
+}
+
+.orders .more {
+    position: relative;
+    display: flex;
+    height: 32px;
+    width: 32px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    height: fit-content;
+    padding: 4px;
+    fill: white;
+    margin-left: 8px;
+}
+
+.orders .more.invert {
+    background-color: rgba(0, 0, 0, 0.05);
+    fill: #1f1f1f;
+}
+
+.orders .more .dropdown {
+    position: absolute;
+    z-index: 10;
+    right: 8px;
+    top: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    overflow: hidden;
+    max-height: 0;
+    filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.6));
+    transition: .3s;
+}
+
+.orders .more:hover .dropdown {
+    max-height: 76px;
+}
+
+.orders .more .dropdown .arrow {
+    width: 0; 
+    height: 0; 
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #4f4f4f;
+}
+
+.orders .more .dropdown .actions {
+    background-color: #4f4f4f;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    text-align: left;
+    overflow: hidden;
+}
+
+.orders .more .dropdown .actions li {
+    background-color: transparent;
+    font-weight: 500;
+    padding: 8px 12px;
+    color: #f1f1f1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.orders .more .dropdown .actions li:hover {
+    background-color: #3f3f3f;
+}
+
+.orders .main .list .item .top .right a:hover {
+    text-decoration: underline;
+}
+
+.orders .main .list .item .top figure p {
+    font-weight: 500;
+    white-space: nowrap;
+    color: inherit;
+}
+
+.orders .main .list .item .top .head {
+    margin-left: 16px;
+}
+
+.orders .main .list .item .bottom {
+    margin: 0 8px;
+}
+
+.orders .main .list .item .bottom .seller {
+    margin-bottom: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    box-shadow: inset 4px 4px 4px rgba(0, 0, 0, 0.08);
+}
+
+.orders .main .list .item .bottom .seller .top {
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.orders .main .list .item .bottom .seller .top .right {
+    display: flex;
+}
+
+.orders .main .list .item .bottom .seller .top p {
+    font-weight: 500;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .right {
+    display: flex;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .left {
+    display: flex;
+    font-size: .8rem;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .left a {
+    display: flex;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .left img {
+    height: 48px;
+    width: 48px;
+    object-fit: cover;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    margin-right: 8px;
+    outline: 2px solid transparent;
+    transition: .3s;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .left .details {
+    margin: auto;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .left .details a:hover p {
+    text-decoration: underline;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .left a:hover img {
+    outline: 2px solid #6464ff6e;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .left .details p {
+    font-weight: 500;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .left .details span {
+    font-weight: 500;
+    margin: 0 4px 0 16px;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .left .details span:first-of-type {
+    font-weight: 500;
+    margin-left: 0;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .right {
+    margin: auto 0;
+    justify-content: flex-end;
+    text-align: right;
+    font-size: .8rem;
+}
+
+.orders .main .list .item .bottom .seller .bottom .item .right span {
+    font-weight: 500;
+}
+
+.orders .main .payment {
+    display: flex;
+    justify-content: center;
+    background-color: #e69600;
+    padding: 8px;
+    color: white;
+    fill: white;
+    cursor: pointer;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    transition: .3s;
+}
+
+.orders .main .payment:hover {
+    background-color: #d88c00;
+}
+
+.orders .main .payment:active {
+    background-color: #c98200;
+}
+
+.orders .main .payment p {
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.orders .head.status {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 16px;
+}
+
+@media only screen and (max-width: 880px) {
+    .orders .head.postage {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 760px) {
+    .orders .head.add {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 560px) {
+    .orders .details .total {
+        display: none;
+    }
+
+    .orders .head.total {
+        display: none;
+    }
+
+    .orders .list .item .top.blue {
+        align-items: center;
+    }
+
+    .orders .id {
+        font-size: .6rem;
+    }
+
+    .orders .head.status span {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .orders .main .seller .bottom .item .left .details {
+        font-size: .6rem;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .orders .main .seller .bottom .item .right .status {
+        font-size: .6rem;
+    }
+
+    .orders .main .seller .top .total {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 352px) {
+    .orders .main .filter .limit {
+        display: none;
+    }
+    
+    .orders .main .seller .bottom .item .right .status {
+        display: none;
+    }
+    
+    .orders .head.order-id {
+        margin-left: 0 !important;
+    }
+    
+    .orders .head.order-id p {
+        display: none;
+    }
 }
