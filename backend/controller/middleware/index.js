@@ -296,6 +296,7 @@ stripe.generatePaymentIntent = async (req, res, next) => {
         }))
         let total = shipping;
         items.forEach(item => total += item.total);
+        console.log(items, total)
         let paymentIntent;
         const order_id = uuid();
         if (!req.session.passport.user.intentId || req.session.passport.user.prevTotal !== total) {

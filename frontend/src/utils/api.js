@@ -260,7 +260,6 @@ checkout.paymentIntent = async (data, clientSetter, dataSetter, orderIdSetter) =
             body: JSON.stringify(data)
         })
         data = await data.json();
-        console.log(data.paymentIntent)
         clientSetter(data.paymentIntent.client_secret);
         orderIdSetter(data.paymentIntent.metadata.order_id);
         delete data.paymentIntent;
