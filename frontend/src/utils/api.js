@@ -296,6 +296,7 @@ const helper = {};
 helper.currencyFormatter = numberToFormat => new Intl.NumberFormat(undefined, {
     style: 'currency',
     currency,
+    currencyDisplay: 'narrowSymbol'
 }).format(numberToFormat);
 
 helper.currencyToInteger = currencyToFormat => {
