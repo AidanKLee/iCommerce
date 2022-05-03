@@ -297,6 +297,7 @@ customer.submitOrder = async (req, res, next) => {
         console.log(5)
         res.status(200).json({message: 'Order submitted. Awaiting payment confirmation.'})
     } catch (err) {
+        console.log(err)
         next(err);
     }
 }
