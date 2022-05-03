@@ -13,6 +13,7 @@ auth.getUser = async () => {
 auth.restoreUserSession = async (dispatcher, method, user) => {
     let data = await fetch(`${baseUrl}/api/auth`);
     data = await data.json();
+    console.log(data)
     const opener = window.opener;
     if (opener && opener.OAuth2) {
         window.addEventListener('beforeunload', async () => {
@@ -258,6 +259,7 @@ checkout.paymentIntent = async (data, clientSetter, dataSetter, orderIdSetter) =
         body: JSON.stringify(data)
     })
     data = await data.json();
+    console.log(data.paymentIntent)
     clientSetter(data.paymentIntent.client_secret);
     orderIdSetter(data.paymentIntent.metadata.order_id);
     delete data.paymentIntent;
