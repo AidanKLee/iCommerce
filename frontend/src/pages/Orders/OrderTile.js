@@ -232,7 +232,6 @@ const OrderTile = props => {
                                 <ul className='bottom'>
                                     {
                                         items.map(i => {
-                                            console.log(i)
                                             const { 
                                                 cancelled, delivery_date, dispatch_date, id: orderItemId, item,
                                                 item_price, item_quantity, reviewed_item, reviewed_customer, reviewed_seller

@@ -84,7 +84,6 @@ auth.login = async ({form, saved, bag}) => {
 };
 
 auth.syncItems = async (user, saved = [], bag = []) => {
-    console.log(saved, bag)
     await Promise.all(saved.map(async item => {
         return await customer.saveItem(user.id, item.item_id, true);
     }));
@@ -118,7 +117,6 @@ const categories = {};
 
 categories.getMain = async setter => {
     const [ cat, setCat ] = setter;
-    console.log(`${baseUrl}/api/categories/main`)
     let categories = await fetch(`${baseUrl}/api/categories/main`);
     categories = await categories.json();
     setCat({
@@ -252,7 +250,6 @@ customer.submitReview = async (customerId, form) => {
 const checkout = {};
 
 checkout.paymentIntent = async (data, clientSetter, dataSetter, orderIdSetter) => {
-    console.log('getting payment intent')
     data = await fetch(`${baseUrl}/api/checkout/intent`, {
         method: 'POST',
         headers: {

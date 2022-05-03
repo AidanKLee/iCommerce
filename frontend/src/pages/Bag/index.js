@@ -29,7 +29,6 @@ const Bag = props => {
 
     useEffect(() => {
         const getItems = async () => {
-            console.log('getting items')
             setInitialLoad(true);
             setLoading(true);
             let products = await p.getByItemIdList(user.cart.items, user.cart.id);

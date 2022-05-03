@@ -97,7 +97,6 @@ helper.getProductsById = async (productsArray) => {
         product.sale = sale[0];
         const seller = await model.selectSellerByProduct([product.id]);
         product.seller = seller[0];
-        console.log(seller[0])
         const sellerStats = await model.selectSellerStats([seller[0].id]);
         product.seller.stats = sellerStats[0];
         delete product.seller_id;
@@ -192,8 +191,6 @@ helper.submitReview = async (req, res, next) => {
         const id = uuid();
         const { customerId, userId } = req.params;
         const { order_id, customer_id, order_item_id, product_id, seller_id, rating, review } = req.body;
-        console.log(req.params)
-        console.log(req.body)
         if (customer_id) {
             await model.insertCustomerReview([id, userId, order_id, customer_id, rating, review]);
             await model.updateItemCustomerReviewed([true, order_item_id]);

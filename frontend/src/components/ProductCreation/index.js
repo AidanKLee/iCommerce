@@ -231,8 +231,6 @@ const NewProduct = props => {
         setForm({...form, items, images})
     }
 
-    console.log(form)
-
     return (
         <div className='new-product'>
             <div className='card'>
