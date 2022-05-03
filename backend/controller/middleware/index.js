@@ -309,25 +309,21 @@ stripe.generatePaymentIntent = async (req, res, next) => {
                 description: JSON.stringify({order_id}),
                 metadata: {
                     order_id
-                }, 
-                // application_fee_amount: Math.floor(total * 100 * .05),
+                },
                 transfer_group: order_id
             })
             req.session.passport.user.intentId = paymentIntent.id
             req.session.passport.user.prevTotal = total
+            console.log(paymentIntent)
         } else {
             paymentIntent = await s.paymentIntents.update(
                 req.session.passport.user.intentId,
                 {
                     amount: Math.round(total * 100),
-                    currency: 'gbp',
-                    // automatic_payment_methods: {
-                    //     enabled: true,
-                    // },
-                    // application_fee_amount: Math.floor(total * 100 * .05),
-                    // transfer_group: uuid()
+                    currency: 'gbp'
                 }
             )
+            console.log(paymentIntent)
         }
         res.status(200).json({items, total, paymentIntent});
     } catch (err) {
