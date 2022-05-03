@@ -674,7 +674,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _bab
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"currency\": function() { return /* binding */ currency; }\n/* harmony export */ });\nvar env = \"development\";\nvar baseUrl = env === 'development' ? 'https://localhost:3000' : 'https://i-commerce-uk.herokuapp.com';\nvar currency = env === 'development' ? 'GBP' : 'USD';\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (baseUrl);\n\n//# sourceURL=webpack://i-commerce/./frontend/src/utils/baseUrl.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"currency\": function() { return /* binding */ currency; }\n/* harmony export */ });\nvar env = 'production';\nvar baseUrl = env === 'development' ? 'https://localhost:3000' : 'https://i-commerce-uk.herokuapp.com';\nvar currency = env === 'development' ? 'GBP' : 'USD';\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (baseUrl);\n\n//# sourceURL=webpack://i-commerce/./frontend/src/utils/baseUrl.js?");
 
 /***/ }),
 
