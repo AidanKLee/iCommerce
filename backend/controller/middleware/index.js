@@ -298,32 +298,20 @@ stripe.generatePaymentIntent = async (req, res, next) => {
         items.forEach(item => total += item.total);
         let paymentIntent;
         const order_id = uuid();
-        if (!req.session.passport.user.intentId || req.session.passport.user.prevTotal !== total) {
-            paymentIntent = await s.paymentIntents.create({
-                amount: Math.round(total * 100),
-                currency: 'gbp',
-                automatic_payment_methods: {
-                    enabled: true,
-                },
-                description: JSON.stringify({order_id}),
-                metadata: {
-                    order_id
-                },
-                transfer_group: order_id
-            })
-            req.session.passport.user.intentId = paymentIntent.id
-            req.session.passport.user.prevTotal = total
-            console.log(paymentIntent)
-        } else {
-            paymentIntent = await s.paymentIntents.update(
-                req.session.passport.user.intentId,
-                {
-                    amount: Math.round(total * 100),
-                    currency: 'gbp'
-                }
-            )
-            console.log(paymentIntent)
-        }
+        paymentIntent = await s.paymentIntents.create({
+            amount: Math.round(total * 100),
+            currency: 'gbp',
+            automatic_payment_methods: {
+                enabled: true,
+            },
+            description: JSON.stringify({order_id}),
+            metadata: {
+                order_id
+            },
+            transfer_group: order_id
+        })
+        req.session.passport.user.intentId = paymentIntent.id
+        req.session.passport.user.prevTotal = total
         res.status(200).json({items, total, paymentIntent});
     } catch (err) {
         console.log(err)
