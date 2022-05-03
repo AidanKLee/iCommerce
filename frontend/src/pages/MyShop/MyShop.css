@@ -147,11 +147,11 @@
 .my-shop .page .main .filter {
     display: flex;
     height: 48px;
-    padding: 0 8px;
     background-color: white;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.0);
+    overflow: hidden;
     transition: .3s;
 }
 
@@ -172,8 +172,6 @@
     display: flex;
     align-items: center;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    margin-left: 8px;
 }
 
 .my-shop .page .main .filter .search input {
