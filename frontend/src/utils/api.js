@@ -1,4 +1,4 @@
-import baseUrl from './baseUrl';
+import baseUrl, { currency } from './baseUrl';
 
 const auth = {};
 
@@ -295,7 +295,7 @@ const helper = {};
 
 helper.currencyFormatter = numberToFormat => new Intl.NumberFormat(undefined, {
     style: 'currency',
-    currency: 'GBP',
+    currency,
 }).format(numberToFormat);
 
 helper.currencyToInteger = currencyToFormat => {

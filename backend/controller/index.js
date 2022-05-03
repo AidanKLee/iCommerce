@@ -282,20 +282,15 @@ customer.submitOrder = async (req, res, next) => {
         const { orderId, customerId } = req.params;
         const { deliveryAddressId, postage, items, cartId } = req.body;
         postage.price = Number(postage.price.slice(1).replace(',',''));
-        console.log(1)
         await model.insertOrder([orderId, customerId, deliveryAddressId, postage.option, postage.price]);
-        console.log(2)
         await Promise.all(items.map(async item => {
             const { seller_id, item_id, item_quantity, item_price } = item;
             await model.itemsSold([item_quantity, item_id]);
             await model.insertOrderItem([uuid(), orderId, seller_id, item_id, item_price, item_quantity]);
             await model.deleteCartItem([cartId, item_id]);
         }));
-        console.log(3)
         await model.deleteCart([customerId]);
-        console.log(4)
         await model.insertCart([uuid(), customerId]);
-        console.log(5)
         res.status(200).json({message: 'Order submitted. Awaiting payment confirmation.'})
     } catch (err) {
         console.log(err)
