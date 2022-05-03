@@ -265,7 +265,7 @@ checkout.paymentIntent = async (data, clientSetter, dataSetter, orderIdSetter) =
         delete data.paymentIntent;
         dataSetter(data);
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
 }
 
