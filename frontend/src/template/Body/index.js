@@ -13,7 +13,7 @@ import Product from '../../pages/Product';
 import Saved from '../../pages/Saved';
 import Bag from '../../pages/Bag';
 import Checkout from '../../pages/Checkout';
-import PaymentStatus from '../../pages/PaymentStatus';
+import PaymentStatus from '../../pages/paymentStatus';
 import CheckoutForm from '../../pages/Checkout/CheckoutForm';
 import Orders from '../../pages/Orders';
 import OrderList from '../../pages/Orders/OrderList';
