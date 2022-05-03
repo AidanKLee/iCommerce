@@ -251,19 +251,23 @@ customer.submitReview = async (customerId, form) => {
 const checkout = {};
 
 checkout.paymentIntent = async (data, clientSetter, dataSetter, orderIdSetter) => {
-    data = await fetch(`${baseUrl}/api/checkout/intent`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    data = await data.json();
-    console.log(data.paymentIntent)
-    clientSetter(data.paymentIntent.client_secret);
-    orderIdSetter(data.paymentIntent.metadata.order_id);
-    delete data.paymentIntent;
-    dataSetter(data);
+    try {
+        data = await fetch(`${baseUrl}/api/checkout/intent`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        data = await data.json();
+        console.log(data.paymentIntent)
+        clientSetter(data.paymentIntent.client_secret);
+        orderIdSetter(data.paymentIntent.metadata.order_id);
+        delete data.paymentIntent;
+        dataSetter(data);
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 checkout.submitOrder = async (customerId, orderId, body) => {
