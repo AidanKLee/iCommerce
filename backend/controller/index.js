@@ -601,7 +601,7 @@ products.get = async (req, res, next) => {
             const items = await model.selectProductItems([...dbQuery, product.id]);
             const sale = await model.selectProductSales([product.id]);
             const seller = await model.selectSellerByProduct([product.id]);
-            const sellerStats = await model.selectSellerStats([seller.id]);
+            const sellerStats = await model.selectSellerStats([seller[0].id]);
             const stats = await model.selectProductStats([product.id]);
             delete product.seller_id;
             return {
@@ -868,7 +868,9 @@ seller.updateSellerOrder = async(req, res, next) => {
         let message;
 
         if (!userId || !orderId) {
-            return;
+            const err = new Error();
+            err.message = 'User ID and Order ID are required.'
+            return next(err);
         }
 
         if (!item) {
@@ -878,7 +880,9 @@ seller.updateSellerOrder = async(req, res, next) => {
             items = [{id: item}];
             updating = 'item';
         } else {
-            return;
+            const err = new Error();
+            err.message = 'At least one order item ID is required.'
+            return next(err);
         }
 
         if (dispatched === true) {
@@ -894,7 +898,6 @@ seller.updateSellerOrder = async(req, res, next) => {
         }
 
         if (delivered === true) {
-            console.log(userId, orderId, dispatched, delivered, reviewed)
             await Promise.all(items.map(async item => {
                 return await model.updateItemDeliveryDate([date, item.id]);
             }));

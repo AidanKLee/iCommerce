@@ -97,7 +97,8 @@ helper.getProductsById = async (productsArray) => {
         product.sale = sale[0];
         const seller = await model.selectSellerByProduct([product.id]);
         product.seller = seller[0];
-        const sellerStats = await model.selectSellerStats([seller.id]);
+        console.log(seller[0])
+        const sellerStats = await model.selectSellerStats([seller[0].id]);
         product.seller.stats = sellerStats[0];
         delete product.seller_id;
         const items = await model.selectItemsByProductId([product.id]);
@@ -181,6 +182,33 @@ helper.getOrdersData = async (req, res, next) => {
             return order;
         }));
         res.status(200).json({orders, years});
+    } catch (err) {
+        next(err);
+    }
+}
+
+helper.submitReview = async (req, res, next) => {
+    try {
+        const id = uuid();
+        const { customerId, userId } = req.params;
+        const { order_id, customer_id, order_item_id, product_id, seller_id, rating, review } = req.body;
+        console.log(req.params)
+        console.log(req.body)
+        if (customer_id) {
+            await model.insertCustomerReview([id, userId, order_id, customer_id, rating, review]);
+            await model.updateItemCustomerReviewed([true, order_item_id]);
+        } else if (product_id) {
+            await model.insertProductReview([id, customerId, order_id, product_id, rating, review]);
+            await model.updateItemReviewed([true, order_item_id]);
+        } else if (seller_id) {
+            await model.insertSellerReview([id, customerId, order_id, seller_id, rating, review]);
+            await model.updateItemSellerReviewed([true, order_item_id]);
+        } else {
+            const err = new Error();
+            err.message = 'A customer_id, product_id or seller_id is required.'
+            return next(err);
+        }
+        res.status(200).json({message: 'Your review has been submitted.'})
     } catch (err) {
         next(err);
     }

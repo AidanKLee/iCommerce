@@ -312,8 +312,20 @@
     transition: .3s;
 }
 
+.my-shop .page .more .dropdown .actions li a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: inherit;
+    font-weight: inherit;
+}
+
 .my-shop .page .more .dropdown .actions li:hover {
     background-color: #3f3f3f;
+}
+
+.my-shop .page .more .dropdown .actions li a:hover {
+    text-decoration: none !important;
 }
 
 .my-shop .page .main .list .item .top .right a:hover {

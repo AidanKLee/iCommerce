@@ -205,6 +205,7 @@ const ProductData = props => {
                 </div>
                 <div className='bottom'>
                     <div className='seller'>
+                    {console.log(seller.stats)}
                         <Link to={`/${seller.shop_name}/products`} className='name'>{seller.shop_name}</Link>
                         <Rating count={5} value={seller.stats.average_rating || 2.5} width='16px'/>
                     </div>

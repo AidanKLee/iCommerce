@@ -9,7 +9,7 @@ const OrderTile = props => {
     const { location, order, setOrders, type, user } = props;
     
     let { 
-        date, delivery_address, id, payment_complete,
+        customer_id, date, delivery_address, id, payment_complete,
         postage_option, postage_price, sellers
     } = useMemo(() => order, [order]);
 
@@ -78,13 +78,19 @@ const OrderTile = props => {
         return helper.currencyFormatter(total);
     }, [postage_price, sellers])
 
+    const reviewState = useMemo(() => {
+        return {
+            user_id: user.id,
+            order_id: id
+        }
+    }, [user, id])
+
     const handleCancel = (sellerId, orderItemId) => {
         c.cancelOrder(user.id, id, sellerId, orderItemId)
         .then(() => c.getOrders(user.id, setOrders, location.search))
     }
 
     const handleUpdateOrderSeller = (orderItemId, { dispatched, delivered, reviewed }) => {
-        console.log('updating item')
         s.updateOrder(user.id, id, orderItemId, dispatched, delivered, reviewed)
         .then(() => s.getOrders(user.id, setOrders, location.search))
     }
@@ -182,20 +188,20 @@ const OrderTile = props => {
                                                                     !cancelled && !dispatched ? (
                                                                         <li onClick={() => handleCancel(sellerId)}>Cancel order from this seller</li>
                                                                     ) : !cancelled && delivered && !reviewed ? (
-                                                                        <li>Review Seller</li>
+                                                                        <li><Link to='/review' state={{...reviewState, seller_id: sellerId, name: shop_name, order_item_id: items[0].id}}>Review Seller</Link></li>
                                                                     ) : undefined
                                                                 }
                                                             </ul>
                                                         </div>
                                                     ) : undefined
                                                 ) : (
-                                                    !cancelled && payment_complete ? (
+                                                    !cancelled && payment_complete && ((!reviewedCustomer && payment_complete) || (!dispatched || !delivered) || (!reviewed && (dispatched || delivered))) ? (
                                                         <div className='dropdown'>
                                                             <div className='arrow'></div>
                                                             <ul className='actions'>
                                                                 {
                                                                     !reviewedCustomer && payment_complete ? (
-                                                                        <li>Review customer</li>
+                                                                        <li><Link to='/review' state={{...reviewState, customer_id, order_item_id: items[0].id}}>Review customer</Link></li>
                                                                     ) : undefined
                                                                 }
                                                                 {
@@ -226,9 +232,10 @@ const OrderTile = props => {
                                 <ul className='bottom'>
                                     {
                                         items.map(i => {
+                                            console.log(i)
                                             const { 
-                                                cancelled, delivery_date, dispatch_date, id: orderItemId,
-                                                item, item_price, item_quantity, reviewed_item
+                                                cancelled, delivery_date, dispatch_date, id: orderItemId, item,
+                                                item_price, item_quantity, reviewed_item, reviewed_customer, reviewed_seller
                                             } = i;
                                             return (
                                                 <li key={item.id} className='item'>
@@ -260,7 +267,7 @@ const OrderTile = props => {
                                                             <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.1 14.35Q4.125 14.35 3.438 13.662Q2.75 12.975 2.75 12Q2.75 11.025 3.438 10.337Q4.125 9.65 5.1 9.65Q6.075 9.65 6.763 10.337Q7.45 11.025 7.45 12Q7.45 12.975 6.763 13.662Q6.075 14.35 5.1 14.35ZM12 14.35Q11.025 14.35 10.338 13.662Q9.65 12.975 9.65 12Q9.65 11.025 10.338 10.337Q11.025 9.65 12 9.65Q12.975 9.65 13.663 10.337Q14.35 11.025 14.35 12Q14.35 12.975 13.663 13.662Q12.975 14.35 12 14.35ZM18.9 14.35Q17.925 14.35 17.238 13.662Q16.55 12.975 16.55 12Q16.55 11.025 17.238 10.337Q17.925 9.65 18.9 9.65Q19.875 9.65 20.562 10.337Q21.25 11.025 21.25 12Q21.25 12.975 20.562 13.662Q19.875 14.35 18.9 14.35Z"/></svg>
                                                             {
                                                                 type !== 'my-shop' ? (
-                                                                    !cancelled && !dispatch_date && !delivery_date && !reviewed_item ? (
+                                                                    (!cancelled && !dispatch_date && !delivery_date) || (!cancelled && delivery_date && !reviewed_item) ? (
                                                                         <div className='dropdown'>
                                                                             <div className='arrow'></div>
                                                                             <ul className='actions'>
@@ -268,14 +275,14 @@ const OrderTile = props => {
                                                                                     !cancelled && !dispatch_date && !delivery_date ? (
                                                                                         <li onClick={() => handleCancel(sellerId, orderItemId)}>Cancel item</li>
                                                                                     ) : !cancelled && delivery_date && !reviewed_item ? (
-                                                                                        <li>Review item</li>
+                                                                                        <li><Link to='/review' state={{...reviewState, product_id: item.product_id, name: item.name, order_item_id: items[0].id}}>Review item</Link></li>
                                                                                     ) : undefined
                                                                                 }
                                                                             </ul>
                                                                         </div>
                                                                     ) : undefined
                                                                 ) : (
-                                                                    !cancelled && payment_complete ? (
+                                                                    !cancelled && payment_complete && ((!dispatch_date || !delivery_date) || (!reviewed_item && (delivery_date || dispatch_date))) ? (
                                                                         <div className='dropdown'>
                                                                             <div className='arrow'></div>
                                                                             <ul className='actions'>

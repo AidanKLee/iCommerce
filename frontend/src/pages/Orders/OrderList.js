@@ -8,7 +8,6 @@ const OrderList = props => {
 
     const { type } = props;
 
-    // const location = useLocation();
     const searchTimer = useRef(null);
 
     const limits = useMemo(() => [

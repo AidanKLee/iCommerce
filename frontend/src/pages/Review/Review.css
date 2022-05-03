@@ -1,0 +1,65 @@
+.review {
+    width: 100%;
+}
+
+.review .header h2 {
+    max-width: 1440px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 20px auto;
+    padding: 0 16px;
+}
+
+.review .main {
+    background-color: white;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.review .main .wrapper {
+    padding: 16px 16px;
+    max-width: 1280px;
+    width: 100%;
+}
+
+.review .main .wrapper h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.review .main .wrapper .rating {
+    margin: 16px 0 32px;
+}
+
+.review .main .wrapper textarea {
+    height: 35vh;
+    width: 100%;
+    padding: 8px;
+    margin: 16px 0 0;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.review .main .wrapper .counter {
+    font-size: .8rem;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.review .main .wrapper .actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.review .main .wrapper .actions .submit {
+    margin-top: 16px;
+    width: 192px;
+    padding: 8px;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: #6464ff;
+    color: white;
+    cursor: pointer;
+}

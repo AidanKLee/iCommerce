@@ -18,4 +18,6 @@ route.get('/:userId/orders', seller.selectAllOrders, helper.getOrdersData);
 
 route.put('/:userId/orders/:orderId', seller.updateSellerOrder);
 
+route.post('/:userId/review', parser.json, helper.submitReview);
+
 module.exports = route;

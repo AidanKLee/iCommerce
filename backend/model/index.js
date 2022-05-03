@@ -854,7 +854,7 @@ const queries = [
     {
         name: 'insertProductReview',
         type: 'insert',
-        tables: {name: 'product_review', columns: ['id', 'user_id', 'order_id', 'product_id', 'date', 'rating', 'review']}
+        tables: {name: 'product_review', columns: ['id', 'user_id', 'order_id', 'product_id', 'rating', 'review']}
     },
     {
         name: 'updateProductReview',
@@ -883,7 +883,7 @@ const queries = [
     {
         name: 'insertSellerReview',
         type: 'insert',
-        tables: {name: 'seller_review', columns: ['id', 'user_id', 'order_id', 'seller_id', 'date', 'rating', 'review']}
+        tables: {name: 'seller_review', columns: ['id', 'user_id', 'order_id', 'seller_id', 'rating', 'review']}
     },
     {
         name: 'updateSellerReview',
@@ -912,7 +912,7 @@ const queries = [
     {
         name: 'insertCustomerReview',
         type: 'insert',
-        tables: {name: 'customer_review', columns: ['id', 'user_id', 'order_id', 'customer_id', 'date', 'rating', 'review']}
+        tables: {name: 'customer_review', columns: ['id', 'user_id', 'order_id', 'customer_id', 'rating', 'review']}
     },
     {
         name: 'updateCustomerReview',

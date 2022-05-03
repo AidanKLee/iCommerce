@@ -18,6 +18,7 @@ import CheckoutForm from '../../pages/Checkout/CheckoutForm';
 import Orders from '../../pages/Orders';
 import OrderList from '../../pages/Orders/OrderList';
 import OrderDetails from '../../pages/Orders/OrderDetails';
+import Review from '../../pages/Review'
 
 const Body = props => {
 
@@ -55,6 +56,7 @@ const Body = props => {
                     <Route path='/orders' element={<OrderList/>}/>
                     <Route path='/orders/:orderId' element={<OrderDetails/>}/>
                 </Route>
+                <Route path='/review' element={<Review/>}/>
             </Routes>
         </section>
         

@@ -241,6 +241,14 @@ customer.cancelOrder = async (customerId, orderId, sellerId, orderItemId) => {
     await fetch(url, { method: 'DELETE' });
 }
 
+customer.submitReview = async (customerId, form) => {
+    await fetch(`${baseUrl}/api/customer/${customerId}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+    })
+}
+
 const checkout = {};
 
 checkout.paymentIntent = async (data, clientSetter, dataSetter, orderIdSetter) => {
@@ -464,6 +472,14 @@ seller.updateOrder = async (userId, orderId, orderItemId, dispatched, delivered,
     }
 
     await fetch(url + params, { method: 'PUT' });
+}
+
+seller.submitReview = async (sellerId, form) => {
+    await fetch(`${baseUrl}/api/seller/${sellerId}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+    })
 }
 
 const api = {
