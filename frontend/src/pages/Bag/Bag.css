@@ -225,3 +225,9 @@
         margin-bottom: 0;
     }
 }
+
+@media only screen and (max-width: 960px) {
+    .bag .tile .img img {
+        object-fit: contain;
+    }
+}

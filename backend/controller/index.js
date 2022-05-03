@@ -602,6 +602,7 @@ products.get = async (req, res, next) => {
             const sale = await model.selectProductSales([product.id]);
             const seller = await model.selectSellerByProduct([product.id]);
             const sellerStats = await model.selectSellerStats([seller[0].id]);
+            console.log(sellerStats)
             const stats = await model.selectProductStats([product.id]);
             delete product.seller_id;
             return {
