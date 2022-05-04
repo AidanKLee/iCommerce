@@ -98,7 +98,6 @@ helper.getProductsById = async (productsArray) => {
         const seller = await model.selectSellerByProduct([product.id]);
         product.seller = seller[0];
         const sellerStats = await model.selectSellerStats([seller[0].id]);
-        console.log(sellerStats)
         product.seller.stats = sellerStats[0];
         delete product.seller_id;
         const items = await model.selectItemsByProductId([product.id]);

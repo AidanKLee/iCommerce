@@ -26,8 +26,6 @@ const ProductData = props => {
         items, stats, seller, views 
     } = product;
 
-    console.log(seller)
-
     const selectedCategories = useMemo(() => {
 
         let cats;

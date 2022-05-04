@@ -128,7 +128,7 @@ const OrderTile = props => {
                     <figure className='head order-id'>
                         <p>Order ID:</p>
                         <figcaption className='id'>
-                            <Link to={`/orders/${id}`} state={order}>{ id }</Link>
+                            <Link to={`/orders/${id}`} state={{order, type}}>{ id }</Link>
                         </figcaption>
                     </figure>
                     {
@@ -234,7 +234,7 @@ const OrderTile = props => {
                                         items.map(i => {
                                             const { 
                                                 cancelled, delivery_date, dispatch_date, id: orderItemId, item,
-                                                item_price, item_quantity, reviewed_item, reviewed_customer, reviewed_seller
+                                                item_price, item_quantity, reviewed_item
                                             } = i;
                                             return (
                                                 <li key={item.id} className='item'>

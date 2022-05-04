@@ -4,12 +4,12 @@ import './Redirect.css';
 
 const Redirect = props => {
 
-    const { to } = props;
+    const { to, state } = props;
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        navigate(to);
+        navigate(to, {state});
     })
 
     return (

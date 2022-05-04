@@ -160,8 +160,6 @@ const Top = props => {
 
     const { seller } = product;
 
-    console.log(seller)
-
     const { averageRating, reviewCount } = useMemo(() => {
         return {
             averageRating: Number(stats.average_rating) || 2.5,

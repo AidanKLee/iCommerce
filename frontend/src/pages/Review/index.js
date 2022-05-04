@@ -44,12 +44,12 @@ const Review = props => {
             s.submitReview(user_id, {
                 order_id, customer_id, order_item_id, rating, review
             })
-            .then(() => navigate('/my-shop/sold', { replace: false }))
+            .then(() => navigate(-1))
         } else {
             c.submitReview(user_id, {
                 order_id, order_item_id, product_id, seller_id, rating, review
             })
-            .then(() => navigate('/orders', { replace: false }))
+            .then(() => navigate(-1))
         }
     }
 
@@ -63,7 +63,7 @@ const Review = props => {
             <div className='main'>
                 <div className='wrapper'>
                     <h3>
-                        { `Rate ${name ? name : 'your ' + type.split('_')[0].slice(0,1).toUpperCase() + type.split('_')[0].slice(1)}`}
+                        { `Rate ${name ? name : 'Your ' + type.split('_')[0].slice(0,1).toUpperCase() + type.split('_')[0].slice(1)}`}
                     </h3>
                     <Rating onChange={handleRatingChange} count={5} value={rating} width='32px'/>
                     <h3>
@@ -78,7 +78,7 @@ const Review = props => {
             </div>
             {
                 !customer_id && !product_id && !seller_id ? (
-                    <Redirect/>
+                    <Redirect to={-1}/>
                 ) : undefined
             }
         </section>

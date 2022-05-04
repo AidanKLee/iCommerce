@@ -13,7 +13,6 @@ auth.getUser = async () => {
 auth.restoreUserSession = async (dispatcher, method, user) => {
     let data = await fetch(`${baseUrl}/api/auth`);
     data = await data.json();
-    console.log(data)
     const opener = window.opener;
     if (opener && opener.OAuth2) {
         window.addEventListener('beforeunload', async () => {
