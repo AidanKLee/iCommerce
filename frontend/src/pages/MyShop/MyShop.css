@@ -137,9 +137,12 @@
     justify-content: flex-start;
 }
 
+.my-shop .page .main ul {
+    list-style: none;
+}
+
 .my-shop .page .main .page-navigation {
     margin-top: auto;
-    list-style: none;
 }
 
 .my-shop .page .no-orders {
