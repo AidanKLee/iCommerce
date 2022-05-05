@@ -16,8 +16,12 @@
 
 .orders .main {
     width: 100%;
+    height: calc(100% - 69px);
     max-width: 1440px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .orders .no-orders {
@@ -96,7 +100,7 @@
 }
 
 .orders .main .list {
-    margin: 0 16px;
+    margin: 0 16px 8px;
     list-style: none;
 }
 
@@ -358,6 +362,10 @@
     flex-direction: column;
     justify-content: center;
     margin-left: 16px;
+}
+
+.orders .main .page-navigation {
+    margin-top: auto;
 }
 
 @media only screen and (max-width: 880px) {

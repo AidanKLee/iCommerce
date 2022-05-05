@@ -3,13 +3,19 @@
     height: 100%;
     width: 100%;
     display: flex;
-    justify-content: center;
     align-items: stretch;
 }
 
 .app.body .products-wrapper {
     width: 100%;
+}
+
+.app.body .products-wrapper .products {
     height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+.app.body .products-wrapper .products .page-navigation {
+    margin-top: auto;
 }

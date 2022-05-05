@@ -1,3 +1,5 @@
+
+
 .product-bar-wrapper {
     display: flex;
     justify-content: center;
@@ -108,9 +110,8 @@
 }
 
 .products-section {
-    margin: 0 16px 0;
+    margin: 0 16px 8px;
     width: calc(100% - 32px);
-    height: calc(100% - 72px);
     display: flex;
     justify-content: center;
     position: relative;
