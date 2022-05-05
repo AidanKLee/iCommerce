@@ -120,7 +120,7 @@
 .my-shop .page .main {
     width: 100%;
     max-width: 1440px;
-    margin: 0 auto 16px;
+    margin: 0 auto;
 }
 
 .my-shop .page .main ul {
@@ -247,7 +247,7 @@
     margin-left: 16px;
 }
 
-.my-shop .page .more {
+.my-shop .page .main .item .more {
     position: relative;
     display: flex;
     height: 32px;
@@ -260,7 +260,7 @@
     margin-left: 8px;
 }
 
-.my-shop .page .more.invert {
+.my-shop .page .main .item .more.invert {
     background-color: rgba(0, 0, 0, 0.05);
     fill: #1f1f1f;
 }

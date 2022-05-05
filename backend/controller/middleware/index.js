@@ -149,12 +149,17 @@ helper.prepareSellerTransfers = async (req, res, next) => {
 helper.getOrdersData = async (req, res, next) => {
     try {
         let years;
+        let count;
         const { customerId, userId } = req.params;
         let orders = req.orders;
         if (customerId) {
             years = await model.selectCustomerOrderYears([customerId]);
+            count = await model.selectCustomerOrderCount([customerId]);
+            count = Number(count[0].count);
         } else {
             years = await model.selectSellerOrderYears([userId]);
+            count = await model.selectSellerOrderCount([userId]);
+            count =Number(count[0].count);
         }
         
         years = years.map(year => year.year);
@@ -180,7 +185,7 @@ helper.getOrdersData = async (req, res, next) => {
             }));
             return order;
         }));
-        res.status(200).json({orders, years});
+        res.status(200).json({orders, years, count});
     } catch (err) {
         next(err);
     }

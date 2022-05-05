@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useOutletContext, useParams } from 'react-router-dom';
+import LoadingModal from '../../components/LoadingModal';
 import api from '../../utils/api';
+import './OrderDetails.css';
 
 const { customer: c, helper, seller: s } = api;
 
@@ -57,7 +59,9 @@ const OrderDetails = props => {
         })
     }, [sellers])
 
-    const type = useMemo(() => location.state.type, [location.state.type])
+    const type = useMemo(() => {
+        return location.pathname.split('/')[1];
+    }, [location.pathname])
 
     const cancellable = useMemo(() => {
         let cancellable = true;
@@ -184,7 +188,7 @@ const OrderDetails = props => {
                                     <p>{`Total: ${total}`}</p>
                                 </div>
                                 <div className='bottom'>
-                                    <ul className='notifications'>
+                                    <ul className='actions'>
                                         {
                                             payment_complete ? (
                                                 !dispatched ? (
@@ -332,6 +336,9 @@ const OrderDetails = props => {
                     })
                 }
             </div>
+            {
+                !isLoggedIn ? <LoadingModal/> : undefined
+            }
         </section>
     )
 }

@@ -47,13 +47,14 @@ const Body = props => {
                     </Route>
                     <Route path='/my-shop/sold' element={<Sold />}>
                         <Route path='/my-shop/sold' element={<OrderList type='my-shop'/>}/>
+                        <Route path='/my-shop/sold/:orderId' element={<OrderDetails/>}/>
                     </Route>
                     <Route path='/my-shop/sales' element={<Sales />}/>
                 </Route>
                 <Route path='/saved' element={<Saved/>}/>
                 <Route path='/bag' element={<Bag/>}/>
                 <Route path='/orders' element={<Orders/>}>
-                    <Route path='/orders' element={<OrderList/>}/>
+                    <Route path='/orders' element={<OrderList type='orders'/>}/>
                     <Route path='/orders/:orderId' element={<OrderDetails/>}/>
                 </Route>
                 <Route path='/review' element={<Review/>}/>

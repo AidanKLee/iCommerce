@@ -1,8 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { CSSTransition } from 'react-transition-group';
 import { addToBag, deleteFromBag, saveItem, selectUser, updateItemBagQuantity } from '../../app/appSlice';
 import api from '../../utils/api';
+import NotificaitionModal from '../NotificationModal';
 import Rating from '../Rating';
 import './ProductTile.css';
 const { customer: c, helper } = api;
@@ -13,7 +15,7 @@ const ProductTile = props => {
 
     const user = useSelector(selectUser);
 
-    const { product, type } = props;
+    const { index, product, setDeleting, type } = props;
 
     const item = useMemo(() => {
         return product.items.filter(item => item.id === product.selected_item_id)[0];
@@ -32,10 +34,30 @@ const ProductTile = props => {
 
     const [ quantity, setQuantity ] = useState(product.item_quantity);
     const [ changed, setChanged ] = useState(false);
+    const [ stockNotification, setStockNotification ] = useState(false);
+
+    const notificationTimer = useRef(null);
+
+    useEffect(() => {
+        if (stockNotification === true) {
+            notificationTimer.current = setTimeout(() => {
+                setStockNotification(false);
+            }, 5000)
+            return () => clearTimeout(notificationTimer);
+        }
+    })
 
     const handleChange = e => {
-        setChanged(true);
-        setQuantity(e.target.value);
+        const value = e.target.value;
+        if (value <= item.in_stock && value > 0) {
+            setChanged(true);
+            setQuantity(value);
+        } else if (value < 1) {
+            handleBagDelete();
+        } else {
+            setStockNotification(true);
+            setQuantity(item.in_stock)
+        }
     }
 
     useEffect(() => {
@@ -59,28 +81,40 @@ const ProductTile = props => {
     }
 
     const handleItemDelete = async () => {
-        dispatch(saveItem({itemId: item.id}));
-        if (user.id) {
-            await c.saveItem(user.id, item.id);
-        }
+        setDeleting(index);
+        setTimeout(async () => {
+            dispatch(saveItem({itemId: item.id}));
+            if (user.id) {
+                await c.saveItem(user.id, item.id);
+            }
+            setDeleting(-1)
+        }, 500)
     }
 
     const handleBagDelete = async () => {
-        dispatch(deleteFromBag({
-            itemId: item.id
-        }));
+        setDeleting(index);
+        setTimeout(async () => {
+            dispatch(deleteFromBag({
+                itemId: item.id
+            }));
+            setDeleting(-1)
+        }, 500)
         if (user.id && user.cart.id) {
             await c.deleteItemFromBag(user.id, user.cart.id, item.id)
         }
     }
 
     const handleMoveToSaved = async () => {
-        dispatch(deleteFromBag({
-            itemId: item.id
-        }));
-        dispatch(saveItem({
-            itemId: item.id
-        }));
+        setDeleting(index);
+        setTimeout(async () => {
+            dispatch(deleteFromBag({
+                itemId: item.id
+            }));
+            dispatch(saveItem({
+                itemId: item.id
+            }));
+            setDeleting(-1)
+        }, 500)
         if (user.id && user.cart.id) {
             await c.deleteItemFromBag(user.id, user.cart.id, item.id);
             await c.saveItem(user.id, item.id);
@@ -88,11 +122,15 @@ const ProductTile = props => {
     }
 
     const handleAddToBag = async () => {
-        dispatch(saveItem({itemId: item.id}));
-        dispatch(addToBag({
-            itemId: item.id, 
-            quantity: 1
-        }))
+        setDeleting(index);
+        setTimeout(async () => {
+            dispatch(saveItem({itemId: item.id}));
+            dispatch(addToBag({
+                itemId: item.id, 
+                quantity: 1
+            }))
+            setDeleting(-1)
+        }, 500)
         if (user.id && user.cart.id) {
             await c.saveItem(user.id, item.id);
             await c.addItemToBag(user.id, user.cart.id, item.id, 1);
@@ -143,7 +181,7 @@ const ProductTile = props => {
                         <div className='action quantity'>
                             <div className='input'>
                                 <label htmlFor={product.selected_item_id}><b>Qty:</b></label>
-                                <input onChange={handleChange} id={product.selected_item_id} type='number' value={quantity} min={1}/>
+                                <input onChange={handleChange} id={product.selected_item_id} type='number' value={quantity} min={0} max={item.in_stock}/>
                             </div>
                             <p className='price'>
                                 <b>Price:</b>
@@ -154,6 +192,17 @@ const ProductTile = props => {
                                 </span>
                             </p>
                         </div>
+                        <CSSTransition 
+                            timeout={500}
+                            classNames={'grow-down2'}
+                            in={stockNotification}
+                            mountOnEnter={true}
+                            unmountOnExit={true}
+                        >
+                            <NotificaitionModal >
+                                <p>{`Sorry there's only ${item.in_stock} in stock at the moment!`}</p>
+                            </NotificaitionModal>
+                        </CSSTransition>
                         <button onClick={handleBagDelete} className='action bag'>Remove From Bag</button>
                         <button onClick={handleMoveToSaved} className='action remove'>Move To Saved</button>
                     </div>

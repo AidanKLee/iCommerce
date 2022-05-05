@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import api from '../../utils/api';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
@@ -10,6 +10,7 @@ import Button from '../../components/Button';
 import Paragraph from '../../components/Paragraph';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToBag, saveItem, selectCategories, selectUser } from '../../app/appSlice';
+import NotificaitionModal from '../../components/NotificationModal';
 const { products: p, customer: c } = api;
 
 const Product = props => {
@@ -51,7 +52,6 @@ const Product = props => {
     const [ loading, setLoading ] = useState(true);
 
     const selected = useMemo(() => {
-        // return itemId && items ? items.findIndex(item => item.id === itemId) : 0;
         return itemId && groupedItems ? groupedItems.findIndex(group => {
             let match = false;
             group.forEach(item => {
@@ -123,6 +123,19 @@ const Top = props => {
 
     const user = useSelector(selectUser);
     const categories = useSelector(selectCategories);
+
+    const [ stockNotification, setStockNotification ] = useState(false);
+
+    const notificationTimer = useRef(null);
+
+    useEffect(() => {
+        if (stockNotification === true) {
+            notificationTimer.current = setTimeout(() => {
+                setStockNotification(false);
+            }, 5000)
+            return () => clearTimeout(notificationTimer);
+        }
+    })
 
     const { cart: [cart, setCart], itemId, items, product, productId, selected, stats } = props;
     const selectedCategories = useMemo(() => {
@@ -230,7 +243,14 @@ const Top = props => {
 
     const handleCartChange = e => {
         const value = Number(e.target.value);
-        setCart(value);
+        if (value < 1) {
+            setCart(1);
+        } else if (value > items[selected][selectedItem].in_stock) {
+            setCart(items[selected][selectedItem].in_stock);
+            setStockNotification(true);
+        } else {
+            setCart(value);
+        }
     }
 
     const handleItemSave = async itemId => {
@@ -245,14 +265,20 @@ const Top = props => {
     }
 
     const handleAddToCart = async () => {
-        if (user.id && user.cart.id) {
-            c.addItemToBag(user.id, user.cart.id, itemId, cart)
+        if (items[selected][selectedItem].in_stock >= cart) {
+            if (user.id && user.cart.id) {
+                c.addItemToBag(user.id, user.cart.id, itemId, cart)
+            }
+            dispatch(addToBag({
+                itemId, 
+                quantity: cart
+            }))
+        } else {
+            setStockNotification(true)
         }
-        dispatch(addToBag({
-            itemId, 
-            quantity: cart
-        }))
     }
+
+    const warningStyle = {outline: '2px solid rgb(200,0,0)', borderRadius: '8px'}
 
     return (
         <div className='top'>
@@ -346,7 +372,7 @@ const Top = props => {
                                 >
                                     Add To Bag
                                 </Button>
-                                <input onChange={handleCartChange} className='add' type='number' name='cart-add' min={1} max={items[selected][selectedItem].in_stock} value={cart}/>
+                                <input onChange={handleCartChange} className='add' style={stockNotification ? warningStyle : {}} type='number' name='cart-add' min={1} max={items[selected][selectedItem].in_stock} value={cart}/>
                             </div>
                             <Button
                                 design='invert'
@@ -364,6 +390,17 @@ const Top = props => {
                                 }
                             />
                         </div>
+                        <CSSTransition 
+                            timeout={500}
+                            classNames={'grow-down'}
+                            in={stockNotification}
+                            mountOnEnter={true}
+                            unmountOnExit={true}
+                        >
+                            <NotificaitionModal >
+                                <p>{`Sorry there's only ${items[selected][selectedItem].in_stock} in stock at the moment!`}</p>
+                            </NotificaitionModal>
+                        </CSSTransition>
                     </div>
                     <div className='seller'>
                             <Link to={`/${seller.shop_name}/products`} className='name'>{seller.shop_name}</Link>

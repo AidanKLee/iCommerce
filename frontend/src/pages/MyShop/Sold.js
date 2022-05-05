@@ -16,7 +16,7 @@ const Sold = props => {
     const isLoggedIn = useMemo(() => 'id' in user, [user]);
     const loginPending = useMemo(() => user.pending, [user.pending]);
 
-    const [ { orders, years }, setOrders ] = useState({orders: [], years: []});
+    const [ { orders, years, count }, setOrders ] = useState({orders: [], years: [], count: 0});
     const [ loading, setLoading ] = useState(false);
 
     useEffect(() => {
@@ -31,7 +31,7 @@ const Sold = props => {
 
     return (
         <div className='page'>
-            <Outlet context={{ isLoggedIn, location, orders, setOrders, user, years }}/>
+            <Outlet context={{ count, isLoggedIn, location, orders, setOrders, user, years }}/>
             {/* //location, orders = [], setOrders, years = [], user */}
             {
                 !loginPending && !isLoggedIn ? <Redirect to='/login'/> : undefined

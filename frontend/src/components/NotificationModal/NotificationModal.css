@@ -1,0 +1,14 @@
+.notification-modal {
+    overflow: hidden;
+}
+
+.notification-modal p {
+    font-size: .8rem;
+    color: rgb(200, 0, 0);
+    font-weight: 700;
+    padding: 0 8px;
+}
+
+.bag .notification-modal p {
+    font-size: .6rem;
+}

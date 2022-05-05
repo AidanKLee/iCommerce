@@ -33,11 +33,13 @@ const Filter = props => {
             if (name in queryParams) {
                 setSearchParams({
                     ...queryParams,
+                    page: 1,
                     [name]: [...queryParams[name], value]
                 })
             } else {
                 setSearchParams({
                     ...queryParams,
+                    page: 1,
                     [name]: [value]
                 });
             }
@@ -45,6 +47,7 @@ const Filter = props => {
             const newAttributes = queryParams[name].filter(att => att !== value);
             setSearchParams({
                 ...queryParams,
+                page: 1,
                 [name]: newAttributes
             })
         }

@@ -8,6 +8,8 @@ import { selectUser } from '../../app/appSlice';
 import ProductData from '../../components/ProductData';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Filter from './Filter';
+import LoadingModal from '../../components/LoadingModal';
+import PageNavigation from '../../components/PageNavigation';
 const { products: p, categories: c } = api;
 
 const Products = props => {
@@ -18,7 +20,9 @@ const Products = props => {
 
     const navigate = useNavigate();
     const location = useLocation();
+
     const { category = '' } = useParams();
+
     const [ categoryData, setCategoryData ] = useState({});
     const [ searchParams, setSearchParams ] = useSearchParams(location.search);
 
@@ -44,18 +48,19 @@ const Products = props => {
         }
         return params
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams, location])
+    }, [searchParams])
 
     const arrange = useMemo(() => {
         return {
             sort: queryParams.sort ? queryParams.sort[0] : 'popular',
-            limit: queryParams.limit ? queryParams.limit[0] : 25,
-            page: queryParams.page ? queryParams.page[0] : 1
+            limit: queryParams.limit ? Number(queryParams.limit[0]) : 25,
+            page: queryParams.page ? Number(queryParams.page[0]) : 1
         }
     }, [queryParams]);
+
     const filter = useMemo(() => {
         return {
-            attributes: queryParams.attributes || [],
+            attributes: queryParams.attributes ? queryParams.attributes : [],
             query: queryParams.query ? queryParams.query[0] : ''
         }
     }, [queryParams])
@@ -64,8 +69,16 @@ const Products = props => {
     const searchTimer = useRef(null);
     const [ newProduct, setNewProduct ] = useState(false);
     const [ results, setResults ] = useState({});
+    const [ loading, setLoading ] = useState(false);
 
     const { products = [], data = {} } = useMemo(() => results, [results]);
+    
+    const pages = useMemo(() => {
+        return {
+            current: arrange.page,
+            total: Math.ceil((data.product_count ? data.product_count : 1) / arrange.limit)
+        }
+    }, [arrange.limit, arrange.page, data.product_count])
 
     const groupedProducts = useMemo(() => {
         const prods = products.map(product => {
@@ -102,7 +115,9 @@ const Products = props => {
     }
 
     useEffect(() => {
+        setLoading(true);
         getProducts()
+        .then(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search, user, category])
 
@@ -130,15 +145,45 @@ const Products = props => {
         const name = e.target.name;
         const value = e.target.value;
         if (name !== 'attributes' && name !== 'category') {
-            setSearchParams({
-                ...queryParams,
-                [name]: [value]
-            });
+            if (name === 'limit') {
+                const params = queryParams;
+                params.page = 1;
+                params[name] = value
+                setSearchParams(params)                    
+            } else {
+                setSearchParams({
+                    ...searchParams,
+                    [name]: value
+                })
+            }
         }
     }
 
     const handleSearchSelect = e => {
         navigate(`${type === 'my-shop' ? '/my-shop' : ''}/products${e.target.value}`)
+    }
+
+    const handlePageSelect = e => {
+        let value = e.target.value;
+        if (!Number.isNaN(Number(value))) {
+            value = Number(value);
+            setSearchParams({
+                ...queryParams,
+                page: value
+            })
+        } else {
+            if (value === 'next') {
+                setSearchParams({
+                    ...queryParams,
+                    page: Number(queryParams.page) + 1
+                })
+            } else {
+                setSearchParams({
+                    ...queryParams,
+                    page: Number(queryParams.page) - 1
+                })
+            }
+        }
     }
 
     return (
@@ -227,7 +272,17 @@ const Products = props => {
                         <NewProduct open={[newProduct, setNewProduct]} refresh={getProducts}/>
                     </CSSTransition>
                 </section>
+                <PageNavigation onClick={handlePageSelect} max={pages.total} value={pages.current} />
             </div>
+            <CSSTransition 
+                    timeout={500}
+                    classNames={'fade'}
+                    in={loading}
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                >
+                <LoadingModal />
+            </CSSTransition>
         </div>
     )
 }

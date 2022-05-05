@@ -128,7 +128,7 @@ const OrderTile = props => {
                     <figure className='head order-id'>
                         <p>Order ID:</p>
                         <figcaption className='id'>
-                            <Link to={`/orders/${id}`} state={{order, type}}>{ id }</Link>
+                            <Link to={type !== 'my-shop' ? `/orders/${id}` : `/my-shop/sold/${id}`} state={{order}}>{ id }</Link>
                         </figcaption>
                     </figure>
                     {

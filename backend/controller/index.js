@@ -589,8 +589,8 @@ products.get = async (req, res, next) => {
         })
 
         data = {
-            product_count: data.products[0].product_count,
-            item_count: data.items[0].item_count,
+            product_count: Number(data.products[0].product_count),
+            item_count: Number(data.items[0].item_count),
             parent_category: parentCategory[0] || {},
             category: data.categories,
             attributes: atts

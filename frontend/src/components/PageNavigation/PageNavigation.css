@@ -1,0 +1,106 @@
+.page-navigation {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    margin-bottom: 8px;
+}
+
+.page-navigation li {
+    position: relative;
+    min-width: 20px;
+    width: fit-content;
+    height: 20px;
+    margin: 0 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: .6rem;
+    font-weight: 600;
+}
+
+.page-navigation button {
+    height: 100%;
+    width: 100%;
+    padding: 0 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: .6rem;
+    font-weight: 600;
+    background-color: white;
+    outline: 2px solid transparent;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.page-navigation button:hover {
+    outline: 2px solid #6464ff75;
+}
+
+.page-navigation button svg {
+    width: 12px;
+    height: 20px;
+    pointer-events: none;
+}
+
+.page-navigation button.selected {
+    background-color: #6464ff;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.page-navigation li.more {
+    min-width: 20px;
+    max-width: 20px;
+    height: 20px;
+    padding: 0 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: .6rem;
+    font-weight: 600;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.page-navigation li .page-list {
+    position: absolute;
+    top: calc(100% + 3px);
+    left: -3px;
+    display: flex;
+    flex-direction: column-reverse;
+    transform-origin: bottom;
+    transform: translateY(-100%);
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 2px;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: .5s;
+    z-index: 10;
+}
+
+.page-navigation li:hover .page-list {
+    max-height: 432px;
+    opacity: 1;
+}
+
+.page-navigation li .page-list li {
+    min-height: 20px;
+    margin: 2px 0;
+}
+
+.page-navigation li .page-list li:first-of-type {
+    margin: 2px 0 0;
+}
+
+.page-navigation li .page-list li:last-of-type {
+    margin: 0 0 2px;
+}

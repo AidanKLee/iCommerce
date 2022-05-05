@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
+import PageNavigation from '../../components/PageNavigation';
 import Select from '../../components/ProductCreation/Select';
 import OrderTile from './OrderTile';
 
@@ -17,7 +18,7 @@ const OrderList = props => {
         { name: 100, value: 100 }
     ], []);
 
-    let { location, orders = [], setOrders, years = [], user } = useOutletContext();
+    let { count = 0, location, orders = [], setOrders, years = [], user } = useOutletContext();
 
     years = useMemo(() => {
         const y = [{name: 'All Time', value: null}];
@@ -39,6 +40,15 @@ const OrderList = props => {
         return params
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams, location])
+
+    const pages = useMemo(() => {
+        return {
+            current: searchParams.page && searchParams.page[0] ? Number(searchParams.page[0]) : 1,
+            total: count && searchParams.limit ? Math.ceil(count / Number(searchParams.limit)) : 1
+        }
+    }, [count, searchParams.limit, searchParams.page])
+
+    console.log(count, pages)
 
     const [ search, setSearch ] = useState('');
 
@@ -68,9 +78,43 @@ const OrderList = props => {
                 delete newParams[name];
                 setSearchParams(newParams)
             }   else {
+                if (name === 'limit') {
+                    const params = searchParams;
+                    delete params.page;
+                    setSearchParams({
+                        ...params,
+                        [name]: value
+                    })                    
+                } else {
+                    setSearchParams({
+                        ...searchParams,
+                        [name]: value
+                    })
+                }
+                
+            }
+        }
+    }
+
+    const handlePageSelect = e => {
+        let value = e.target.value;
+        if (!Number.isNaN(Number(value))) {
+            console.log(value)
+            value = Number(value);
+            setSearchParams({
+                ...searchParams,
+                page: value
+            })
+        } else {
+            if (value === 'next') {
                 setSearchParams({
                     ...searchParams,
-                    [name]: value
+                    page: Number(searchParams.page) + 1 || 2
+                })
+            } else {
+                setSearchParams({
+                    ...searchParams,
+                    page: Number(searchParams.page) - 1
                 })
             }
         }
@@ -99,6 +143,7 @@ const OrderList = props => {
                     }
                 </ul>
             </CSSTransition>
+            <PageNavigation onClick={handlePageSelect} max={pages.total} value={pages.current} />
         </section>
     )
 }
