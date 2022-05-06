@@ -213,8 +213,8 @@ const ProductTile = props => {
                                 <p>{`Sorry there's only ${item.in_stock} in stock at the moment!`}</p>
                             </NotificaitionModal>
                         </CSSTransition>
-                        <button onClick={handleBagDelete} className='action bag'>Remove From Bag</button>
-                        <button onClick={handleMoveToSaved} className='action remove'>Move To Saved</button>
+                        <button onClick={handleMoveToSaved} className='action bag'>Move To Saved</button>
+                        <button onClick={handleBagDelete} className='action remove'>Remove From Bag</button>
                     </div>
                 )
             }
