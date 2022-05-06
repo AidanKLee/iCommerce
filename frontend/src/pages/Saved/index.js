@@ -73,11 +73,15 @@ const Saved = props => {
                 unmountOnExit={true}
             >
                 <div className='main'>
-                    {
-                        saved.length === 0 ? (
-                            <p className='no-saved'>No Saved Products</p>
-                        ) : undefined
-                    }
+                    <CSSTransition
+                        timeout={500}
+                        classNames={'grow-down2'}
+                        in={saved.length === 0}
+                        mountOnEnter={true}
+                        unmountOnExit={true}
+                    >
+                        <p className='no-saved'>No Saved Products</p>
+                    </CSSTransition>
                     {
                         !('id' in user) ? (
                             <div className='login'>

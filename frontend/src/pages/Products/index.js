@@ -119,7 +119,7 @@ const Products = props => {
         getProducts()
         .then(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location.search, user, category])
+    }, [location.search])
 
     const handleChange = e => {
         if (searchTimer.current) {

@@ -155,11 +155,15 @@ const Bag = props => {
                 unmountOnExit={true}
             >
                 <div className='main'>
-                    {
-                        bagItems.length === 0 ? (
-                            <p className='no-bag'>No Products In Your Shopping Bag</p>
-                        ) : undefined
-                    }
+                    <CSSTransition
+                        timeout={500}
+                        classNames={'grow-down2'}
+                        in={bagItems.length === 0}
+                        mountOnEnter={true}
+                        unmountOnExit={true}
+                    >
+                        <p className='no-bag'>No Products In Your Shopping Bag</p>
+                    </CSSTransition>
                     {
                         !('id' in user) ? (
                             <div className='login'>
