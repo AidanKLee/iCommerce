@@ -48,8 +48,10 @@ const ProductTile = props => {
     })
 
     const handleChange = e => {
-        const value = e.target.value;
-        if (value <= item.in_stock && value > 0) {
+        const value = e.target.value === '' ? '' : Number(e.target.value);
+        if (value === '') {
+            setQuantity(value);
+        } else if (value <= item.in_stock && value > 0) {
             setChanged(true);
             setQuantity(value);
         } else if (value < 1) {
@@ -57,6 +59,14 @@ const ProductTile = props => {
         } else {
             setStockNotification(true);
             setQuantity(item.in_stock)
+        }
+    }
+
+    const handleQuantityBlur = e => {
+        const value = e.target.value;
+        if (value === '') {
+            setChanged(true);
+            setQuantity(1);
         }
     }
 
@@ -84,11 +94,11 @@ const ProductTile = props => {
         setDeleting(index);
         setTimeout(async () => {
             dispatch(saveItem({itemId: item.id}));
-            if (user.id) {
-                await c.saveItem(user.id, item.id);
-            }
             setDeleting(-1)
         }, 500)
+        if (user.id) {
+            await c.saveItem(user.id, item.id);
+        }
     }
 
     const handleBagDelete = async () => {
@@ -181,7 +191,7 @@ const ProductTile = props => {
                         <div className='action quantity'>
                             <div className='input'>
                                 <label htmlFor={product.selected_item_id}><b>Qty:</b></label>
-                                <input onChange={handleChange} id={product.selected_item_id} type='number' value={quantity} min={0} max={item.in_stock}/>
+                                <input onChange={handleChange} onBlur={handleQuantityBlur} id={product.selected_item_id} type='number' value={quantity} min={0} max={item.in_stock}/>
                             </div>
                             <p className='price'>
                                 <b>Price:</b>

@@ -273,20 +273,18 @@
 }
 
 .grow-down3-enter-active {
-    max-height: 220px;
+    max-height: 620px;
     margin: 8px;
     transition: .5s;
     overflow: hidden;
 }
 
-.grow-down3-enter-done {
-    max-height: 220px;
-    margin: 8px;
-    overflow: hidden;
-}
+/* .grow-down3-enter-done {
+
+} */
 
 .grow-down3-exit {
-    max-height: 220px;
+    max-height: 620px;
     margin: 8px;
     overflow: hidden;
 }
@@ -298,11 +296,11 @@
     overflow: hidden;
 }
 
-.grow-down3-exit-done {
+/* .grow-down3-exit-done {
     max-height: 0;
     margin: 0 8px;
     overflow: hidden;
-}
+} */
 
 
 

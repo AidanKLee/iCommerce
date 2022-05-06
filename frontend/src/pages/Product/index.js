@@ -242,14 +242,24 @@ const Top = props => {
     }
 
     const handleCartChange = e => {
-        const value = Number(e.target.value);
-        if (value < 1) {
+        const value = e.target.value === '' ? '' : Number(e.target.value);
+        console.log(value)
+        if (value === '') {
+            setCart('');
+        } else if (value < 1) {
             setCart(1);
         } else if (value > items[selected][selectedItem].in_stock) {
             setCart(items[selected][selectedItem].in_stock);
             setStockNotification(true);
         } else {
             setCart(value);
+        }
+    }
+
+    const handleQuantityBlur = e => {
+        const value = e.target.value;
+        if (value === '') {
+            setCart(1);
         }
     }
 
@@ -372,7 +382,7 @@ const Top = props => {
                                 >
                                     Add To Bag
                                 </Button>
-                                <input onChange={handleCartChange} className='add' style={stockNotification ? warningStyle : {}} type='number' name='cart-add' min={1} max={items[selected][selectedItem].in_stock} value={cart}/>
+                                <input onChange={handleCartChange} onBlur={handleQuantityBlur} className='add' style={stockNotification ? warningStyle : {}} type='number' name='cart-add' min={1} max={items[selected][selectedItem].in_stock} value={cart}/>
                             </div>
                             <Button
                                 design='invert'
