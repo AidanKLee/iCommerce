@@ -42,6 +42,7 @@ const Gallery = props => {
 
     const dragMove = e => {
         const currentPos = e.screenX;
+        console.log(scrollerPos.current.scrollLeft + currentPos - prevPos.current, e.target.scrollWidth)
         if (currentPos > prevPos.current) {
             if (scrollerPos.current.scrollLeft - currentPos + prevPos.current > 0) {
                 scrollerPos.current.scrollLeft = scrollerPos.current.scrollLeft - currentPos + prevPos.current;

@@ -21,13 +21,14 @@
 
 .product .details .bottom .categories {
     list-style: none;
-    display: flex;
+    display: block;
     flex-wrap: wrap;
     font-size: .6rem;
 }
 
 .product .details .bottom .categories li {
-    white-space: nowrap;
+    /* white-space: nowrap; */
+    display: inline;
 }
 
 .product .details .bottom .categories li span {
