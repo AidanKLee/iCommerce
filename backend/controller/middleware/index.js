@@ -4,6 +4,7 @@ const s = require('stripe')(process.env.STRIPE_SECRET);
 const model = require('../../model');
 const multer = require('multer');
 const path = require('path');
+const { check, validationResult } = require('express-validator');
 const fs = require('fs');
 
 const parser = {};
@@ -38,11 +39,72 @@ helper.isAuthenticated = (req, res, next) => {
             next();
         } else {
             if (req.baseUrl === '/api/auth') {
-                res.status(200).json({message: 'No session.'});
+                res.status(200).json({message: 'No user session, please login.'});
             } else {
                 res.status(401).json({message: 'Not authorized.'});
             }
         }
+    } catch (err) {
+        next(err);
+    }
+}
+
+helper.isAuthenticatedCustomer = (req, res, next) => {
+    const customerId = req.params.customerId;
+    const sessionUserId = req.session.passport.user.id;
+    if (customerId !== sessionUserId) {
+        const err = new Error();
+        err.message = 'You are not authorized to access this data.'
+        err.status = 403;
+        return next(err);
+    }
+    next();
+}
+
+helper.isAuthenticatedSeller = (req, res, next) => {
+    const userId = req.params.userId;
+    const sessionUserId = req.session.passport.user.id;
+    if (userId !== sessionUserId) {
+        const err = new Error();
+        err.message = 'You are not authorized to access this data.'
+        err.status = 403;
+        return next(err);
+    }
+    next();
+}
+
+helper.isCustomerCart = async (req, res, next) => {
+    try {
+        const customerId = req.session.passport.user.id;
+        const cartId = req.params.cartId ? req.params.cartId : req.query.cart_id;
+        if (cartId) {
+            const cart = await model.selectCart([customerId]);
+            const isCustomerCart = cart.length > 0 & cart[0].id === cartId;
+            if (!isCustomerCart) {
+                const err = new Error();
+                err.message = 'You are not authorized to access this cart.'
+                err.status = 403;
+                return next(err);
+            }
+            req.cart = cart;
+        }
+        next();
+    } catch (err) {
+        next(err);
+    }
+}
+
+helper.isSellerProduct =async  (req, res, next) => {
+    try {
+        const product = model.selectProductById([req.params.productId]);
+        const isSellerProduct = product[0].seller_id === req.params.userId;
+        if (!isSellerProduct) {
+            const err = new Error();
+            err.message = 'You are not authorized to edit this product.'
+            err.status = 403;
+            return next(err);
+        }
+        next();
     } catch (err) {
         next(err);
     }
@@ -168,6 +230,12 @@ helper.getOrdersData = async (req, res, next) => {
                 order.items = await model.selectCustomerOrderItems([order.id]);
             } else {
                 order.items = await model.selectSellerOrderItems([order.id, userId]);
+                if (order.items.length === 0) {
+                    const err = new Error();
+                    err.message = 'You are not authorized to view this order.'
+                    err.status = 403;
+                    throw err;
+                }
             }
             const address = await model.selectAddressById([order.delivery_address_id]);
             order.delivery_address = address[0];
@@ -185,10 +253,15 @@ helper.getOrdersData = async (req, res, next) => {
             }));
             return order;
         }));
-        res.status(200).json({orders, years, count});
+        req.orders = { orders, years, count };
+        next();
     } catch (err) {
         next(err);
     }
+}
+
+helper.sendOrderData = (req, res, next) => {
+    res.status(200).json(req.orders);
 }
 
 helper.submitReview = async (req, res, next) => {
@@ -350,6 +423,36 @@ stripe.fulfillTransfersToSellers = async (req, res, next) => {
     }
 }
 
+const validate = {};
+
+validate.array = array => check(array).isArray();
+validate.email = email => check(email).isEmail();
+validate.password = password => check(password).isStrongPassword();
+validate.stringIsValidOption = (string, options) => check(string).custom(value => {
+    const match = options
+        .map(option => option.toLowerCase())
+        .includes(value.toLowerCase());
+    if (!match) {
+        const err = new Error();
+        err.message = `The submitted value (${value}) should match one of the following values [${options.join(', ')}].`
+        throw err;
+    }
+    return true;
+});
+validate.uuid = string => check(string).isUUID();
+
+validate.handleErrors = (req, res, next) => {
+    let err = validationResult(req);
+    if (!err.isEmpty()) {
+        err.message = err.errors
+            .map(error => error.msg)
+            .join(' ')
+        err.status = 400;
+        return next(err);
+    }
+    next();
+}
+
 module.exports = {
-    parser, helper, stripe
+    parser, helper, stripe, validate
 }

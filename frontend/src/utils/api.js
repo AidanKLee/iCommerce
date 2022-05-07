@@ -76,8 +76,10 @@ auth.login = async ({form, saved, bag}) => {
         });
         return await data.json()
     }
-
     let user = await login();
+    if (user.message) {
+        return user;
+    }
     await auth.syncItems(user, saved, bag);
     user = await auth.getUser();
     return user;
@@ -405,7 +407,7 @@ seller.createItems = async form => {
             type: image.type
         }
     })
-    await fetch(`${baseUrl}/api/seller/${form.userId}/products/${form.id}/items`, {
+    await fetch(`${baseUrl}/api/seller/${form.userId}/products/${form.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -442,6 +444,14 @@ seller.getOrders = async (userId, setter, params) => {
     orders = await orders.json();
     orders = { ...orders, orders: helper.groupOrdersItemsBySeller(orders.orders) };
     setter(orders);
+}
+
+seller.getOrderById = async (userId, orderId, setter) => {
+    let orders = await fetch(`${baseUrl}/api/seller/${userId}/orders/${orderId}`);
+    orders = await orders.json();
+    orders = { ...orders, orders: helper.groupOrdersItemsBySeller(orders.orders) };
+    const { orders: order } = orders;
+    setter(order[0]);
 }
 
 seller.updateOrder = async (userId, orderId, orderItemId, dispatched, delivered, reviewed) => {

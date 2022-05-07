@@ -144,7 +144,7 @@
     margin-left: 16px;
 }
 
-.orders .top .more {
+.orders .main .list .item .more {
     position: relative;
     display: flex;
     height: 32px;
@@ -157,7 +157,7 @@
     margin-left: 8px;
 }
 
-.orders .more.invert {
+.orders .main .list .item .more.invert {
     background-color: rgba(0, 0, 0, 0.05);
     fill: #1f1f1f;
 }

@@ -20,9 +20,7 @@ const Sold = props => {
     const [ loading, setLoading ] = useState(false);
 
     useEffect(() => {
-        new Promise(res => {
-            res(setLoading(true))
-        })
+        setLoading(true)
         if (isLoggedIn) {
             s.getOrders(user.id, setOrders, location.search)
             .then(() => setLoading(false))

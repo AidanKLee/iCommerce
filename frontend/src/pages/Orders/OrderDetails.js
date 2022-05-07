@@ -97,9 +97,13 @@ const OrderDetails = props => {
 
     useEffect(() => {
         if (!order.customer_id && isLoggedIn) {
-            c.getOrderById(user.id, orderId, setOrder);
+            if (type !== 'my-shop') {
+                c.getOrderById(user.id, orderId, setOrder);
+            } else {
+                s.getOrderById(user.id, orderId, setOrder)
+            }
         }
-    }, [isLoggedIn, order, orderId, user.id])
+    }, [isLoggedIn, order, orderId, type, user.id])
     
     const handleCancel = (sellerId, orderItemId) => {
         c.cancelOrder(user.id, id, sellerId, orderItemId)

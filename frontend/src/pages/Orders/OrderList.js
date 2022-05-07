@@ -134,6 +134,11 @@ const OrderList = props => {
                     <Select className='limit' id='limit' onChange={handleChange} options={limits}/>
                 </header>
             </div>
+            {
+                orders.length === 0 ? (
+                    <p className='no-orders'>You have made no orders yet.</p>
+                ) : undefined
+            }
             <CSSTransition timeout={500} classNames='fade' in={orders.length > 0} mountOnEnter={true} unmountOnExit={true}>
                 <ul className='list'>
                     {

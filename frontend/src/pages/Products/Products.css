@@ -388,7 +388,7 @@
 }
 
 .products-section .products .product .details .top {
-    border: 0 none transparent;
+    border: 0 none transparent !important;
 }
 
 .products-section .products .product .details .top .actions {

@@ -21,9 +21,7 @@ const Orders = props => {
     const [ loading, setLoading ] = useState(false);
 
     useEffect(() => {
-        new Promise(res => {
-            res(setLoading(true))
-        })
+        setLoading(true)
         if (isLoggedIn) {
             c.getOrders(user.id, setOrders, location.search)
             .then(() => setLoading(false))
@@ -40,11 +38,6 @@ const Orders = props => {
             <Outlet context={{ count, isLoggedIn, location, orders, setOrders, user, years }}/>
             {
                 !loginPending && !isLoggedIn ? <Redirect to='/login'/> : undefined
-            }
-            {
-                orders.length === 0 ? (
-                    <p className='no-orders'>You have made no orders yet.</p>
-                ) : undefined
             }
             <CSSTransition 
                 timeout={500}

@@ -1,9 +1,20 @@
 const express = require('express');
 const route = express.Router();
-const { stripe, parser, helper } = require('../controller/middleware')
+const { stripe, parser, helper, validate } = require('../controller/middleware')
 
-route.post('/intent', parser.json, stripe.generatePaymentIntent);
+route.post('/intent',
+    parser.json,
+    validate.array('items'),
+    validate.stringIsValidOption('shipping', ['Next Day', 'Standard', 'Upto 7 Days']),
+    validate.handleErrors,
+    stripe.generatePaymentIntent
+);
 
-route.post('/transfers/:orderId', helper.prepareSellerTransfers, stripe.fulfillTransfersToSellers);
+route.post('/transfers/:orderId',
+    validate.uuid('orderId'),
+    validate.handleErrors,
+    helper.prepareSellerTransfers,
+    stripe.fulfillTransfersToSellers
+);
 
 module.exports = route;

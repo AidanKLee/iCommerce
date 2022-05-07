@@ -333,8 +333,21 @@ customer.selectAllOrders = async (req, res, next) => {
 
 customer.selectOrderById = async (req, res, next) => {
     try {
-        const { orderId } = req.params;
-        req.orders = await model.selectOrderById([orderId]);
+        const { customerId, orderId } = req.params;
+        const order = await model.selectOrderById([orderId]);
+        if (order.length === 0) {
+            const err = new Error();
+            err.message = 'This order does not exist.'
+            err.status = 404;
+            return next(err);
+        }
+        if (customerId && order[0].customer_id !== customerId) {
+            const err = new Error();
+            err.message = 'You are not authorized to view this order.'
+            err.status = 403;
+            return next(err);
+        }
+        req.orders = order;
         next();
     } catch (err) {
         next(err);

@@ -25,9 +25,19 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'frontend/public/')));
 
 app.use(session({
-    secret: 'session-secret',
+    name: 'i-commerce-session',
+    keys: [
+        'b80700d7-4798-4d52-9b74-ebe010166daf',
+        '88e1ca2b-e0ef-418e-9bf8-ec9d057487d4',
+        '9467f23e-5da4-4bef-8f2f-4ef3909e5233'
+    ],
+    secret: '235645f9-00c1-4f8a-b0ba-886c4c739908',
     resave: false,
     saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: true
+    }
 }));
 app.use(passport.authenticate('session'));
 
@@ -56,6 +66,7 @@ app.get('*', (req, res, next) => {
 app.use((err, req, res, next) => {
     const status = err.status || 500;
     const message = err.message;
+    console.log(err);
     res.status(status).json({message});
 })
 

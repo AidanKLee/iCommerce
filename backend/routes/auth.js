@@ -5,12 +5,16 @@ const GoogleStrategy = require('passport-google-oauth2');
 const FacebookStrategy = require('passport-facebook');
 const route = express.Router();
 const { auth } = require('../controller/index.js');
-const { parser, helper, stripe } = require('../controller/middleware');
+const { parser, helper, stripe, validate } = require('../controller/middleware');
 require('dotenv').config();
 
 route.get('/', helper.isAuthenticated, auth.restoreSession, helper.getAllUserData);
 
-route.post('/login', parser.json, passport.authenticate('local', {failWithError: true}),
+route.post('/login', 
+    parser.json,
+    validate.email('email'),
+    validate.handleErrors,
+    passport.authenticate('local', {failWithError: true}),
     (req, res, next) => {
         delete req.user.password;
         next();
@@ -34,9 +38,22 @@ route.post('/logout', (req, res, next) => {
     res.redirect('/');
 });
 
-route.post('/register', parser.json, auth.register);
+route.post('/register',
+    parser.json,
+    validate.email('email'),
+    validate.password('password'),
+    validate.handleErrors,
+    auth.register
+);
 
-route.post('/register/shop', parser.json, stripe.createAccount, auth.registerShop, stripe.getAccountLink);
+route.post('/register/shop',
+    parser.json,
+    validate.email('business_email'),
+    validate.handleErrors,
+    stripe.createAccount,
+    auth.registerShop,
+    stripe.getAccountLink
+);
 
 route.get('/stripe/account', stripe.retrieveAccount, stripe.sendAccount);
 
