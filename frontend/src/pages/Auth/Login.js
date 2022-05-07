@@ -9,14 +9,11 @@ import LoadingModal from '../../components/LoadingModal'
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, selectUser } from '../../app/appSlice';
-import cookie from 'react-cookies';
 import Redirect from '../Redirect';
 
 const Login = props => {
 
     const dispatch = useDispatch();
-
-    const csrf = cookie.load('csrf-token');
 
     const location = useLocation();
     const redirect = useMemo(() => {
@@ -50,7 +47,7 @@ const Login = props => {
         e.preventDefault();
         try {
             setRequesting(true);
-            let user = await auth.login({csrf, form, saved, bag});
+            let user = await auth.login({form, saved, bag});
             setRequesting(false);
             if (user.message) {
                 return setIncorrect(user.message);

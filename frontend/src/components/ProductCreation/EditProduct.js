@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../../utils/api';
+
 import './NewProduct.css';
 import Select from './Select';
 import ToggleSwitch from '../ToggleSwitch';
@@ -15,6 +16,8 @@ import ImageInput from './ImageInput';
 const { categories: c, helper, seller: s } = api;
 
 const EditProduct = props => {
+
+    
 
     const user = useSelector(selectUser);
 

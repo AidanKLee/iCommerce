@@ -28,7 +28,7 @@ auth.restoreUserSession = async (dispatcher, method, user) => {
     }
 }
 
-auth.register = async form => {
+auth.register = async (form) => {
     const data = await fetch(`${baseUrl}/api/auth/register`, {
         method: 'POST',
         headers: {
@@ -39,7 +39,7 @@ auth.register = async form => {
     return await data.json();
 };
 
-auth.registerShop = async form => {
+auth.registerShop = async (form) => {
     let data = await fetch(`${baseUrl}/api/auth/register/shop`, {
         method: 'POST',
         headers: {
@@ -65,13 +65,12 @@ auth.retrieveStripe = async setter => {
     setter(data);
 }
 
-auth.login = async ({csrf, form, saved, bag}) => {
+auth.login = async ({form, saved, bag}) => {
     const login = async () => {
         const data = await fetch(`${baseUrl}/api/auth/login`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'csrf-token': csrf
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(form)
         });
@@ -239,13 +238,17 @@ customer.cancelOrder = async (customerId, orderId, sellerId, orderItemId) => {
     } else {
         return;
     }
-    await fetch(url, { method: 'DELETE' });
+    await fetch(url, {
+        method: 'DELETE'
+    });
 }
 
 customer.submitReview = async (customerId, form) => {
     await fetch(`${baseUrl}/api/customer/${customerId}/review`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(form)
     })
 }
@@ -380,7 +383,7 @@ products.getByItemIdList = async (itemList, bagId) => {
 
 const seller = {};
 
-seller.createProduct = async form => {
+seller.createProduct = async (form) => {
     const categories = form.categories.one.concat(form.categories.two);
     form = { ...form, categories };
     form.images = form.images.map(image => {
@@ -393,12 +396,14 @@ seller.createProduct = async form => {
     })
     await fetch(`${baseUrl}/api/seller/${form.userId}/products`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(form)
     })
 }
 
-seller.createItems = async form => {
+seller.createItems = async (form) => {
     delete form.categories;
     form.images = form.images.map(image => {
         return {
@@ -410,12 +415,14 @@ seller.createItems = async form => {
     })
     await fetch(`${baseUrl}/api/seller/${form.userId}/products/${form.id}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(form)
     })
 }
 
-seller.editProduct = async form => {
+seller.editProduct = async (form) => {
     const categories = form.categories.one.concat(form.categories.two);
     form = { ...form, categories };
     form.images = form.images.map(image => {
@@ -428,7 +435,9 @@ seller.editProduct = async form => {
     })
     await fetch(`${baseUrl}/api/seller/${form.userId}/products/${form.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(form)
     })
     return categories;
@@ -490,7 +499,9 @@ seller.updateOrder = async (userId, orderId, orderItemId, dispatched, delivered,
 seller.submitReview = async (sellerId, form) => {
     await fetch(`${baseUrl}/api/seller/${sellerId}/review`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(form)
     })
 }

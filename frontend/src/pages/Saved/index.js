@@ -23,7 +23,7 @@ const Saved = props => {
         const getItems = async () => {
             setInitialLoad(true);
             setLoading(true);
-            let products = await p.getByItemIdList(user.saved);
+            let products = await p.getByItemIdList(user.saved, undefined);
             setSaved(products);
             setLoading(false);
         }

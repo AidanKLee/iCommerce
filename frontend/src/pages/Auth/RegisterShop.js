@@ -2,16 +2,11 @@ import React, { useState } from 'react';
 import './Auth.css';
 import Button from '../../components/Button';
 import api from '../../utils/api';
-import { useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import LoadingModal from '../../components/LoadingModal';
-import { useDispatch } from 'react-redux';
-import { login } from '../../app/appSlice';
 
 const RegisterShop = props => {
 
-    const dispatch = useDispatch()
-    const navigate = useNavigate();
     const { auth } = api;
 
     const initialForm = {

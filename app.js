@@ -1,6 +1,6 @@
 const express = require('express');
 const session = require('cookie-session');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const https = require('https');
 const path = require('path');
@@ -25,9 +25,9 @@ app.use(cors());
 
 app.use(express.static(path.join(__dirname, 'frontend/public/')));
 
-app.use(cookieParser());
+// app.use(cookieParser());
 
-app.use(helper.csurf);
+// app.use(helper.csurf);
 
 app.use(session({
     name: 'i-commerce-session',
@@ -65,15 +65,15 @@ app.get('/oauth2/facebook', passport.authenticate('facebook', { failWithError: t
 );
 
 app.get('*', (req, res, next) => {
-    res.cookie('csrf-token', req.csrfToken());
+    // res.cookie('csrf-token', req.csrfToken());
     res.sendFile(path.join(__dirname, '/frontend/public/index.html'));
 });
 
 app.use((err, req, res, next) => {
-    if (err.code === 'EBADCSRFTOKEN') {
-        err.message = 'Form has been tampered with.'
-        err.status = 403;
-    }
+    // if (err.code === 'EBADCSRFTOKEN') {
+    //     err.message = 'Form has been tampered with.'
+    //     err.status = 403;
+    // }
     const status = err.status || 500;
     const message = err.message;
     console.log(err);
