@@ -38,23 +38,48 @@ const Register = props => {
 
     const [ showPassword, setShowPassword ] = useState(false);
     const [ form, setForm ] = useState(initialForm);
+    const [ confirm, setConfirm ] = useState({
+        email: '',
+        password: ''
+    })
     const [ requesting, setRequesting ] = useState(false);
+    const [ warning, setWarning ] = useState(false);
 
     const { 
         first_name, last_name, email, password,
         birth_date, phone, subscribed 
     } = form;
 
+    const confirmed = useMemo(() => {
+        const confirmed = {};
+        Object.keys(confirm).forEach(key => {
+            confirmed[key] = form[key] === confirm[key];
+        })
+        return confirmed;
+    }, [form, confirm])
+
+    const allConfirmed = useMemo(() => {
+        return !Object.keys(confirmed)
+            .map(key => confirmed[key])
+            .includes(false);
+    }, [confirmed])
+
+    const confirmedStyle = key => !confirmed[key] && warning ? { outline: '2px solid rgb(200,0,0)', borderRadius: '4px' } : {};
+
     const handleSubmit = async e => {
         e.preventDefault();
-        try {
-            setRequesting(true);
-            await auth.register(form);
-            setRequesting(false);
-            navigate(redirect ? `/login?redirect=${redirect}` : '/login', {replace: false});
-        } catch (err) {
-            setRequesting(false);
-            console.log('Registration Failed')
+        if (allConfirmed) {
+            try {
+                setRequesting(true);
+                await auth.register(form);
+                setRequesting(false);
+                navigate(redirect ? `/login?redirect=${redirect}` : '/login', {replace: false});
+            } catch (err) {
+                setRequesting(false);
+                console.log('Registration Failed')
+            }
+        } else {
+            setWarning(true);
         }
     }
 
@@ -72,6 +97,12 @@ const Register = props => {
         setForm({...form, [input]: value})
     }
 
+    const handleConfirmChange = e => {
+        const input = e.target.id.split('_').slice(1).join('_');
+        let value = e.target.value;
+        setConfirm({...confirm, [input]: value});
+    }
+
     const handleShowPassword = () => {
         setShowPassword(!showPassword)
     }
@@ -81,6 +112,8 @@ const Register = props => {
         window.OAuth2 = true;
         window.syncItems = async customer => await auth.syncItems(customer, user.saved, user.cart.items);
     }
+
+    console.log(confirmed)
 
     return (
         <section className='auth'>
@@ -121,13 +154,28 @@ const Register = props => {
                             <label htmlFor='email'>
                                 E-Mail*
                             </label>
-                            <input onChange={handleChange} type='email' id='email' name='email' placeholder='E-Mail' value={email} required />
+                            <input onChange={handleChange} type='email' id='email' name='email' placeholder='E-Mail' value={email} required style={confirmedStyle('email')} />
                         </div>
+                        <div className='auth form double input'>
+                            <label htmlFor='confirm_email'>
+                                Confirm E-Mail*
+                            </label>
+                            <input onChange={handleConfirmChange} type='email' id='confirm_email' name='confirm_email' placeholder='Confirm E-Mail' value={confirm.email} required style={confirmedStyle('email')} />
+                        </div>
+                    </div>
+                    <div className='auth form double'>
                         <div className='auth form double input'>
                             <label htmlFor='password'>
                                 Password*
                             </label>
-                            <input onChange={handleChange} type={showPassword ? 'text' : 'password'} id='password' name='password' placeholder='Password' value={password} required />
+                            <input onChange={handleChange} type={showPassword ? 'text' : 'password'} id='password' name='password' placeholder='Password' value={password} required style={confirmedStyle('password')} />
+                            <ShowPassword className='show' visible={showPassword} onClick={handleShowPassword}/>
+                        </div>
+                        <div className='auth form double input'>
+                            <label htmlFor='confirm_password'>
+                                Confirm Password*
+                            </label>
+                            <input onChange={handleConfirmChange} type={showPassword ? 'text' : 'password'} id='confirm_password' name='confirm_password' placeholder='Confirm Password' value={confirm.password} required style={confirmedStyle('password')} />
                             <ShowPassword className='show' visible={showPassword} onClick={handleShowPassword}/>
                         </div>
                     </div>

@@ -31,6 +31,7 @@
     font-size: 1.2rem;
     font-weight: 500;
     background-color: white;
+    border-radius: 8px;
 }
 
 .orders .main .filter-wrapper {

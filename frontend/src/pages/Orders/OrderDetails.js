@@ -59,6 +59,24 @@ const OrderDetails = props => {
         })
     }, [sellers])
 
+    const status = useMemo(() => {
+        let dispatched = true;
+        let delivered = true;
+        let cancelled = true;
+        sellers.forEach(seller => {
+            if (!seller.dispatched) {
+                dispatched = false;
+            }
+            if (!seller.delivered) {
+                delivered = false;
+            }
+            if (!seller.cancelled) {
+                cancelled = false;
+            }
+        })
+        return { dispatched, delivered, cancelled }
+    }, [sellers])
+
     const type = useMemo(() => {
         return location.pathname.split('/')[1];
     }, [location.pathname])
@@ -163,11 +181,14 @@ const OrderDetails = props => {
             <div className='payment'>
                 {
                     !payment_complete ? (
-                        type === 'my-shop' ? (
-                            <p><svg xmlns="http://www.w3.org/2000/svg" height="48" width="48" viewBox="0 0 48 48"><path d="M7 40Q5.8 40 4.9 39.1Q4 38.2 4 37V11Q4 9.8 4.9 8.9Q5.8 8 7 8H41Q42.2 8 43.1 8.9Q44 9.8 44 11V37Q44 38.2 43.1 39.1Q42.2 40 41 40ZM7 16.45H41V11Q41 11 41 11Q41 11 41 11H7Q7 11 7 11Q7 11 7 11ZM7 22.9V37Q7 37 7 37Q7 37 7 37H41Q41 37 41 37Q41 37 41 37V22.9ZM7 37Q7 37 7 37Q7 37 7 37V11Q7 11 7 11Q7 11 7 11Q7 11 7 11Q7 11 7 11V37Q7 37 7 37Q7 37 7 37Z"/></svg>Awaiting Payment</p>
-                        ) : (
-                            <p className='action'><svg xmlns="http://www.w3.org/2000/svg" height="48" width="48" viewBox="0 0 48 48"><path d="M7 40Q5.8 40 4.9 39.1Q4 38.2 4 37V11Q4 9.8 4.9 8.9Q5.8 8 7 8H41Q42.2 8 43.1 8.9Q44 9.8 44 11V37Q44 38.2 43.1 39.1Q42.2 40 41 40ZM7 16.45H41V11Q41 11 41 11Q41 11 41 11H7Q7 11 7 11Q7 11 7 11ZM7 22.9V37Q7 37 7 37Q7 37 7 37H41Q41 37 41 37Q41 37 41 37V22.9ZM7 37Q7 37 7 37Q7 37 7 37V11Q7 11 7 11Q7 11 7 11Q7 11 7 11Q7 11 7 11V37Q7 37 7 37Q7 37 7 37Z"/></svg>Complete Payment</p>
-                        )
+                        !status.cancelled ? (
+                            type === 'my-shop' ? (
+                                <p><svg xmlns="http://www.w3.org/2000/svg" height="48" width="48" viewBox="0 0 48 48"><path d="M7 40Q5.8 40 4.9 39.1Q4 38.2 4 37V11Q4 9.8 4.9 8.9Q5.8 8 7 8H41Q42.2 8 43.1 8.9Q44 9.8 44 11V37Q44 38.2 43.1 39.1Q42.2 40 41 40ZM7 16.45H41V11Q41 11 41 11Q41 11 41 11H7Q7 11 7 11Q7 11 7 11ZM7 22.9V37Q7 37 7 37Q7 37 7 37H41Q41 37 41 37Q41 37 41 37V22.9ZM7 37Q7 37 7 37Q7 37 7 37V11Q7 11 7 11Q7 11 7 11Q7 11 7 11Q7 11 7 11V37Q7 37 7 37Q7 37 7 37Z"/></svg>Awaiting Payment</p>
+                            ) : (
+                                <p className='action'><svg xmlns="http://www.w3.org/2000/svg" height="48" width="48" viewBox="0 0 48 48"><path d="M7 40Q5.8 40 4.9 39.1Q4 38.2 4 37V11Q4 9.8 4.9 8.9Q5.8 8 7 8H41Q42.2 8 43.1 8.9Q44 9.8 44 11V37Q44 38.2 43.1 39.1Q42.2 40 41 40ZM7 16.45H41V11Q41 11 41 11Q41 11 41 11H7Q7 11 7 11Q7 11 7 11ZM7 22.9V37Q7 37 7 37Q7 37 7 37H41Q41 37 41 37Q41 37 41 37V22.9ZM7 37Q7 37 7 37Q7 37 7 37V11Q7 11 7 11Q7 11 7 11Q7 11 7 11Q7 11 7 11V37Q7 37 7 37Q7 37 7 37Z"/></svg>Complete Payment</p>
+                            )
+                        ) : undefined
+                        
                     ) : <p><svg xmlns="http://www.w3.org/2000/svg" height="48" width="48" viewBox="0 0 48 48"><path d="M7 40Q5.8 40 4.9 39.1Q4 38.2 4 37V11Q4 9.8 4.9 8.9Q5.8 8 7 8H41Q42.2 8 43.1 8.9Q44 9.8 44 11V37Q44 38.2 43.1 39.1Q42.2 40 41 40ZM7 16.45H41V11Q41 11 41 11Q41 11 41 11H7Q7 11 7 11Q7 11 7 11ZM7 22.9V37Q7 37 7 37Q7 37 7 37H41Q41 37 41 37Q41 37 41 37V22.9ZM7 37Q7 37 7 37Q7 37 7 37V11Q7 11 7 11Q7 11 7 11Q7 11 7 11Q7 11 7 11V37Q7 37 7 37Q7 37 7 37Z"/></svg>Payment Complete</p>
                 }
             </div>
@@ -194,15 +215,17 @@ const OrderDetails = props => {
                                 <div className='bottom'>
                                     <ul className='actions'>
                                         {
-                                            payment_complete ? (
-                                                !dispatched ? (
-                                                    type === 'my-shop' ? (
-                                                        cancelled ? undefined : <li onClick={() => handleUpdateOrderSeller(null, {dispatched: true})}>Mark Order As Dispatched</li>
-                                                    ) : (
-                                                        <li className='done'>Awaiting Dispatch</li>
-                                                    )
-                                                ) : <li className='done'>Order Dispatched</li>
-                                            ) : <li className='done'>Awaiting payment</li>
+                                            !cancelled ? (
+                                                payment_complete ? (
+                                                    !dispatched ? (
+                                                        type === 'my-shop' ? (
+                                                            cancelled ? undefined : <li onClick={() => handleUpdateOrderSeller(null, {dispatched: true})}>Mark Order As Dispatched</li>
+                                                        ) : (
+                                                            <li className='done'>Awaiting Dispatch</li>
+                                                        )
+                                                    ) : <li className='done'>Order Dispatched</li>
+                                                ) : <li className='done'>Awaiting payment</li>
+                                            ) : undefined
                                         }
                                         {
                                             !dispatched ? (

@@ -282,6 +282,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-top: 0 none transparent;
     margin: 0;
+    padding: 0;
     z-index: 30;
 }
 

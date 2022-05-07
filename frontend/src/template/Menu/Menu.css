@@ -75,6 +75,10 @@
     color: white;
 }
 
+.menu .user .auth {
+    padding: 0;
+}
+
 .menu .user .auth .person {
     display: flex;
     justify-content: center;

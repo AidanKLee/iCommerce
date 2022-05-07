@@ -53,10 +53,10 @@
 .my-shop.manage.header.actions.item {
     align-items: center;
     padding: 0 16px;
-    cursor: context-menu;
     width: fit-content;
     transition: .3s;
     min-width: 56px;
+    user-select: none;
 }
 
 .my-shop.manage.header.actions.item.active {

@@ -19,9 +19,11 @@ const MyShop = props => {
 
     const loginPending = useMemo(() => user.pending, [user.pending]);
     const isLoggedIn = useMemo(() => 'id' in user, [user]);
+    
+    const isSeller = useMemo(() => 'shop' in user && 'id' in user.shop, [user.shop]);
 
     const shop = useMemo(() => user.shop, [user]);
-    const isShop = useMemo(() => shop && 'id' in shop, [shop]);
+    const isShop = useMemo(() => user && user.shop && user.shop.id, [user]);
 
     const [ stripe, setStripe ] = useState({});
 
@@ -38,10 +40,12 @@ const MyShop = props => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            seller.purgeUnusedImages(user.id);
-            auth.retrieveStripe(setStripe);
+            if (isSeller) {
+                seller.purgeUnusedImages(user.id);
+                auth.retrieveStripe(setStripe);
+            }
         }
-    }, [isLoggedIn, user])
+    }, [isLoggedIn, isSeller, user])
 
     return (
         <section className='my-shop'>

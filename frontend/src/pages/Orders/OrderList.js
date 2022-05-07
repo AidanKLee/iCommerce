@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import PageNavigation from '../../components/PageNavigation';
@@ -18,7 +18,7 @@ const OrderList = props => {
         { name: 100, value: 100 }
     ], []);
 
-    let { count = 0, location, orders = [], setOrders, years = [], user } = useOutletContext();
+    let { count = 0, loading, location, orders = [], setOrders, years = [], user } = useOutletContext();
 
     years = useMemo(() => {
         const y = [{name: 'All Time', value: null}];
@@ -48,9 +48,13 @@ const OrderList = props => {
         }
     }, [count, searchParams.limit, searchParams.page])
 
-    console.log(count, pages)
-
     const [ search, setSearch ] = useState('');
+    const [ term , setTerm ] = useState(search);
+
+    useEffect(() => {
+        setTerm(search)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loading])
 
     const handleChange = e => {
         const name = e.target.name;
@@ -135,8 +139,10 @@ const OrderList = props => {
                 </header>
             </div>
             {
-                orders.length === 0 ? (
-                    <p className='no-orders'>You have made no orders yet.</p>
+                orders.length === 0 && !loading ? (
+                    term ? (
+                        <p className='no-orders'>{`No results for '${term}'.`}</p>
+                    ): <p className='no-orders'>You haven't placed any orders yet.</p>
                 ) : undefined
             }
             <CSSTransition timeout={500} classNames='fade' in={orders.length > 0} mountOnEnter={true} unmountOnExit={true}>
