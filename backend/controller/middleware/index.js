@@ -84,18 +84,21 @@ helper.isAuthenticatedSeller = (req, res, next) => {
 
 helper.isCustomerCart = async (req, res, next) => {
     try {
-        const customerId = req.session.passport.user.id;
-        const cartId = req.params.cartId ? req.params.cartId : req.query.cart_id;
-        if (cartId) {
-            const cart = await model.selectCart([customerId]);
-            const isCustomerCart = cart.length > 0 & cart[0].id === cartId;
-            if (!isCustomerCart) {
-                const err = new Error();
-                err.message = 'You are not authorized to access this cart.'
-                err.status = 403;
-                return next(err);
+        if (req.session.passport.user) {
+            console.log('is session')
+            const customerId = req.session.passport.user.id;
+            const cartId = req.params.cartId ? req.params.cartId : req.query.cart_id;
+            if (cartId) {
+                const cart = await model.selectCart([customerId]);
+                const isCustomerCart = cart.length > 0 & cart[0].id === cartId;
+                if (!isCustomerCart) {
+                    const err = new Error();
+                    err.message = 'You are not authorized to access this cart.'
+                    err.status = 403;
+                    return next(err);
+                }
+                req.cart = cart;
             }
-            req.cart = cart;
         }
         next();
     } catch (err) {

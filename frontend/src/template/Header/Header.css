@@ -99,7 +99,7 @@
 }
 
 .app.header.section.item .categories.item.more:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(0, 0, 0, .2);
     border-bottom: 0 solid transparent;
     color: white;
     fill: white;
@@ -133,7 +133,7 @@
     position: relative;
     top: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .app.header.section.item .categories.item.more .dropdown.list.item:hover {
