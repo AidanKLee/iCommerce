@@ -35,9 +35,11 @@ parser.multi = multer.diskStorage({
 const helper = {};
 
 helper.csurf = csurf({
-    httpOnly: true,
-    sameSite: 'none',
-    secure: true
+    cookie: {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true
+    }
 })
 
 helper.isAuthenticated = (req, res, next) => {
