@@ -65,12 +65,13 @@ auth.retrieveStripe = async setter => {
     setter(data);
 }
 
-auth.login = async ({form, saved, bag}) => {
+auth.login = async ({csrf, form, saved, bag}) => {
     const login = async () => {
         const data = await fetch(`${baseUrl}/api/auth/login`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'csrf-token': csrf
             },
             body: JSON.stringify(form)
         });

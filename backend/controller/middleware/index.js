@@ -1,4 +1,5 @@
 const bodyParser = require('body-parser');
+const csurf = require('csurf');
 const { v4: uuid } = require('uuid');
 const s = require('stripe')(process.env.STRIPE_SECRET);
 const model = require('../../model');
@@ -32,6 +33,12 @@ parser.multi = multer.diskStorage({
 })
 
 const helper = {};
+
+helper.csurf = csurf({
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true
+})
 
 helper.isAuthenticated = (req, res, next) => {
     try {
