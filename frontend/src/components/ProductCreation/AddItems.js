@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import api from '../../utils/api';
-
 import './NewProduct.css';
 import { NewItem } from '.';
 import Button from '../Button';
@@ -24,8 +23,6 @@ const item = {
 }
 
 const AddItems = props => {
-
-    
 
     const user = useSelector(selectUser);
 
