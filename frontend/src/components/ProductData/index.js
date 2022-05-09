@@ -22,8 +22,8 @@ const ProductData = props => {
     const user = useSelector(selectUser);
 
     let { 
-        favourites, id, is_active,
-        items, stats, seller, views 
+        /*favourites,*/ id, is_active,
+        items, stats, seller, /*views*/ 
     } = product;
 
     const selectedCategories = useMemo(() => {
@@ -200,12 +200,11 @@ const ProductData = props => {
                                 </div>
                             )
                         }
-                    </div>
-                    <p className='views'><b>{views}</b> views | <b>{favourites}</b> favourites</p>                  
+                    </div>                
                 </div>
                 <div className='bottom'>
                     <div className='seller'>
-                        <Link to={`/${seller.shop_name}/products`} className='name'>{seller.shop_name}</Link>
+                        <Link onClick={e => e.preventDefault()} to={`/${seller.shop_name}/products`} className='name'>{seller.shop_name}</Link>
                         <Rating count={5} value={seller.stats.average_rating || 2.5} width='16px'/>
                     </div>
                     {

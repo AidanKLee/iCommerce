@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation, useOutletContext, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import LoadingModal from '../../components/LoadingModal';
 import api from '../../utils/api';
 import './OrderDetails.css';
@@ -9,6 +9,7 @@ const { customer: c, helper, seller: s } = api;
 const OrderDetails = props => {
 
     const location = useLocation();
+    const navigate = useNavigate();
 
     const { orderId } = useParams();
     const { user, isLoggedIn } = useOutletContext();
@@ -17,6 +18,7 @@ const OrderDetails = props => {
         customer_id: '', date: '', id: '', delivery_address: '',
         payment_complete: '', postage_option: '', postage_price:'' , sellers: []
     });
+
     let {
         customer_id, date, id, delivery_address, payment_complete,
         postage_price, sellers
@@ -116,12 +118,22 @@ const OrderDetails = props => {
     useEffect(() => {
         if (!order.customer_id && isLoggedIn) {
             if (type !== 'my-shop') {
-                c.getOrderById(user.id, orderId, setOrder);
+                c.getOrderById(user.id, orderId, setOrder)
+                .then(err => {
+                    if (err && 'message' in err) {
+                        navigate('/error')
+                    }
+                })
             } else {
                 s.getOrderById(user.id, orderId, setOrder)
+                .then(err => {
+                    if (err && 'message' in err) {
+                        navigate('/error')
+                    }
+                })
             }
         }
-    }, [isLoggedIn, order, orderId, type, user.id])
+    }, [isLoggedIn, navigate, order, orderId, type, user.id])
     
     const handleCancel = (sellerId, orderItemId) => {
         c.cancelOrder(user.id, id, sellerId, orderItemId)

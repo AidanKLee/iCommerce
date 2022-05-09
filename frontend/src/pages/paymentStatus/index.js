@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useStripe } from '@stripe/react-stripe-js';
 import './PaymentStatus.css';
 import { CSSTransition } from 'react-transition-group';
@@ -13,6 +13,8 @@ const PaymentStatus = props => {
 
     const navigate = useNavigate();
     const stripe = useStripe();
+
+    const timer = useRef(null);
 
     const user = useSelector(selectUser);
 
@@ -65,15 +67,15 @@ const PaymentStatus = props => {
     
     useEffect(() => {
         if (status === 'succeeded' ) {
-            const timer = setTimeout(() => {
+            timer.current = setTimeout(() => {
                 navigate('/', { replace: false })
             }, 6000)
-            return () => clearTimeout(timer);
+            return () => clearTimeout(timer.current);
         } else if (status !== 'processing' && status !== 'succeeded') {
-            const timer = setTimeout(() => {
+            timer.current = setTimeout(() => {
                 navigate(-1);
             }, 6000)
-            return () => clearTimeout(timer);
+            return () => clearTimeout(timer.current);
         }
     }, [navigate, status])
 

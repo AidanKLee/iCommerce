@@ -15,6 +15,8 @@ const { products: p, customer: c } = api;
 
 const Product = props => {
 
+    const navigate = useNavigate();
+
     const { productId, itemId } = useParams();
 
     const [ cart, setCart ] = useState(1);
@@ -52,7 +54,7 @@ const Product = props => {
     const [ loading, setLoading ] = useState(true);
 
     const selected = useMemo(() => {
-        return itemId && groupedItems ? groupedItems.findIndex(group => {
+        const index = itemId && groupedItems ? groupedItems.findIndex(group => {
             let match = false;
             group.forEach(item => {
                 if (item.id === itemId) {
@@ -61,6 +63,11 @@ const Product = props => {
             })
             return match;
         }) : 0;
+        if (index > -1) {
+            return index;
+        } else {
+            return 0;
+        }
     }, [groupedItems, itemId])
 
     useEffect(() => {
@@ -71,10 +78,13 @@ const Product = props => {
     const getProducts = async () => {
         try {
             const product = await p.getById(productId);
+            if ('message' in product) {
+                navigate('/error')
+            }
             setProduct(product);
             setLoading(false);
         } catch (err) {
-            console.log(err)
+            navigate('/error')
         }
     }
 
@@ -133,7 +143,7 @@ const Top = props => {
             notificationTimer.current = setTimeout(() => {
                 setStockNotification(false);
             }, 5000)
-            return () => clearTimeout(notificationTimer);
+            return () => clearTimeout(notificationTimer.current);
         }
     })
 
@@ -181,9 +191,14 @@ const Top = props => {
     }, [stats]);
 
     const selectedItem = useMemo(() => {
-        return items && items[selected] ? items[selected].findIndex(item => {
+        const index = items && items[selected] ? items[selected].findIndex(item => {
             return itemId === item.id;
-        }) : 0
+        }) : 0;
+        if (index > -1) {
+            return index;
+        } else {
+            return 0;
+        }
     }, [items, selected, itemId])
 
     const images = useMemo(() => {
@@ -413,7 +428,7 @@ const Top = props => {
                         </CSSTransition>
                     </div>
                     <div className='seller'>
-                            <Link to={`/${seller.shop_name}/products`} className='name'>{seller.shop_name}</Link>
+                            <Link onClick={e => e.preventDefault()} to={`/${seller.shop_name}/products`} className='name'>{seller.shop_name}</Link>
                             <Rating count={5} value={seller.stats.average_rating || 2.5} width='16px'/>
                         </div>
                     <div className='info'>
@@ -441,9 +456,14 @@ const Bottom = props => {
     const { reviews } = product;
 
     const selectedItem = useMemo(() => {
-        return items && Number.isInteger(selected) ? items[selected].findIndex(item => {
+        const index = items && items[selected] ? items[selected].findIndex(item => {
             return itemId === item.id;
-        }) : 0
+        }) : 0;
+        if (index > -1) {
+            return index;
+        } else {
+            return 0;
+        }
     }, [items, selected, itemId])
 
     return (

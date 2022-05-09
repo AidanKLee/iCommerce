@@ -222,50 +222,52 @@ helper.prepareSellerTransfers = async (req, res, next) => {
 
 helper.getOrdersData = async (req, res, next) => {
     try {
-        let years;
-        let count;
-        const { customerId, userId } = req.params;
-        let orders = req.orders;
-        if (customerId) {
-            years = await model.selectCustomerOrderYears([customerId]);
-            count = await model.selectCustomerOrderCount([customerId]);
-            count = Number(count[0].count);
-        } else {
-            years = await model.selectSellerOrderYears([userId]);
-            count = await model.selectSellerOrderCount([userId]);
-            count =Number(count[0].count);
-        }
-        
-        years = years.map(year => year.year);
-        orders = await Promise.all(orders.map(async order => {
+        if (req.orders.length > 0) {
+            let years;
+            let count;
+            const { customerId, userId } = req.params;
+            let orders = req.orders;
             if (customerId) {
-                order.items = await model.selectCustomerOrderItems([order.id]);
+                years = await model.selectCustomerOrderYears([customerId]);
+                count = await model.selectCustomerOrderCount([customerId]);
+                count = Number(count[0].count);
             } else {
-                order.items = await model.selectSellerOrderItems([order.id, userId]);
-                if (order.items.length === 0) {
-                    const err = new Error();
-                    err.message = 'You are not authorized to view this order.'
-                    err.status = 403;
-                    throw err;
-                }
+                years = await model.selectSellerOrderYears([userId]);
+                count = await model.selectSellerOrderCount([userId]);
+                count =Number(count[0].count);
             }
-            const address = await model.selectAddressById([order.delivery_address_id]);
-            order.delivery_address = address[0];
-            delete order.delivery_address_id;
-            order.items = await Promise.all(order.items.map(async item => {
-                const seller = await model.selectSellerById([item.seller_id]);
-                item.seller = seller[0];
-                delete item.seller_id;
-                const it = await model.selectItemById([item.item_id]);
-                item.item = it[0];
-                const image = await model.selectItemPrimaryImage([item.item.id]);
-                item.item.image = image[0];
-                delete item.item_id;
-                return item;
+            
+            years = years.map(year => year.year);
+            orders = await Promise.all(orders.map(async order => {
+                if (customerId) {
+                    order.items = await model.selectCustomerOrderItems([order.id]);
+                } else {
+                    order.items = await model.selectSellerOrderItems([order.id, userId]);
+                    if (order.items.length === 0) {
+                        const err = new Error();
+                        err.message = 'You are not authorized to view this order.'
+                        err.status = 403;
+                        throw err;
+                    }
+                }
+                const address = await model.selectAddressById([order.delivery_address_id]);
+                order.delivery_address = address[0];
+                delete order.delivery_address_id;
+                order.items = await Promise.all(order.items.map(async item => {
+                    const seller = await model.selectSellerById([item.seller_id]);
+                    item.seller = seller[0];
+                    delete item.seller_id;
+                    const it = await model.selectItemById([item.item_id]);
+                    item.item = it[0];
+                    const image = await model.selectItemPrimaryImage([item.item.id]);
+                    item.item.image = image[0];
+                    delete item.item_id;
+                    return item;
+                }));
+                return order;
             }));
-            return order;
-        }));
-        req.orders = { orders, years, count };
+            req.orders = { orders, years, count };
+        }
         next();
     } catch (err) {
         next(err);
@@ -273,7 +275,10 @@ helper.getOrdersData = async (req, res, next) => {
 }
 
 helper.sendOrderData = (req, res, next) => {
-    res.status(200).json(req.orders);
+    if (!Array.isArray(req.orders)) {
+        return res.status(200).json(req.orders);
+    }
+    next();
 }
 
 helper.submitReview = async (req, res, next) => {

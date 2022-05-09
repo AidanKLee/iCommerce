@@ -26,6 +26,7 @@ const Orders = props => {
             c.getOrders(user.id, setOrders, location.search)
             .then(() => setLoading(false))
         }
+        return;
     }, [isLoggedIn, location.search, user.id])
 
     return (

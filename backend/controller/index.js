@@ -347,6 +347,12 @@ customer.selectOrderById = async (req, res, next) => {
             err.status = 403;
             return next(err);
         }
+        if (order.length === 0) {
+            const err = new Error();
+            err.message = 'Order not found.'
+            err.status = 404;
+            return next(err);
+        }
         req.orders = order;
         next();
     } catch (err) {
@@ -648,6 +654,12 @@ products.get = async (req, res, next) => {
 products.getById = async (req, res, next) => {
     try {
         const product = await model.selectProductById([req.params.productId]);
+        if (product.length === 0) {
+            const err = new Error();
+            err.message = 'Product not found.'
+            err.status = 404;
+            return next(err);
+        }
         req.products = product;
         next();
     } catch(err) {

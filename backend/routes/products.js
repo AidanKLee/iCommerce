@@ -1,7 +1,7 @@
 const express = require('express');
 const route = express.Router();
 const controller = require('../controller/index.js');
-const { parser, helper } = require('../controller/middleware');
+const { parser, helper, validate } = require('../controller/middleware');
 const { products } = controller;
 
 route.get('/:category', products.get);
@@ -31,6 +31,11 @@ route.get('/items/:itemId',
     products.getDataAndItems
 );
 
-route.get('/product/:productId', products.getById, products.getDataAndItems);
+route.get('/product/:productId',
+    validate.uuid('productId'),
+    validate.handleErrors,
+    products.getById,
+    products.getDataAndItems
+);
 
 module.exports = route;

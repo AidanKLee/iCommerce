@@ -37,13 +37,14 @@ const ProductTile = props => {
     const [ stockNotification, setStockNotification ] = useState(false);
 
     const notificationTimer = useRef(null);
+    const timer = useRef(null);
 
     useEffect(() => {
         if (stockNotification === true) {
             notificationTimer.current = setTimeout(() => {
                 setStockNotification(false);
             }, 5000)
-            return () => clearTimeout(notificationTimer);
+            return () => clearTimeout(notificationTimer.current);
         }
     })
 
@@ -72,14 +73,14 @@ const ProductTile = props => {
 
     useEffect(() => {
         if (changed) {
-            const timer = setTimeout(() => {
+            timer.current = setTimeout(() => {
                 dispatch(updateItemBagQuantity({
                     itemId: item.id,
                     quantity
                 }))
                 updateQuantity();
             }, 500)
-            return () => clearTimeout(timer);
+            return () => clearTimeout(timer.current);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quantity])

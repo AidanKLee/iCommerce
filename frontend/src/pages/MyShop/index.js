@@ -20,7 +20,7 @@ const MyShop = props => {
     const loginPending = useMemo(() => user.pending, [user.pending]);
     const isLoggedIn = useMemo(() => 'id' in user, [user]);
     
-    const isSeller = useMemo(() => 'shop' in user && 'id' in user.shop, [user.shop]);
+    const isSeller = useMemo(() => 'shop' in user && 'id' in user.shop, [user]);
 
     const shop = useMemo(() => user.shop, [user]);
     const isShop = useMemo(() => user && user.shop && user.shop.id, [user]);

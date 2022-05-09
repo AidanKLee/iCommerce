@@ -222,6 +222,9 @@ customer.getOrders = async (customerId, setter, params) => {
 customer.getOrderById = async (customerId, orderId, setter) => {
     let orders = await fetch(`${baseUrl}/api/customer/${customerId}/orders/${orderId}`);
     orders = await orders.json();
+    if ('message' in orders) {
+        return orders;
+    }
     orders = { ...orders, orders: helper.groupOrdersItemsBySeller(orders.orders) };
     const { orders: order } = orders;
     setter(order[0]);
@@ -359,6 +362,9 @@ products.getAll = async (category, queryString) => {
 products.getById = async (productId) => {
     let product = await fetch(`${baseUrl}/api/products/product/${productId}`);
     product = await product.json();
+    if ('message' in product) {
+        return product;
+    }
     return product[0];
 }
 
@@ -459,6 +465,9 @@ seller.getOrders = async (userId, setter, params) => {
 seller.getOrderById = async (userId, orderId, setter) => {
     let orders = await fetch(`${baseUrl}/api/seller/${userId}/orders/${orderId}`);
     orders = await orders.json();
+    if ('message' in orders) {
+        return orders;
+    }
     orders = { ...orders, orders: helper.groupOrdersItemsBySeller(orders.orders) };
     const { orders: order } = orders;
     setter(order[0]);

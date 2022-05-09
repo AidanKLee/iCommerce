@@ -243,16 +243,16 @@
 }
 
 .grow-down2-enter-active {
-    max-height: 44px;
+    max-height: 58px;
     transition: .5s;
 }
 
 .grow-down2-enter-done {
-    max-height: 44px;
+    max-height: 58px;
 }
 
 .grow-down2-exit {
-    max-height: 44px;
+    max-height: 58px;
 }
 
 .grow-down2-exit-active {

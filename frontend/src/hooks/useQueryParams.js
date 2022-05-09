@@ -43,11 +43,8 @@ const useQueryParams = ({ searchTimeout, searchSetter, exceptions }) => {
                     })
                 };
             }, searchTimeout)
-        } else {
-            
         }
     }
-
     return [ queryParams, handleChange ];
 
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Header from '../template/Header';
 import Body from '../template/Body';
 import Footer from '../template/Footer';
@@ -16,6 +16,8 @@ function App() {
   const { auth } = api;
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
+
+  const timer = useRef(null);
 
   const [ initialLoad, setInitialLoad ] = useState(false);
   const [ menuOpen, setMenuOpen ] = useState(false);
@@ -69,7 +71,6 @@ function App() {
   })
 
   useEffect(() => {
-    let timer;
     if (user.cart.pending) {
       setAddToModal({
         showing: true,
@@ -84,7 +85,7 @@ function App() {
         rejected: user.cart.rejected,
         message: user.cart.message
       })
-      timer = setTimeout(() => {
+      timer.current = setTimeout(() => {
         setAddToModal({
           showing: false,
           fulfilled: user.cart.fulfilled,
@@ -93,12 +94,11 @@ function App() {
         })
       }, 2000);
     }
-    return () => clearTimeout(timer)
+    return () => clearTimeout(timer.current)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.cart.message])
 
   useEffect(() => {
-    let timer;
     if (user.savedStatus.pending) {
       setAddToModal({
         showing: true,
@@ -113,7 +113,7 @@ function App() {
         rejected: user.savedStatus.rejected,
         message: user.savedStatus.message
       })
-      timer = setTimeout(() => {
+      timer.current = setTimeout(() => {
         setAddToModal({
           showing: false,
           fulfilled: user.savedStatus.fulfilled,
@@ -122,7 +122,7 @@ function App() {
         })
       }, 2000);
     }
-    return () => clearTimeout(timer)
+    return () => clearTimeout(timer.current)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.savedStatus.message])
 

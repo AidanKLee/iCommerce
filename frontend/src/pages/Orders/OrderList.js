@@ -95,7 +95,6 @@ const OrderList = props => {
                         [name]: value
                     })
                 }
-                
             }
         }
     }

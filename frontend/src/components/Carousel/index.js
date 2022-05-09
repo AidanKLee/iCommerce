@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import './Carousel.css';
 
 const Carousel = props => {
 
     let { children, timed } = props;
+
+    const timer = useRef(null);
 
     const [ card, setCard ] = useState(0);
 
@@ -39,14 +41,14 @@ const Carousel = props => {
 
     useEffect(() => {
         if (timed) {
-            const timer = setTimeout(() => {
+            timer.current = setTimeout(() => {
                 if (card < updatedChildren.length - 1) {
                     setCard(card + 1);
                 } else {
                     setCard(0);
                 }
             }, 5000)
-            return () => clearTimeout(timer)
+            return () => clearTimeout(timer.current)
         }
     }, [card, timed, updatedChildren])
 
