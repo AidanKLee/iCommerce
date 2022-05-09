@@ -291,7 +291,7 @@ const queries = [
     {
         name: 'selectCategoryByHref',
         type: 'select',
-        tables: {name: 'category', columns: ['name', 'parent_category_name']},
+        tables: {name: 'category', columns: ['*']},
         conditions: 'WHERE href ='
     },
     {

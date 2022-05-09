@@ -222,7 +222,7 @@ helper.prepareSellerTransfers = async (req, res, next) => {
 
 helper.getOrdersData = async (req, res, next) => {
     try {
-        if (req.orders.length > 0) {
+        if (!req.error) {
             let years;
             let count;
             const { customerId, userId } = req.params;
@@ -275,7 +275,7 @@ helper.getOrdersData = async (req, res, next) => {
 }
 
 helper.sendOrderData = (req, res, next) => {
-    if (!Array.isArray(req.orders)) {
+    if (!req.error) {
         return res.status(200).json(req.orders);
     }
     next();

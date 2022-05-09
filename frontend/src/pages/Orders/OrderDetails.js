@@ -121,14 +121,14 @@ const OrderDetails = props => {
                 c.getOrderById(user.id, orderId, setOrder)
                 .then(err => {
                     if (err && 'message' in err) {
-                        navigate('/error')
+                        navigate('/error', {state: location.pathname})
                     }
                 })
             } else {
                 s.getOrderById(user.id, orderId, setOrder)
                 .then(err => {
                     if (err && 'message' in err) {
-                        navigate('/error')
+                        navigate('/error', {state: location.pathname})
                     }
                 })
             }

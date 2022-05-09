@@ -29,11 +29,18 @@ const Products = props => {
     useEffect(() => {
         if (category) {
             c.getByHref(category)
-            .then(data => setCategoryData(data))
-            .catch(err => console.error(err))
+            .then(data => {
+                if ('message' in data) {
+                    navigate('/error', {state: location.pathname})
+                } else {
+                    setCategoryData(data)
+                }
+            })
+            .catch(err => navigate('/error', {state: location.pathname}))
         } else {
             setCategoryData({});
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [category])
 
     const queryParams = useMemo(() => {

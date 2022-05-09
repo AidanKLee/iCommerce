@@ -1,19 +1,27 @@
 import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Error.css';
 
 const Error = props => {
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const timer = useRef(null);
 
     useEffect(() => {
         timer.current = setTimeout(() => {
-            navigate(-2);
+            if (location.pathname.includes('/error')) {
+                navigate(-2);
+            } else {
+                navigate(-1);
+            }
         }, 5000)
         return () => clearTimeout(timer.current)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    // console.log(document.referrer, window.history)
 
     return (
         <section className='error'>

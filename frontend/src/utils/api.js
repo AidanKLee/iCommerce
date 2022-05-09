@@ -215,7 +215,10 @@ customer.postAddress = async (customerId, form, setter) => {
 customer.getOrders = async (customerId, setter, params) => {
     let orders = await fetch(`${baseUrl}/api/customer/${customerId}/orders${params ? params : ''}`);
     orders = await orders.json();
-    orders = { ...orders, orders: helper.groupOrdersItemsBySeller(orders.orders) };
+    orders = {
+        ...orders, 
+        orders: orders.orders.length > 0 ? helper.groupOrdersItemsBySeller(orders.orders) : orders.orders
+    };
     setter(orders);
 }
 

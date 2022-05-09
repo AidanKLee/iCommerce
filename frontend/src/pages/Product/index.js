@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import api from '../../utils/api';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import LoadingModal from '../../components/LoadingModal';
 import './Product.css';
@@ -16,6 +16,7 @@ const { products: p, customer: c } = api;
 const Product = props => {
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { productId, itemId } = useParams();
 
@@ -79,12 +80,12 @@ const Product = props => {
         try {
             const product = await p.getById(productId);
             if ('message' in product) {
-                navigate('/error')
+                navigate('/error', {state: location.pathname})
             }
             setProduct(product);
             setLoading(false);
         } catch (err) {
-            navigate('/error')
+            navigate('/error', {state: location.pathname})
         }
     }
 

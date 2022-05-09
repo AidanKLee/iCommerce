@@ -155,7 +155,13 @@ categories.getSub = async (req, res, next) => {
 
 categories.getByHref = async (req, res, next) => {
     try {
-        let category = await model.selectCategoryByHref(['/' + req.params.href])
+        let category = await model.selectCategoryByHref(['/' + req.params.href]);
+        if (category.length === 0) {
+            const err = new Error();
+            err.message = 'Invalid category.'
+            err.status = 404;
+            return next(err);
+        }
         category = category[0];
         res.status(200).json(category);
     } catch (err) {
@@ -339,18 +345,14 @@ customer.selectOrderById = async (req, res, next) => {
             const err = new Error();
             err.message = 'This order does not exist.'
             err.status = 404;
+            req.error = true;
             return next(err);
         }
         if (customerId && order[0].customer_id !== customerId) {
             const err = new Error();
             err.message = 'You are not authorized to view this order.'
             err.status = 403;
-            return next(err);
-        }
-        if (order.length === 0) {
-            const err = new Error();
-            err.message = 'Order not found.'
-            err.status = 404;
+            req.error = true;
             return next(err);
         }
         req.orders = order;
@@ -408,12 +410,14 @@ products.get = async (req, res, next) => {
         let parentCategory = {};
         if (category && category.length > 0) {
             const categoryName = await model.selectCategoryByHref(['/' + category]);
-            parentCategory = await model.selectParentCategory([categoryName[0].parent_category_name]);
-            dbQuery.push(categoryName[0].name);
-            conditions.push(`${conditionJoin} category.name = $${queryCount}`);
-            categoryIndex = queryCount;
-            queryCount ++;
-            conditionJoin = 'AND'
+            if (categoryName.length > 0) {
+                parentCategory = await model.selectParentCategory([categoryName[0].parent_category_name]);
+                dbQuery.push(categoryName[0].name);
+                conditions.push(`${conditionJoin} category.name = $${queryCount}`);
+                categoryIndex = queryCount;
+                queryCount ++;
+                conditionJoin = 'AND'
+            }
         }
                 
         if (userId && userId.length > 0) {
