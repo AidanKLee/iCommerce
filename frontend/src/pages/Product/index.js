@@ -383,13 +383,16 @@ const Top = props => {
                             }
                         </div>
                         {
-                            items[selected][selectedItem].in_stock < 31 ? (
+                            items[selected][selectedItem].in_stock < 10 && items[selected][selectedItem].in_stock > 0 ? (
                                 <p className='stock'>{` Only ${items[selected][selectedItem].in_stock} left in stock!`}</p>
+                            ) : items[selected][selectedItem].in_stock === 0 ? (
+                                <p className='stock'>Sold out! We'll have some more for you soon.</p>
                             ) : undefined
                         }
                         <div className='actions'>
-                            <div className='cart'>
+                            <div className={`cart${items[selected][selectedItem].in_stock === 0 ? ' disabled' : ''}`}>
                                 <Button
+                                    disabled={items[selected][selectedItem].in_stock === 0}
                                     onClick={handleAddToCart}
                                     type='button'
                                     leftIcon={<svg xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/><path d="M18,6h-2c0-2.21-1.79-4-4-4S8,3.79,8,6H6C4.9,6,4,6.9,4,8v12c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8C20,6.9,19.1,6,18,6z M12,4c1.1,0,2,0.9,2,2h-4C10,4.9,10.9,4,12,4z M18,20H6V8h2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V8h4v2c0,0.55,0.45,1,1,1s1-0.45,1-1V8 h2V20z"/></g></svg>}
@@ -398,7 +401,7 @@ const Top = props => {
                                 >
                                     Add To Bag
                                 </Button>
-                                <input onChange={handleCartChange} onBlur={handleQuantityBlur} className='add' style={stockNotification ? warningStyle : {}} type='number' name='cart-add' min={1} max={items[selected][selectedItem].in_stock} value={cart}/>
+                                <input onChange={handleCartChange} onBlur={handleQuantityBlur} className='add' style={stockNotification ? warningStyle : {}} type='number' name='cart-add' min={1} max={items[selected][selectedItem].in_stock} value={cart} disabled={items[selected][selectedItem].in_stock === 0}/>
                             </div>
                             <Button
                                 design='invert'

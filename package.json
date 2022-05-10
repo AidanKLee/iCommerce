@@ -35,6 +35,7 @@
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "pg-promise": "^10.11.1",
+    "pprint": "^0.0.1",
     "process": "^0.11.10",
     "react": "^17.0.2",
     "react-cookies": "^0.1.1",

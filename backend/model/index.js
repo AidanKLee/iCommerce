@@ -455,7 +455,7 @@ const queries = [
     {
         name: 'updateItem',
         type: 'update',
-        tables: {name: 'item', columns: ['name', 'description', 'price']},
+        tables: {name: 'item', columns: ['name', 'description', 'price', 'in_stock']},
         conditions: 'WHERE id ='
     },
     {

@@ -133,7 +133,7 @@ const OrderDetails = props => {
                 })
             }
         }
-    }, [isLoggedIn, navigate, order, orderId, type, user.id])
+    }, [isLoggedIn, location.pathname, navigate, order, orderId, type, user.id])
     
     const handleCancel = (sellerId, orderItemId) => {
         c.cancelOrder(user.id, id, sellerId, orderItemId)

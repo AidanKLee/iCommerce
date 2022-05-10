@@ -4,7 +4,7 @@
     justify-content: center;
 }
 
-.my-shop svg, .my-shop p {
+.my-shop.manage.header svg, .my-shop.manage.header p {
     pointer-events: none;
 }
 

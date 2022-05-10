@@ -70,6 +70,12 @@ const ProductTile = props => {
             setQuantity(1);
         }
     }
+    
+    const updateQuantity = async () => {
+        if (user.id && user.cart.id) {
+            await c.updateItemBagQuantity(user.id, user.cart.id, item.id, quantity);
+        }
+    }
 
     useEffect(() => {
         if (changed) {
@@ -85,11 +91,21 @@ const ProductTile = props => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quantity])
 
-    const updateQuantity = async () => {
-        if (user.id && user.cart.id) {
-            await c.updateItemBagQuantity(user.id, user.cart.id, item.id, quantity);
+    useEffect(() => {
+        if (type === 'bag') {
+            if (item.in_stock === 0) {
+                handleBagDelete();
+            } else if (item.in_stock < quantity) {
+                dispatch(updateItemBagQuantity({
+                    itemId: item.id,
+                    quantity: item.in_stock
+                }))
+                updateQuantity();
+            }
         }
-    }
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [item.in_stock, quantity])
 
     const handleItemDelete = async () => {
         setDeleting(index);

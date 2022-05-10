@@ -5,9 +5,9 @@ const { categories } = controller;
 
 route.get('/', categories.getAll);
 
-route.get('/main', categories.getMain);
+route.get('/:href', categories.getByHref);
 
-route.get('/main/:href', categories.getByHref);
+route.get('/main', categories.getMain);
 
 route.get('/:category', categories.getSub);
 

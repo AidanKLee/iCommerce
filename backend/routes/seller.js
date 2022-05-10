@@ -8,6 +8,10 @@ route.get('/:userId/products/:category',
     products.get
 );
 
+route.delete('/:userId/products/images',
+    products.purgeUnusedImages
+);
+
 route.use('/:userId',
     validate.uuid('userId'),
     validate.handleErrors,
@@ -18,10 +22,6 @@ route.post('/:userId/products',
     parser.json,
     products.create,
     products.createItems
-);
-
-route.delete('/:userId/products/images',
-    products.purgeUnusedImages
 );
 
 route.use('/:userId/products/:productId',

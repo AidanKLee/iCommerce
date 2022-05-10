@@ -28,8 +28,6 @@ const Bag = props => {
     const [ initialLoad, setInitialLoad ] = useState(false);
     const [ deleting, setDeleting ] = useState(-1);
 
-    console.log(bagItems)
-
     useEffect(() => {
         const getItems = async () => {
             setInitialLoad(true);

@@ -128,7 +128,7 @@ categories.getMain = async setter => {
 }
 
 categories.getByHref = async (href) => {
-    let categories = await fetch(`${baseUrl}/api/categories/main/${href}`);
+    let categories = await fetch(`${baseUrl}/api/categories/${href}`);
     categories = await categories.json();
     return categories
 }
@@ -236,11 +236,11 @@ customer.getOrderById = async (customerId, orderId, setter) => {
 customer.cancelOrder = async (customerId, orderId, sellerId, orderItemId) => {
     let url;
     if (orderId && sellerId) {
-        url = `${baseUrl}/api/customer/${customerId}/orders/${orderId}/?seller=${sellerId}`;
+        url = `${baseUrl}/api/customer/${customerId}/orders/${orderId}/?seller_id=${sellerId}`;
     } else if (orderId && !orderItemId) {
         url = `${baseUrl}/api/customer/${customerId}/orders/${orderId}`;
     } else if (orderId && orderItemId) {
-        url = `${baseUrl}/api/customer/${customerId}/orders/${orderId}?item=${orderItemId}`;
+        url = `${baseUrl}/api/customer/${customerId}/orders/${orderId}?order_item_id=${orderItemId}`;
     } else {
         return;
     }

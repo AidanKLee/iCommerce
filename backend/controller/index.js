@@ -299,7 +299,6 @@ customer.submitOrder = async (req, res, next) => {
         await model.insertCart([uuid(), customerId]);
         res.status(200).json({message: 'Order submitted. Awaiting payment confirmation.'})
     } catch (err) {
-        console.log(err)
         next(err);
     }
 }
@@ -365,17 +364,17 @@ customer.selectOrderById = async (req, res, next) => {
 customer.cancelOrderItems = async (req, res, next) => {
     try {
         const { orderId } = req.params;
-        const { item, sellerId } = req.query;
+        const { order_item_id, seller_id } = req.query;
         let items;
         let message = {message: 'Item cancelled.'}
-        if (orderId && sellerId) {
-            items = await model.selectOrderItemsIdBySeller([orderId, sellerId]);
+        if (orderId && seller_id) {
+            items = await model.selectOrderItemsIdBySeller([orderId, seller_id]);
             message = {message: 'Seller order cancelled.'}
-        } else if (orderId && !item) {
+        } else if (orderId && !order_item_id) {
             items = await model.selectOrderItemsIdByOrder([orderId]);
             message = {message: 'Order cancelled.'}
-        } else if (item) {
-            items = [{id: item}];
+        } else if (order_item_id) {
+            items = [{id: order_item_id}];
         } else {
             return;
         }
@@ -812,8 +811,9 @@ products.edit = async (req, res, next) => {
             allImages = [...allImages, ...item.images]
         })
         await Promise.all(items.map(async item => {
-            const { attributes, description, id: itemId, name, price, image_ids, image_id_primary } = item;
-            await model.updateItem([name, description, price, itemId]);
+            // console.log(item)
+            const { attributes, description, id: itemId, name, price, image_ids, image_id_primary, in_stock } = item;
+            await model.updateItem([name, description, price, Number(in_stock), itemId]);
             await Promise.all(attributes.map(async attribute => {
                 return await model.updateItemAttributeValue([attribute.value, itemId, attribute.key]);
             }));

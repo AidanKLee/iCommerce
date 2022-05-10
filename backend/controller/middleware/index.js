@@ -85,7 +85,6 @@ helper.isAuthenticatedSeller = (req, res, next) => {
 helper.isCustomerCart = async (req, res, next) => {
     try {
         if (req.session.passport.user) {
-            console.log('is session')
             const customerId = req.session.passport.user.id;
             const cartId = req.params.cartId ? req.params.cartId : req.query.cart_id;
             if (cartId) {
@@ -108,7 +107,7 @@ helper.isCustomerCart = async (req, res, next) => {
 
 helper.isSellerProduct =async  (req, res, next) => {
     try {
-        const product = model.selectProductById([req.params.productId]);
+        const product = await model.selectProductById([req.params.productId]);
         const isSellerProduct = product[0].seller_id === req.params.userId;
         if (!isSellerProduct) {
             const err = new Error();
@@ -266,6 +265,7 @@ helper.getOrdersData = async (req, res, next) => {
                 }));
                 return order;
             }));
+            console.log(orders[0].items[0].item.image)
             req.orders = { orders, years, count };
         }
         next();
@@ -418,7 +418,7 @@ stripe.fulfillTransfersToSellers = async (req, res, next) => {
     try {
         const transferred =  await Promise.all(req.pendingTransfers.map(async transfer => {
             const stripeTransfer = await s.transfers.create({
-                amount: 100 * (transfer.amount * .91),
+                amount: 100 * (Number(transfer.amount) * .91),
                 currency: 'gbp',
                 destination: transfer.stripe_id,
                 transfer_group: req.params.orderId,

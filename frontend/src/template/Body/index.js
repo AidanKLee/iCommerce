@@ -20,6 +20,7 @@ import OrderList from '../../pages/Orders/OrderList';
 import OrderDetails from '../../pages/Orders/OrderDetails';
 import Review from '../../pages/Review'
 import Error from '../../pages/Error';
+import Documentation from '../../pages/Documentation';
 
 const Body = props => {
 
@@ -59,6 +60,7 @@ const Body = props => {
                     <Route path='/orders/:orderId' element={<OrderDetails/>}/>
                 </Route>
                 <Route path='/review' element={<Review/>}/>
+                <Route path='/docs' element={<Documentation/>}/>
                 <Route path='*' element={<Error/>}/>
             </Routes>
         </section>

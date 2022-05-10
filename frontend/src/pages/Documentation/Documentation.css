@@ -1,0 +1,373 @@
+.docs {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.docs a:hover {
+    text-decoration: underline;
+}
+
+.docs .header {
+    position: fixed;
+    top: 49px;
+    background-color: #f1f1f1;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    width: 100%;
+    z-index: 2;
+}
+
+.docs .header h2 {
+    max-width: 1440px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin: 0 auto;
+    padding: 20px 16px;
+}
+
+.docs .main {
+    position: relative;
+    top: 69px;
+    display: flex;
+    height: calc(100vh - 151px);
+}
+
+.docs .main .contents {
+    list-style: none;
+    height: 100%;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    max-width: 280px;
+    background-color: #f1f1f1;
+    border-right: 2px solid rgba(0, 0, 0, 0.1);
+    overflow-x: hidden;
+    transition: .5s;
+}
+
+.docs .main .contents .view {
+    overflow: hidden;
+}
+
+.docs .main .contents li {
+    font-weight: 600;
+}
+
+.docs .main .contents li a {
+    font-weight: 600;
+    display: block;
+    padding: 16px;
+}
+
+.docs .main .contents li a.blue {
+    background-color: #6464ff;
+    color: white;
+}
+
+
+.docs .main .contents .route {
+    list-style: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+.docs .main .contents .route .tab {
+    max-height: 34px;
+    overflow: hidden;
+    list-style: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: .5s;
+}
+
+
+.docs .main .contents .route .tab.open {
+    max-height: 320px;
+}
+
+
+.docs .main .contents .route .dropdown {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.docs .main .contents .route .dropdown svg {
+    margin-right: 8px;
+    height: 34px;
+    width: 34px;
+    padding: 8px;
+    transition: .3s;
+}
+
+
+.docs .main .contents .route .dropdown svg:hover {
+    transform: scale(1.4);
+}
+
+
+.docs .main .contents .route .dropdown svg:active {
+    transform: scale(1);
+}
+
+
+.docs .main .contents .route .dropdown svg path {
+    pointer-events: none;
+}
+
+.docs .main .contents li li {
+    font-size: .8rem;
+}
+
+.docs .main .contents li li a {
+    padding: 8px 16px;
+}
+
+
+.docs .main .contents li li ul {
+    list-style: none;
+    margin: 0 0 4px 8px;
+}
+
+.docs .main .contents li li li a {
+    font-weight: 400;
+    padding: 2px 16px;
+}
+
+.docs .main .view {
+    width: 100%;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.docs .main .view ul {
+    list-style: none;
+}
+
+.docs .main .view li.route-item {
+    display: flex;
+    /* justify-content: center; */
+}
+
+.docs .main .view li.route-item div.route {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    padding-right: 16px;
+}
+
+.docs .main .view li.route-item .route span {
+    display: inline-block;
+    font-size: .6rem;
+    font-weight: 400;
+    background-color: #6464ff;
+    color: white;
+    padding: 0 4px;
+    border: 2px solid #6464ff;
+    border-radius: 4px;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+.docs .main .view li.route-item .route span.grey {
+    background-color: rgba(0, 0, 0, 0.05);
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    color: inherit;
+}
+
+.docs .main .view li.route-item .route span.white {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: rgb(255, 255, 255);
+}
+
+.docs .main .view li.route-item .route .description{
+    margin: 8px 0;
+}
+
+.docs .main .view li.route-item .route .params {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.docs .main .view li.route-item .route .params:last-of-type {
+    margin-bottom: 0;
+}
+
+.docs .main .view li.route-item .route .params .type {
+    font-size: .8rem;
+    font-weight: 600;
+    padding: 8px;
+    background-color: #d69b00;
+    color: white;
+}
+
+.docs .main .view li.route-item .route .params .param {
+    margin: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    font-size: .7rem;
+    overflow: hidden;
+}
+
+.docs .main .view li.route-item .route .params .param .title {
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.docs .main .view li.route-item .route .params .param .details {
+    padding: 4px 8px;
+}
+
+.docs .main .view li.route-item .route .param b {
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.docs .main .view li.route-item div.responses {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    max-width: 600px;
+}
+
+.docs .main .view li.route-item div.responses .sticky {
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+    max-height: calc(100vh - 166px);
+    display: flex;
+    flex-direction: column;
+}
+
+.docs .main .view li.route-item div.responses .sticky .response {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0 0 16px;
+    flex: 1 1 auto;
+    min-height: 244px;
+}
+
+.docs .main .view li.route-item div.responses .sticky .response pre {
+    font-weight: 500;
+    font-size: .7rem;
+    padding: 8px;
+    width: 100%;
+    height: fit-content;
+    max-height: calc(100% - 29px);
+    overflow: auto;
+}
+
+.docs .main .view li.route-item div.responses .sticky .response pre::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    padding: 2px;
+}
+
+.docs .main .view li.route-item div.responses .sticky .response pre::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.docs .main .view li.route-item div.responses .sticky .response pre::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.docs .main .view .sub-route {
+    margin-bottom: 16px;
+}
+
+.docs h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding: 16px 0;
+}
+
+.docs h4 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 16px 0;
+}
+
+.docs h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.docs h6 {
+    font-size: .8rem;
+    font-weight: 600;
+    line-height: 1;
+    padding: 8px;
+    background-color: #d69b00;
+    color: white;
+    width: 100%;
+}
+
+.docs .body p {
+    font-size: .8rem;
+    line-height: 1.2;
+}
+
+.docs .mr8 {
+    margin-right: 8px;
+    font-weight: bold !important;
+    background-color: transparent !important;
+    color: rgb(200,0,0) !important;
+    border: 0 none transparent !important;
+}
+
+@media only screen and (max-width: 480px) {
+    .docs .main .view li.route-item div.responses .sticky .response pre {
+        font-size: .6rem;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+    .docs .main .view li.route-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .docs .main .view li.route-item div.route {
+        width: 100%;
+        padding-right: 0;
+    }
+
+    .docs .main .view li.route-item div.responses {
+        padding-top: 0;
+        min-width: 100%;
+        align-items: stretch;
+    }
+
+    .docs .main .view li.route-item div.responses .sticky {
+        max-height: none;
+    }
+
+    .docs .main .view li.route-item div.responses .sticky .response:last-of-type {
+        margin-bottom: 0;
+    }
+}
+
+@media only screen and (max-width: 1300px) {
+
+    .docs .main .contents {
+        max-width: 0;
+        position: fixed;
+        top: 118px;
+        height: calc(100vh - 151px);
+        z-index: 1;
+    }
+
+    .docs .main .contents.open {
+        max-width: 280px;
+    }
+}

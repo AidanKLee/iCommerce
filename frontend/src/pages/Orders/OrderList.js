@@ -102,7 +102,6 @@ const OrderList = props => {
     const handlePageSelect = e => {
         let value = e.target.value;
         if (!Number.isNaN(Number(value))) {
-            console.log(value)
             value = Number(value);
             setSearchParams({
                 ...searchParams,

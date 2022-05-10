@@ -13,6 +13,7 @@ html {
   height: fit-content;
   width: 100%;
   background-color: #f1f1f1;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -40,7 +41,7 @@ b {
   color: inherit;
 }
 
-code {
+code, pre {
   font-family: 'Roboto Mono', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
