@@ -352,6 +352,10 @@
         max-height: none;
     }
 
+    .docs .main .view li.route-item div.responses .sticky .response {
+        min-height: 0;
+    }
+
     .docs .main .view li.route-item div.responses .sticky .response:last-of-type {
         margin-bottom: 0;
     }
