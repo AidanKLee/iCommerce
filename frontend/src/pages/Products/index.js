@@ -172,6 +172,7 @@ const Products = props => {
 
     const handlePageSelect = e => {
         let value = e.target.value;
+        let page;
         if (!Number.isNaN(Number(value))) {
             value = Number(value);
             setSearchParams({
@@ -180,9 +181,13 @@ const Products = props => {
             })
         } else {
             if (value === 'next') {
+                page = Number(queryParams.page) + 1
+                if (Number.isNaN(page)) {
+                    page = 2
+                }
                 setSearchParams({
                     ...queryParams,
-                    page: Number(queryParams.page) + 1
+                    page: page
                 })
             } else {
                 setSearchParams({
