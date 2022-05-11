@@ -7,7 +7,7 @@ route.get('/', categories.getAll);
 
 route.get('/main', categories.getMain);
 
-route.get('/main/:href', categories.getByHref);
+route.get('/href/:href', categories.getByHref);
 
 route.get('/:category', categories.getSub);
 
