@@ -648,7 +648,8 @@ products.get = async (req, res, next) => {
                 stats: stats[0]
             }
         }));
-        res.status(200).json({products, data})
+
+        res.status(200).json({data, products})
     } catch (err) {
         next(err);
     }
@@ -751,9 +752,11 @@ products.create = async (req, res, next) => {
 
 products.createItems = async (req, res, next) => {
     try {
-        await Promise.all(req.body.images.map(async image => {
-            return await model.insertImage([image.id, image.name, image.src, image.type]); 
-        }))
+        if (req.body.images) {
+            await Promise.all(req.body.images.map(async image => {
+                return await model.insertImage([image.id, image.name, image.src, image.type]); 
+            }))
+        }
         const id = req.params.productId;
         await Promise.all(req.body.items.map(async item => {
             const { attributes, name, description, price, in_stock, image_ids, image_id_primary } = item;
@@ -811,7 +814,6 @@ products.edit = async (req, res, next) => {
             allImages = [...allImages, ...item.images]
         })
         await Promise.all(items.map(async item => {
-            // console.log(item)
             const { attributes, description, id: itemId, name, price, image_ids, image_id_primary, in_stock } = item;
             await model.updateItem([name, description, price, Number(in_stock), itemId]);
             await Promise.all(attributes.map(async attribute => {
@@ -887,7 +889,7 @@ seller.selectAllOrders = async (req, res, next) => {
 seller.updateSellerOrder = async(req, res, next) => {
     try {
         const { userId, orderId } = req.params;
-        let { item, dispatched, delivered, reviewed } = req.query;
+        let { order_item_id, dispatched, delivered, reviewed } = req.query;
         dispatched = dispatched!== undefined ? dispatched === 'true' : undefined;
         delivered = delivered!== undefined ? delivered === 'true' : undefined;
         reviewed = reviewed!== undefined ? reviewed === 'true' : undefined;
@@ -902,11 +904,11 @@ seller.updateSellerOrder = async(req, res, next) => {
             return next(err);
         }
 
-        if (!item) {
+        if (!order_item_id) {
             items = await model.selectOrderItemsIdBySeller([orderId, userId]);
             updating = 'order';
-        } else if (item) {
-            items = [{id: item}];
+        } else if (order_item_id) {
+            items = [{id: order_item_id}];
             updating = 'item';
         } else {
             const err = new Error();

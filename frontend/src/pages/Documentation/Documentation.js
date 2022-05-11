@@ -1,4 +1,3 @@
-import { stringify } from "uuid";
 import baseUrl from "../../utils/baseUrl";
 
 const docs = {
@@ -330,8 +329,22 @@ docs.api.routes.checkout = {
                         awards: null,
                         item_quantity: 1,
                         total: 70,
-                        image: [Object],
-                        seller: [Object]
+                        image: {
+                            id: 'd15fae8b-f5af-4263-a96c-2c43e1b0b079',
+                            name: '50"-samsung-television.png',
+                            src: 'data:image/png;base64,...',
+                            type: 'image/png'
+                        },
+                        seller: {
+                            id: '55c49c94-a9f6-4dbe-985c-cede294a181a',
+                            shop_name: 'iCommerce',
+                            image_id: null,
+                            description: 'The top place to come for your online shopping needs.',
+                            business_email: 'shop@icommerce.com',
+                            business_phone: '07000000001',
+                            business_type: 'individual',
+                            stripe_id: 'acct_5OgrgpRHzmNLFGl'
+                        }
                     }
                 ],
                 total: 73.99,
@@ -518,7 +531,7 @@ docs.api.routes.customer = {
                                         name: '50"-samsung-television.png',
                                         src: 'data:image/png;base64,...',
                                         type: 'image/png'
-                                      }
+                                    }
                                 }
                             }
                         ],
@@ -958,34 +971,205 @@ docs.api.routes.customer = {
 docs.api.routes.products = {
     uri: '/products',
     name: 'Products and Items',
+    responses: [
+        {
+            name: 'Products',
+            response: JSON.stringify({
+                data: {
+                    product_count: 1,
+                    item_count: 1,
+                    parent_category: {},
+                    category: [
+                        {
+                            category_name: 'Health & Beauty',
+                            href: '/health-beauty',
+                            parent_category_name: null,
+                            count: '1'
+                        }
+                    ],
+                    attributes: {
+                        brand: [ { value: 'Gillette', count: '1' } ],
+                        condition: [ { value: 'New', count: '1' } ],
+                        responsible: [ { value: 'Sustainable Materials', count: '1' } ]
+                    }
+                },
+                products: [
+                    {
+                        id: '2c5a7178-6682-461f-9c62-f2de0539008c',
+                        is_active: true,
+                        views: 0,
+                        favourites: 0,
+                        categories: [
+                            'Health & Beauty',
+                            'Shaving & Hair Removal',
+                            'Shaving & Grooming Kits'
+                        ],
+                        items: [
+                            {
+                                id: 'dab153d9-ef2d-4da6-80ee-4bcc52835f79',
+                                name: 'Gillette Razor and Grooming Kit',
+                                description: 'Premium beard grooming kit.',
+                                price: '£50.00',
+                                in_stock: 49,
+                                ordered: 35,
+                                awards: null,
+                                attributes: {
+                                    condition: 'New',
+                                    responsible: 'Sustainable Materials',
+                                    brand: 'Gillette'
+                                },
+                                images: [ 
+                                    {
+                                        id: 'd15fae8b-f5af-4263-a96c-2c43e1b0b079',
+                                        name: 'gillete-beard-trimming-kit.png',
+                                        src: 'data:image/png;base64,...',
+                                        type: 'image/png'
+                                    }
+                                ],
+                                image_ids: [ 'd15fae8b-f5af-4263-a96c-2c43e1b0b079' ],
+                                sale: {}
+                            }
+                        ],
+                        reviews: [
+                            {
+                                id: '85d2c234-3bd5-46a5-8496-3af1870a79cf',
+                                date: '2022-05-03T14:26:45.914Z',
+                                rating: 5,
+                                review: 'Amazing product!',
+                                first_name: 'User',
+                                last_name: 'Name',
+                                order_date: '2022-04-27T19:59:30.031Z'
+                            }
+                        ],
+                        sale: undefined,
+                        seller: {
+                            id: '55c49c94-a9f6-4dbe-985c-cede294a181a',
+                            shop_name: 'iCommerce',
+                            image_id: null,
+                            description: 'The top place to come for your online shopping needs.',
+                            business_email: 'shop@icommerce.com',
+                            business_phone: '07000000001',
+                            business_type: 'individual',
+                            stripe_id: 'acct_5OgrgpRHzmNLFGl'
+                        },
+                        stats: { average_rating: '5', count: '1' }
+                    }
+                ]
+            }, null, 2)
+        }
+    ],
     routes: [
         {
-            uri: '/items',
+            uri: '/product/:category',
             method: {
-                post: {
-                    name: 'Get items from item list',
-                    description: 'Get items to display in cart/bag and saved items by item ID.',
-                    params: {}
-                }
-            }
-        },
-        {
-            uri: '/items/:itemId',
-            method: {
-                post: {
-                    name: 'Get item by ID',
-                    description: 'Get a single item to by item ID.',
-                    params: {}
+                get: {
+                    name: 'Get all products',
+                    description: 'Get a list of all products or a filtered list of products by category href (omit href for all products)',
+                    params: {
+                        category: {
+                            type: 'string',
+                            description: 'The href of the category that the user would like to filter the products by.'
+                        }
+                    },
+                    queries: {
+                        attributes: {
+                            type: 'array',
+                            description: 'An array of attribute strings that the customer would like to filter the products by. Use "Get attributes by category" or use a products items attributes to find usable attributes.'
+                        },
+                        limit: {
+                            type: 'number',
+                            description: 'Limit the results of the request.',
+                            default: 25
+                        },
+                        page: {
+                            type: 'number',
+                            description: 'Returns the list with with results from the specified page. (If limit is 25 and page is 3 it returns a max of 25 results from the 50th result.',
+                            default: 1,
+                        },
+                        query: {
+                            type: 'string',
+                            description: 'Returns products with the specified term in a products item name.'
+                        },
+                        sort: {
+                            type: 'string',
+                            description: 'Returns the list sorted by the specified order.',
+                            default: 'popular',
+                            options: [
+                                'most-viewed', 'name-asc', 'name-desc',
+                                'popular', 'price-asc', 'price-desc', 'top-rated'
+                            ]
+                        }
+                    }
                 }
             }
         },
         {
             uri: '/product/:productId',
             method: {
-                post: {
+                get: {
                     name: 'Get product by ID',
                     description: 'Get a product and its items by product ID.',
-                    params: {}
+                    params: {
+                        productId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the product you would like to retrieve.',
+                            required: true
+                        }
+                    }
+                }
+            }
+        },
+        {
+            uri: '/items',
+            method: {
+                post: {
+                    name: 'Get items from item list',
+                    description: 'Get items from a list of items.',
+                    body: {
+                        type: 'application/json',
+                        params: {
+                            itemList: {
+                                type: 'array',
+                                description: `The array containing item objects with the item ID's the customer would like to retrieve. Only the array should be sent in the body, not an object containing the array.`,
+                                required: true,
+                                params: {
+                                    item_id: {
+                                        type: 'string/uuid',
+                                        description: 'The ID of the item from the list that the customer would like to retrieve.',
+                                        required: true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    queries: {
+                        cart_id: {
+                            type: 'string/uuid',
+                            description: 'The registered customers cart ID to retrieve items from, use this for authenticated users.'
+                        }
+                    }
+                }
+            }
+        },
+        {
+            uri: '/items/:itemId',
+            method: {
+                get: {
+                    name: 'Get item by ID',
+                    description: 'Get an item by item ID.',
+                    params: {
+                        item_id: {
+                            type: 'string/uuid',
+                            description: 'The ID of the item that the customer would like to retrieve.',
+                            required: true
+                        }
+                    },
+                    queries: {
+                        cart_id: {
+                            type: 'string/uuid',
+                            description: 'The registered customers cart ID to retrieve item from, use this for authenticated users.'
+                        }
+                    }
                 }
             }
         }
@@ -995,14 +1179,125 @@ docs.api.routes.products = {
 docs.api.routes.seller = {
     uri: '/seller',
     name: 'Seller/Shop Actions',
+    responses: [
+        {
+            name: 'Orders',
+            response: JSON.stringify({
+                orders: [
+                    {
+                        id: '821a47f2-7b6a-45f7-9ed6-950bdc97f2cf',
+                        customer_id: '9b080c4e-7d9e-4340-bc02-b0d890120627',
+                        date: '2021-04-27T19:31:55.074Z',
+                        payment_complete: true,
+                        postage_option: 'Next Day',
+                        postage_price: '£3.99',
+                        items: [
+                            {
+                                id: 'da6330f3-9324-42df-b0e8-9dbdaa41f19f',
+                                order_id: '821a47f2-7b6a-45f7-9ed6-950bdc97f2cf',
+                                item_quantity: 1,
+                                dispatch_date: null,
+                                delivery_date: null,
+                                cancelled: false,
+                                reviewed_item: false,
+                                reviewed_seller: false,
+                                reviewed_customer: false,
+                                seller_paid: false,
+                                transfer_id: null,
+                                item_price: '£0.00',
+                                seller: {
+                                    id: '55c49c94-a9f6-4dbe-985c-cede294a181a',
+                                    shop_name: 'iCommerce',
+                                    image_id: null,
+                                    description: 'The top place to come for your online shopping needs.',
+                                    business_email: 'shop@icommerce.com',
+                                    business_phone: '07000000001',
+                                    business_type: 'individual',
+                                    stripe_id: 'acct_5OgrgpRHzmNLFGl'
+                                },
+                                item: {
+                                    id: 'dab153d9-ef2d-4da6-80ee-4bcc52835f79',
+                                    product_id: '2c5a7178-6682-461f-9c62-f2de0539008c',
+                                    name: '50" Samsung Television',
+                                    description: 'The best television on the market.',
+                                    price: '499.99',
+                                    in_stock: 49,
+                                    ordered: 35,
+                                    awards: null,
+                                    image: {
+                                        id: 'd15fae8b-f5af-4263-a96c-2c43e1b0b079',
+                                        name: '50"-samsung-television.png',
+                                        src: 'data:image/png;base64,...',
+                                        type: 'image/png'
+                                    }
+                                }
+                            }
+                        ],
+                        delivery_address: {
+                            id: '117665e0-ca34-42dd-90b5-acf56951aec7',
+                            line_1: '1 Address Line',
+                            line_2: '',
+                            city: 'Cityshire',
+                            county: 'Countyshire',
+                            postcode: 'C06 9BL',
+                            is_primary: true,
+                            customer_id: '9b080c4e-7d9e-4340-bc02-b0d890120627',
+                            seller_id: null
+                        }
+                    }
+                ],
+                years: [ 2022, 2021 ],
+                count: 23
+            }, null, 2)
+        }
+    ],
     routes: [
         {
             uri: '/:sellerId/products/:category',
             method: {
-                post: {
-                    name: 'Get sellers products by category',
-                    description: 'Get a list of sellers products and their items by seller ID and category href (omit href for all products).',
-                    params: {}
+                get: {
+                    name: 'Get sellers products',
+                    description: 'Get a list of sellers products and their items by seller ID and category href (omit href for all products)',
+                    params: {
+                        category: {
+                            type: 'string',
+                            description: 'The href of the category that the user would like to filter the products by.'
+                        },
+                        sellerId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the seller that the user would like to retrieve the items for.',
+                            required: true
+                        }
+                    },
+                    queries: {
+                        attributes: {
+                            type: 'array',
+                            description: 'An array of attribute strings that the customer would like to filter the products by. Use "Get attributes by category" or use a products items attributes to find usable attributes.'
+                        },
+                        limit: {
+                            type: 'number',
+                            description: 'Limit the results of the request.',
+                            default: 25
+                        },
+                        page: {
+                            type: 'number',
+                            description: 'Returns the list with with results from the specified page. (If limit is 25 and page is 3 it returns a max of 25 results from the 50th result.',
+                            default: 1,
+                        },
+                        query: {
+                            type: 'string',
+                            description: 'Returns products with the specified term in a products item name.'
+                        },
+                        sort: {
+                            type: 'string',
+                            description: 'Returns the list sorted by the specified order.',
+                            default: 'popular',
+                            options: [
+                                'most-viewed', 'name-asc', 'name-desc',
+                                'popular', 'price-asc', 'price-desc', 'top-rated'
+                            ]
+                        }
+                    }
                 }
             }
         },
@@ -1012,7 +1307,97 @@ docs.api.routes.seller = {
                 post: {
                     name: 'Create a new product listing',
                     description: 'Creates a new listing for a sellers product and its items.',
-                    params: {}
+                    body: {
+                        type: 'application/json',
+                        params: {
+                            categories: {
+                                type: 'array',
+                                description: 'An array of category names as strings. Use "Get main categories" for a list of valid categories, once the user has selected a main category use "Get sub-categories" to show get valid sub-categories. Do this until sub-categories return empty.',
+                                required: true
+                            },
+                            images: {
+                                type: 'array',
+                                description: 'An array of image objects, each containing an ID, name, src and type.',
+                                required: true,
+                                params: {
+                                    id: {
+                                        type: 'string/uuid',
+                                        description: 'An id created on the client side for the uploaded image.',
+                                        required: true
+                                    },
+                                    name: {
+                                        type: 'string',
+                                        description: 'The name of image the seller is uploading.',
+                                        required: true
+                                    },
+                                    src: {
+                                        type: 'string',
+                                        description: 'The source of the object the seller is uploading. Either a url or base64 encoded string.',
+                                        required: true
+                                    },
+                                    type: {
+                                        type: 'string',
+                                        description: 'The filetype of the image that the seller is uploading.',
+                                        required: true
+                                    } 
+                                },
+                            },
+                            is_active: {
+                                type: 'boolean',
+                                description: 'If true all users are able to see and purchase the product, otherwise only the seller can see it in "my-shop".',
+                                required: true
+                            },
+                            items: {
+                                type: 'array',
+                                description: 'An array of items/variants to be created for the product.',
+                                required: true,
+                                params: {
+                                    attributes: {
+                                        type: 'array',
+                                        description: 'An array of valid attribute objects containing attribute.key (preset value) and attribute.value (user created value) that the seller selects for the item. Use "Get attributes by category" to get a list of valid attributes for the products selected categories.',
+                                        required: true
+                                    },
+                                    description: {
+                                        type: 'string',
+                                        description: 'The item/product description.',
+                                        required: true
+                                    },
+                                    image_ids: {
+                                        type: 'array',
+                                        description: 'An array of image IDs for the item.',
+                                        required: true
+                                    },
+                                    images_id_primary: {
+                                        type: 'string',
+                                        description: 'The image ID that the seller selected as the primary image.',
+                                        required: true
+                                    },
+                                    in_stock: {
+                                        type: 'number',
+                                        description: 'The number of items in stock.',
+                                        required: true
+                                    },
+                                    name: {
+                                        type: 'string',
+                                        description: 'The name of the item being uploaded.',
+                                        required: true
+                                    },
+                                    price: {
+                                        type: 'number',
+                                        description: 'The price of the item.',
+                                        required: true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    params: {
+                        sellerId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the seller/shop that is creating the new item.',
+                            required: true
+                        }
+                    }
                 }
             }
         },
@@ -1022,12 +1407,191 @@ docs.api.routes.seller = {
                 post: {
                     name: 'Create product items',
                     description: 'Creates new items for an existing product.',
-                    params: {}
+                    body: {
+                        type: 'application/json',
+                        params: {
+                            images: {
+                                type: 'array',
+                                description: 'An array of image objects, each containing an ID, name, src and type. Image params are only required if uploading new images.',
+                                params: {
+                                    id: {
+                                        type: 'string/uuid',
+                                        description: 'An id created on the client side for the uploaded image.',
+                                        required: true
+                                    },
+                                    name: {
+                                        type: 'string',
+                                        description: 'The name of image the seller is uploading.',
+                                        required: true
+                                    },
+                                    src: {
+                                        type: 'string',
+                                        description: 'The source of the object the seller is uploading. Either a url or base64 encoded string.',
+                                        required: true
+                                    },
+                                    type: {
+                                        type: 'string',
+                                        description: 'The filetype of the image that the seller is uploading.',
+                                        required: true
+                                    } 
+                                },
+                            },
+                            items: {
+                                type: 'array',
+                                description: 'An array of items/variants to be created for the product.',
+                                required: true,
+                                params: {
+                                    attributes: {
+                                        type: 'array',
+                                        description: 'An array of valid attribute objects containing attribute.key (preset value) and attribute.value (user created value) that the seller selects for the item. Use "Get attributes by category" to get a list of valid attributes for the products selected categories.',
+                                        required: true
+                                    },
+                                    description: {
+                                        type: 'string',
+                                        description: 'The item/product description.',
+                                        required: true
+                                    },
+                                    image_ids: {
+                                        type: 'array',
+                                        description: 'An array of image IDs for the item.',
+                                        required: true
+                                    },
+                                    images_id_primary: {
+                                        type: 'string',
+                                        description: 'The image ID that the seller selected as the primary image.',
+                                        required: true
+                                    },
+                                    in_stock: {
+                                        type: 'number',
+                                        description: 'The number of items in stock.',
+                                        required: true
+                                    },
+                                    name: {
+                                        type: 'string',
+                                        description: 'The name of the item being uploaded.',
+                                        required: true
+                                    },
+                                    price: {
+                                        type: 'number',
+                                        description: 'The price of the item.',
+                                        required: true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    params: {
+                        sellerId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the seller/shop that is creating the new item.',
+                            required: true
+                        },
+                        productId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the product the seller wishes to add items to.',
+                            required: true
+                        }
+                    }
                 },
                 put: {
                     name: 'Edit product items',
                     description: 'Edits the current items that are listed for an existing product',
-                    params: {}
+                    body: {
+                        type: 'application/json',
+                        params: {
+                            categories: {
+                                type: 'array',
+                                description: 'An array of category names as strings. Use "Get main categories" for a list of valid categories, once the user has selected a main category use "Get sub-categories" to show get valid sub-categories. Do this until sub-categories return empty.',
+                                required: true
+                            },
+                            images: {
+                                type: 'array',
+                                description: 'An array of image objects, each containing an ID, name, src and type.',
+                                required: true,
+                                params: {
+                                    id: {
+                                        type: 'string/uuid',
+                                        description: 'An id created on the client side for the uploaded image.',
+                                        required: true
+                                    },
+                                    name: {
+                                        type: 'string',
+                                        description: 'The name of image the seller is uploading.',
+                                        required: true
+                                    },
+                                    src: {
+                                        type: 'string',
+                                        description: 'The source of the object the seller is uploading. Either a url or base64 encoded string.',
+                                        required: true
+                                    },
+                                    type: {
+                                        type: 'string',
+                                        description: 'The filetype of the image that the seller is uploading.',
+                                        required: true
+                                    } 
+                                },
+                            },
+                            is_active: {
+                                type: 'boolean',
+                                description: 'If true all users are able to see and purchase the product, otherwise only the seller can see it in "my-shop".',
+                                required: true
+                            },
+                            items: {
+                                type: 'array',
+                                description: 'An array of items/variants to be created for the product.',
+                                required: true,
+                                params: {
+                                    attributes: {
+                                        type: 'array',
+                                        description: 'An array of valid attribute objects containing attribute.key (preset value) and attribute.value (user created value) that the seller selects for the item. Use "Get attributes by category" to get a list of valid attributes for the products selected categories.',
+                                        required: true
+                                    },
+                                    description: {
+                                        type: 'string',
+                                        description: 'The item/product description.',
+                                        required: true
+                                    },
+                                    image_ids: {
+                                        type: 'array',
+                                        description: 'An array of image IDs for the item.',
+                                        required: true
+                                    },
+                                    images_id_primary: {
+                                        type: 'string',
+                                        description: 'The image ID that the seller selected as the primary image.',
+                                        required: true
+                                    },
+                                    in_stock: {
+                                        type: 'number',
+                                        description: 'The number of items in stock.',
+                                        required: true
+                                    },
+                                    name: {
+                                        type: 'string',
+                                        description: 'The name of the item being uploaded.',
+                                        required: true
+                                    },
+                                    price: {
+                                        type: 'number',
+                                        description: 'The price of the item.',
+                                        required: true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    params: {
+                        sellerId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the seller/shop that is editing item.',
+                            required: true
+                        },
+                        productId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the product the seller wishes to edit.',
+                            required: true
+                        }
+                    }
                 }
             }
         },
@@ -1037,7 +1601,12 @@ docs.api.routes.seller = {
                 delete: {
                     name: 'Purge unused images',
                     description: 'Deletes all unused product images from the database.',
-                    params: {}
+                    params: {
+                        sellerId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the seller/shop that is purging the images.',
+                            required: true
+                        },}
                 }
             }
         },
@@ -1047,7 +1616,33 @@ docs.api.routes.seller = {
                 get: {
                     name: 'Get seller orders',
                     description: 'Get a list of all the sellers orders.',
-                    params: {}
+                    params: {
+                        sellerId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the seller/shop that is retrieving their sold items.',
+                            required: true
+                        },
+                    },
+                    queries: {
+                        limit: {
+                            type: 'number',
+                            description: 'Returns the list with the specified amount of orders per page.',
+                            default: 25,
+                        },
+                        page: {
+                            type: 'number',
+                            description: 'Returns the list with with results from the specified page. (If limit is 25 and page is 3 it returns a max of 25 results from the 50th result.',
+                            default: 1,
+                        },
+                        search: {
+                            type: 'string',
+                            description: 'Returns orders with the specified term in an item name.'
+                        },
+                        year: {
+                            type: 'number/string',
+                            description: 'Returns the list with orders made in the specified year.'
+                        }
+                    }
                 }
             }
         },
@@ -1057,12 +1652,52 @@ docs.api.routes.seller = {
                 get: {
                     name: 'Get seller order by ID',
                     description: 'Get a specific order by the order ID',
-                    params: {}
+                    params: {
+                        sellerId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the seller/shop that is retrieving a sold item.',
+                            required: true
+                        },
+                        orderId: {
+                            type: 'string/uuid',
+                            description: `The ID of the order thats being retrieved.`,
+                            required: true
+                        }
+                    }
                 },
                 put: {
                     name: 'Update seller order status',
-                    description: 'Seller actions for updating the order (dispatched, delivered and reviewed).',
-                    params: {}
+                    description: 'Seller actions for updating the order (dispatched, delivered and reviewed). You can use this to update the whole order or just an item from the order.',
+                    params: {
+                        sellerId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the seller/shop that is updating an order status.',
+                            required: true
+                        },
+                        orderId: {
+                            type: 'string/uuid',
+                            description: `The ID of the order thats status is being updated.`,
+                            required: true
+                        }
+                    },
+                    queries: {
+                        delivered: {
+                            type: 'boolean',
+                            description: 'True to mark order as delivered, false to unmark order as delivered.'
+                        },
+                        dispatched: {
+                            type: 'boolean',
+                            description: 'True to mark order as dispatched, false to unmark order as dispatched.'
+                        },
+                        order_item_id: {
+                            type: 'string/uuid',
+                            description: 'The order item ID of the item the seller wishes to change the status of.'
+                        },
+                        reviewed: {
+                            type: 'boolean',
+                            description: 'True to mark order as reviewed, false to unmark order as reviewed.'
+                        }
+                    }
                 }
             }
         },
@@ -1072,7 +1707,46 @@ docs.api.routes.seller = {
                 get: {
                     name: 'Post a customer review',
                     description: 'Create a customer review for an order.',
-                    params: {}
+                    params: {
+                        sellerId: {
+                            type: 'string/uuid',
+                            description: 'The ID of the seller/shop that is posting a review.',
+                            required: true
+                        },
+                    },
+                    body: {
+                        type: 'application/json',
+                        params: {
+                            customer_id: {
+                                type: 'string/uuid',
+                                description: 'The ID of the customer the seller is reviewing.',
+                                required: true
+                            },
+                            order_id: {
+                                type: 'string/uuid',
+                                description: 'The ID of the order that the seller is posting a review for.',
+                                required: true
+                            },
+                            order_item_id: {
+                                type: 'string/uuid',
+                                description: 'The order item ID that is being reviewed.',
+                                required: true
+                            },
+                            rating: {
+                                type: 'number',
+                                description: 'The rating that the seller gives either the customerr.',
+                                required: true,
+                                options: [
+                                    1, 2, 3, 4, 5
+                                ]
+                            },
+                            review: {
+                                type: 'string',
+                                description: 'The written review that the seller is giving the customer.',
+                                required: true
+                            }
+                        }
+                    },
                 }
             }
         }

@@ -15,6 +15,7 @@ for (let doc in docs) {
 
 const Documentation = props => {
 
+    const [ contentsOpen, setContentsOpen ] = useState(false);
     const [ menus, setMenus ] = useState(dropdowns);
 
     const handleScroll = e => {
@@ -44,11 +45,12 @@ const Documentation = props => {
         <section className='docs'>
             <header className='header'>
                 <h2>
-                    iCommerce Documentation
+                    <svg className={`contents${contentsOpen ? ' open' : ''}`} onClick={() => setContentsOpen(!contentsOpen)} xmlns="http://www.w3.org/2000/svg" height="48" width="48" viewBox='0 0 48 48'><path d="M4.7 36.95V32.8H31.95V36.95ZM4.7 26V21.8H25.9V26ZM4.7 15.2V11.05H31.95V15.2ZM40.4 34.25 30.1 23.95 40.35 13.7 43.3 16.7 36.05 23.95 43.35 31.25Z"/></svg>
+                    Documentation
                 </h2>
             </header>
             <div className='main'>
-                <ul className='contents'>
+                <ul className={`contents${contentsOpen ? ' open' : ''}`}>
                     {
                         contents.map(doc => {
                         const link = `/docs#${doc.name.replaceAll(' ','-').replaceAll('/','-').toLowerCase()}`;
@@ -66,7 +68,7 @@ const Documentation = props => {
                                                             <li key={`countents-${link}`} className={`tab${menus[i].id === route.uri && menus[i].open ? ' open' : ''}`}>
                                                                 <div className={`dropdown`}>
                                                                     <a href={link} onClick={handleScroll}>{route.name}</a>
-                                                                    <svg id={route.uri} onClick={handleClick} xmlns="http://www.w3.org/2000/svg" height="48" width="48" viewBox='0 0 48 48'><path d="M24 31.4 11.3 18.7 14.15 15.9 24 25.8 33.85 15.95 36.7 18.75Z"/></svg>
+                                                                    <svg id={route.uri} onClick={handleClick} className={menus[i].id === route.uri && menus[i].open ? 'r180' : ''} xmlns="http://www.w3.org/2000/svg" height="48" width="48" viewBox='0 0 48 48'><path d="M24 31.4 11.3 18.7 14.15 15.9 24 25.8 33.85 15.95 36.7 18.75Z"/></svg>
                                                                 </div>
                                                                 {
                                                                     route.routes.length > 0 ? (
@@ -107,7 +109,7 @@ const Documentation = props => {
                         contents.map(doc => {
                             const id = doc.name.replaceAll(' ','-').replaceAll('/','-').toLowerCase();
                             return(
-                                <div key={id} className='route'>
+                                <div key={id} className='doc'>
                                     <h3 id={id}>
                                         { doc.name }
                                     </h3>

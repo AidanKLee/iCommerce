@@ -6,25 +6,27 @@
     max-width: 1440px;
     font-weight: 600;
     font-size: 1.2rem;
-    margin: 20px auto;
-    padding: 0 16px;
+    margin: 0 auto;
+    padding: 20px 16px;
 }
 
 .bag .products {
     max-width: 1600px;
-    margin: -8px auto 0;
+    margin: 0 auto 0;
     display: flex;
     justify-content: center;
 }
 
 .bag .products .left {
     flex: 1 1;
+    margin-top: -8px;
 }
 
 .bag .products .right {
     width: 100%;
     max-width: 320px;
     padding-right: 8px;
+    margin-top: -8px;
 }
 
 .bag .products .right .sticky {

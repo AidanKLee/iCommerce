@@ -33,6 +33,7 @@ const Bag = props => {
             setInitialLoad(true);
             setLoading(true);
             let products = await p.getByItemIdList(user.cart.items, user.cart.id);
+            console.log(products)
             products = getProductQuantityPrice(products);
             setBagItems(products);
             setLoading(false);

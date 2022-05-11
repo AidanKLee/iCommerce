@@ -265,7 +265,6 @@ helper.getOrdersData = async (req, res, next) => {
                 }));
                 return order;
             }));
-            console.log(orders[0].items[0].item.image)
             req.orders = { orders, years, count };
         }
         next();
@@ -409,7 +408,6 @@ stripe.generatePaymentIntent = async (req, res, next) => {
         req.session.passport.user.prevTotal = total
         res.status(200).json({items, total, paymentIntent});
     } catch (err) {
-        console.log(err)
         next(err);
     }
 }

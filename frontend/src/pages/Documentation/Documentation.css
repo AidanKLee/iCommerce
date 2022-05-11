@@ -23,6 +23,24 @@
     font-size: 1.2rem;
     margin: 0 auto;
     padding: 20px 16px;
+    display: flex;
+    align-items: center;
+}
+
+.docs .header h2 svg {
+    overflow: hidden;
+    width: 0;
+    transition: .3s;
+}
+
+.docs .header h2 svg:hover {
+    filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.6));
+    transform: scale(1.1);
+}
+
+.docs .header h2 svg:active {
+    filter: drop-shadow(0 0 0 transparent);
+    transform: scale(1);
 }
 
 .docs .main {
@@ -34,10 +52,10 @@
 
 .docs .main .contents {
     list-style: none;
-    height: 100%;
+    top: 118px;
+    height: calc(100vh - 151px);
     overflow-y: auto;
     position: sticky;
-    top: 0;
     width: 100%;
     max-width: 280px;
     background-color: #f1f1f1;
@@ -102,6 +120,11 @@
 }
 
 
+.docs .main .contents .route .dropdown .r180:hover {
+    transform: rotate(180deg) scale(1.4);
+}
+
+
 .docs .main .contents .route .dropdown svg:hover {
     transform: scale(1.4);
 }
@@ -112,7 +135,7 @@
 }
 
 
-.docs .main .contents .route .dropdown svg path {
+.docs svg path {
     pointer-events: none;
 }
 
@@ -141,13 +164,19 @@
     overflow-y: auto;
 }
 
+.docs .main .view .doc {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
 .docs .main .view ul {
     list-style: none;
 }
 
 .docs .main .view li.route-item {
     display: flex;
-    /* justify-content: center; */
+    justify-content: center;
 }
 
 .docs .main .view li.route-item div.route {
@@ -205,6 +234,10 @@
     color: white;
 }
 
+.docs .main .view li.route-item .route .params .type span {
+    margin-left: 4px;
+}
+
 .docs .main .view li.route-item .route .params .param {
     margin: 8px;
     border: 1px solid rgba(0, 0, 0, 0.2);
@@ -227,7 +260,7 @@
 
 .docs .main .view li.route-item .route .param b {
     font-weight: 600;
-    margin-right: 8px;
+    margin-right: 4px;
 }
 
 .docs .main .view li.route-item div.responses {
@@ -265,27 +298,12 @@
     overflow: auto;
 }
 
-.docs .main .view li.route-item div.responses .sticky .response pre::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    padding: 2px;
-}
-
-.docs .main .view li.route-item div.responses .sticky .response pre::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-}
-
-.docs .main .view li.route-item div.responses .sticky .response pre::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
 .docs .main .view .sub-route {
     margin-bottom: 16px;
 }
 
 .docs h3 {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: 600;
     padding: 16px 0;
 }
@@ -318,11 +336,47 @@
 }
 
 .docs .mr8 {
-    margin-right: 8px;
+    margin-right: 4px;
     font-weight: bold !important;
     background-color: transparent !important;
     color: rgb(200,0,0) !important;
     border: 0 none transparent !important;
+}
+
+.docs .r180 {
+    transform: rotate(180deg);
+}
+
+@media (hover: hover) {
+    .docs .main .contents::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        padding: 2px;
+    }
+
+    .docs .main .contents::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+
+    .docs .main .contents::-webkit-scrollbar-track {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .docs .main .view li.route-item div.responses .sticky .response pre::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        padding: 2px;
+    }
+
+    .docs .main .view li.route-item div.responses .sticky .response pre::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+
+    .docs .main .view li.route-item div.responses .sticky .response pre::-webkit-scrollbar-track {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
 }
 
 @media only screen and (max-width: 480px) {
@@ -362,6 +416,14 @@
 }
 
 @media only screen and (max-width: 1300px) {
+    .docs .header h2 svg {
+        width: 24px;
+        margin-right: 8px;
+    }
+    
+    .docs .header h2 svg.open {
+        fill: #6464ff;
+    }
 
     .docs .main .contents {
         max-width: 0;
@@ -369,6 +431,7 @@
         top: 118px;
         height: calc(100vh - 151px);
         z-index: 1;
+        box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2);
     }
 
     .docs .main .contents.open {

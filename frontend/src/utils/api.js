@@ -487,7 +487,7 @@ seller.updateOrder = async (userId, orderId, orderItemId, dispatched, delivered,
     }
 
     if (orderItemId) {
-        params.push(`item=${orderItemId}`);
+        params.push(`order_item_id=${orderItemId}`);
     }
     if (dispatched === true || dispatched === false) {
         params.push(`dispatched=${dispatched}`);
