@@ -128,7 +128,7 @@ categories.getMain = async setter => {
 }
 
 categories.getByHref = async (href) => {
-    let categories = await fetch(`${baseUrl}/api/categories/${href}`);
+    let categories = await fetch(`${baseUrl}/api/categories/href/${href}`);
     categories = await categories.json();
     return categories
 }

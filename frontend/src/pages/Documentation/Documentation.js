@@ -254,7 +254,16 @@ docs.api.routes.categories = {
             },
         },
         {
-            uri: '/:href',
+            uri: '/main',
+            method: {
+                get: {
+                    name: 'Get main categories',
+                    description: 'Gets a list of all the main/top-level categories.'
+                }
+            }
+        },
+        {
+            uri: 'href/:href',
             method: {
                 get: {
                     name: 'Get categories by href',
@@ -269,15 +278,6 @@ docs.api.routes.categories = {
             
         },
         {
-            uri: '/main',
-            method: {
-                get: {
-                    name: 'Get main categories',
-                    description: 'Gets a list of all the main/top-level categories.'
-                }
-            }
-        },
-        {
             uri: '/:category',
             method: {
                 get: {
@@ -285,7 +285,7 @@ docs.api.routes.categories = {
                     description: 'Gets a list of all the sub-categories by a category.',
                     params: {
                         category: {
-                            description: 'The href of the category you want the subcategories from.'
+                            description: 'The category name you want the subcategories from.'
                         }
                     }
                 }
@@ -300,7 +300,7 @@ docs.api.routes.categories = {
                     description: 'Gets a list of attributes for a specific category.',
                     params: {
                         category: {
-                            description: 'The href of the category you want the attributes from.'
+                            description: 'The category name you want the attributes from.'
                         }
                     }
                 }
