@@ -164,6 +164,7 @@ const NewProduct = props => {
 
     const handleCountClick = e => {
         const action = e.target.id;
+        console.log(action)
         let newForm = {...form}
         if (action === 'add-item') {
             newForm = {
