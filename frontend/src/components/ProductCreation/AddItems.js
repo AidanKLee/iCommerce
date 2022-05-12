@@ -62,6 +62,17 @@ const AddItems = props => {
         return current;
     }, [product]);
 
+    const [ imagesWarning, setImageWarning ] = useState(false);
+    const itemsHaveImage = useMemo(() => {
+        let itemsHaveImage = true;
+        form.items.forEach(item => {
+            if (item.image_ids.length === 0) {
+                itemsHaveImage = false;
+            }
+        })
+        return itemsHaveImage;
+    }, [form.items])
+
     useEffect(() => {
         if (currentImages.length > 0) {
             setForm({...form, currentImages})
@@ -162,10 +173,14 @@ const AddItems = props => {
     const handleSubmit = async e => {
         try {
             e.preventDefault();
-            setSubmitting(true);
-            await s.createItems({...form, id: id, userId: user.id});
-            await refresh();
-            setOpen(false);
+            if (itemsHaveImage) {
+                setSubmitting(true);
+                await s.createItems({...form, id: id, userId: user.id});
+                await refresh();
+                setOpen(false);
+            } else {
+                setImageWarning(true);
+            }
         } catch (err) {
             console.log(err)
         }
@@ -269,11 +284,20 @@ const AddItems = props => {
                             return (
                                 <div key={i}>
                                     {i > 0 ? <br className='break'/> : undefined}
-                                    <NewItem key={i} attributes={attributes} current={currentImages} form={[form, setForm]} index={i} item={item}/>
+                                    <NewItem imageWarning={imagesWarning} key={i} attributes={attributes} current={currentImages} form={[form, setForm]} index={i} item={item}/>
                                 </div>
                             )
                         })
                     }
+                    <CSSTransition 
+                        timeout={500}
+                        classNames={'grow-down2'}
+                        in={imagesWarning}
+                        mountOnEnter={true}
+                        unmountOnExit={true}
+                    >
+                        <p className='warning'>Select at least one image for every item.</p>
+                    </CSSTransition>
                     <div className='actions'>
                         <Button primary='rgb(30, 30, 30)' type='submit' design='invert'>Submit</Button>
                         <Button primary='rgb(200, 0, 0)' type='reset'>Reset</Button>

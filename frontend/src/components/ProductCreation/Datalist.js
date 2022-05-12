@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 const Datalist = props => {
 
-    const { attribute, form: [form, setForm], index: formAttIndex, itemIndex } = props;
+    const { attribute, form: [form, setForm], itemIndex } = props;
 
     const text = useMemo(() => {
         let formatted = attribute.attribute;

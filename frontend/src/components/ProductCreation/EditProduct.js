@@ -46,7 +46,6 @@ const EditProduct = props => {
     const [ submitting, setSubmitting ] = useState(false);
 
     const images = useMemo(() => {
-        console.log(form.items)
         let imageArray = form.images.map(image => {
             return <img src={image.src} title={image.name} alt={image.name}/>
         })
@@ -67,6 +66,17 @@ const EditProduct = props => {
         })
         return current;
     }, [product]);
+
+    const [ imagesWarning, setImageWarning ] = useState(false);
+    const itemsHaveImage = useMemo(() => {
+        let itemsHaveImage = true;
+        form.items.forEach(item => {
+            if (item.image_ids.length === 0) {
+                itemsHaveImage = false;
+            }
+        })
+        return itemsHaveImage;
+    }, [form.items])
 
     useEffect(() => {
         if (currentImages.length > 0) {
@@ -281,10 +291,14 @@ const EditProduct = props => {
     const handleSubmit = async e => {
         try {
             e.preventDefault();
-            setSubmitting(true);
-            await s.editProduct({...form, userId: user.id});
-            await refresh();
-            setOpen(false);
+            if (itemsHaveImage) {
+                setSubmitting(true);
+                await s.editProduct({...form, userId: user.id});
+                await refresh();
+                setOpen(false);
+            } else {
+                setImageWarning(true);
+            }
         } catch (err) {
             console.log(err);
         }
@@ -411,7 +425,7 @@ const EditProduct = props => {
                             return (
                                 <div key={i}>
                                     {i > 0 ? <br className='break'/> : undefined}
-                                    <NewItem key={i} attributes={attributes} current={currentImages} form={[form, setForm]} index={i} item={item}/>
+                                    <NewItem imageWarning={imagesWarning} key={i} attributes={attributes} current={currentImages} form={[form, setForm]} index={i} item={item}/>
                                 </div>
                             )
                         })
@@ -422,6 +436,15 @@ const EditProduct = props => {
                         </label>
                         <ToggleSwitch onChange={() => setForm({...form, is_active: !form.is_active})} checked={form.is_active}/>
                     </div>
+                    <CSSTransition 
+                        timeout={500}
+                        classNames={'grow-down2'}
+                        in={imagesWarning}
+                        mountOnEnter={true}
+                        unmountOnExit={true}
+                    >
+                        <p className='warning'>Select at least one image for every item.</p>
+                    </CSSTransition>
                     <div className='actions'>
                         <Button primary='rgb(30, 30, 30)' type='submit' design='invert'>Submit</Button>
                         <Button primary='rgb(200, 0, 0)' type='reset'>Reset</Button>

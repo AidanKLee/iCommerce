@@ -196,6 +196,13 @@
     text-align: center;
 }
 
+.new-product .form p.warning {
+    font-weight: 600;
+    font-size: .8rem;
+    margin: 8px 0;
+    color: rgb(200,0,0);
+}
+
 .new-item {
     display: flex;
     flex-direction: column;
@@ -227,6 +234,11 @@
     font-size: .8rem;
     font-weight: 500;
     margin-bottom: 4px;
+}
+
+.new-item .head.no-image {
+    font-weight: 700;
+    color: rgb(200,0,0);
 }
 
 .new-item .src .checkbox {

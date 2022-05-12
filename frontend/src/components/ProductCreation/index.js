@@ -54,6 +54,17 @@ const NewProduct = props => {
         return imageArray;
     }, [form])
 
+    const [ imagesWarning, setImageWarning ] = useState(false);
+    const itemsHaveImage = useMemo(() => {
+        let itemsHaveImage = true;
+        form.items.forEach(item => {
+            if (item.image_ids.length === 0) {
+                itemsHaveImage = false;
+            }
+        })
+        return itemsHaveImage;
+    }, [form.items])
+
     const oneCategories = useMemo(() => (form.categories.one.length > 0 && categories[form.categories.one[form.categories.one.length - 1]].length > 0) || form.categories.one.length === 0 , [form, categories]);
     const selectedCategories = useMemo(() => form.categories.one.concat(form.categories.two), [form.categories]);
     attributes = useMemo(() => {
@@ -187,10 +198,14 @@ const NewProduct = props => {
     const handleSubmit = async e => {
         try {
             e.preventDefault();
-            setSubmitting(true);
-            await s.createProduct({...form, userId: user.id});
-            await refresh();
-            setOpen(false);
+            if (itemsHaveImage) {
+                setSubmitting(true);
+                await s.createProduct({...form, userId: user.id});
+                await refresh();
+                setOpen(false);
+            } else {
+                setImageWarning(true);
+            }
         } catch (err) {
             console.log(err);
         }
@@ -313,7 +328,7 @@ const NewProduct = props => {
                             return (
                                 <div key={i}>
                                     {i > 0 ? <br className='break'/> : undefined}
-                                    <NewItem attributes={attributes} form={[form, setForm]} index={i} item={item}/>
+                                    <NewItem imageWarning={imagesWarning} attributes={attributes} form={[form, setForm]} index={i} item={item}/>
                                 </div>
                             )
                         })
@@ -324,6 +339,15 @@ const NewProduct = props => {
                         </label>
                         <ToggleSwitch onChange={() => setForm({...form, is_active: !form.is_active})} checked={form.is_active}/>
                     </div>
+                    <CSSTransition 
+                        timeout={500}
+                        classNames={'grow-down2'}
+                        in={imagesWarning}
+                        mountOnEnter={true}
+                        unmountOnExit={true}
+                    >
+                        <p className='warning'>Select at least one image for every item.</p>
+                    </CSSTransition>
                     <div className='actions'>
                         <Button primary='rgb(30, 30, 30)' type='submit' design='invert'>Submit</Button>
                         <Button primary='rgb(200, 0, 0)' type='reset'>Reset</Button>
@@ -345,7 +369,7 @@ const NewProduct = props => {
 
 export const NewItem = props => {
 
-    const { attributes, current, form: [form, setForm], index, item } = props;
+    const { attributes, current, form: [form, setForm], imageWarning, index, item } = props;
 
     const srcSelect = useMemo(() => {
         let imgs = [];
@@ -357,6 +381,12 @@ export const NewItem = props => {
         }
         return imgs;
     }, [current, form.images])
+
+    const hasImage = useMemo(() => {
+        return item.image_ids.length > 0;
+    }, [item.image_ids.length])
+
+    console.log(hasImage)
 
     const handleChange = e => {
         const key = e.target.name;
@@ -420,7 +450,7 @@ export const NewItem = props => {
             <textarea onChange={handleChange} type='text' name='description' placeholder='Item Description' value={item.description} required></textarea>
             {
                 srcSelect && srcSelect.length > 0 ? (
-                    <p className='head'>Select Images</p>
+                    <p className={`head${!hasImage && imageWarning ? ' no-image' : ''}`}>Select Images</p>
                 ) : undefined
             }
             <div className='src'>
@@ -441,17 +471,6 @@ export const NewItem = props => {
                 <input onChange={handleChange} type='number' name='in_stock' placeholder='Stock Count' value={item.in_stock} required min={0} step={1}/>
             </div>
             <div className='attributes'>
-                {
-                    /* {
-                        attributes.length > 0  ? attributes.map((attribute, i) => {
-                            console.log(form.items[index].attributes)
-                            const isInForm = form.items[index].attributes.length > 0 ? form.items[index].attributes.filter(att => {
-                                return att.key === attribute.attribute
-                            })[0].key === attribute.attribute : false;
-                            return isInForm ? <Datalist key={attribute.attribute} attribute={attribute} form={[form, setForm]} index={i} itemIndex={index}/> : undefined
-                        }) : undefined
-                    } */
-                }
                 {
                     attributes.length > 0 ? attributes.map((attribute, i) => {
                         return (

@@ -248,7 +248,7 @@ const Top = props => {
     const selectedOptions = useMemo(() => {
         return selectableOptions.map(option => {
             let value = items[selected][selectedItem].attributes[option];
-            if (!Number.isNaN(value)) {
+            if (!Number.isNaN(Number(value))) {
                 value = Number(value);
             }
             return {
@@ -262,7 +262,7 @@ const Top = props => {
             let values = [];
             selectableItems[key].forEach(item => {
                 let option = item.attributes[key];
-                if (!Number.isNaN(option)) {
+                if (!Number.isNaN(Number(option))) {
                     option = Number(option);
                 }
                 if (!values.includes(option)) {
@@ -280,7 +280,7 @@ const Top = props => {
     const handleChange = e => {
         let value = e.target.value;
         const name = e.target.name;
-        if (!Number.isNaN(value)) {
+        if (!Number.isNaN(Number(value))) {
             value = Number(value);
         }
         let selectedAttributes = {};
@@ -291,8 +291,8 @@ const Top = props => {
         let item = items[selected].filter(item => {
             let isMatch = true;
             Object.keys(selectedAttributes).forEach(attribute => {
-                const itemValue = Number.isNaN(item.attributes[attribute]) ? item.attributes[attribute] : Number(item.attributes[attribute]);
-                const selectedValue = Number.isNaN(selectedAttributes[attribute]) ? selectedAttributes[attribute] : Number(selectedAttributes[attribute]);
+                const itemValue = Number.isNaN(Number(item.attributes[attribute])) ? item.attributes[attribute] : Number(item.attributes[attribute]);
+                const selectedValue = Number.isNaN(Number(selectedAttributes[attribute])) ? selectedAttributes[attribute] : Number(selectedAttributes[attribute]);
                 if (itemValue !== selectedValue) {
                     isMatch = false
                 }
@@ -301,7 +301,7 @@ const Top = props => {
         })
         if (item.length === 0) {
             item = items[selected].filter(item => {
-                const itemValue = Number.isNaN(item.attributes[name]) ? item.attributes[name] : Number(item.attributes[name]);
+                const itemValue = Number.isNaN(Number(item.attributes[name])) ? item.attributes[name] : Number(item.attributes[name]);
                 return itemValue === value;
             })
         }
