@@ -313,7 +313,7 @@ const NewProduct = props => {
                             return (
                                 <div key={i}>
                                     {i > 0 ? <br className='break'/> : undefined}
-                                    <NewItem key={i} attributes={attributes} form={[form, setForm]} index={i} item={item}/>
+                                    <NewItem attributes={attributes} form={[form, setForm]} index={i} item={item}/>
                                 </div>
                             )
                         })
@@ -442,9 +442,21 @@ export const NewItem = props => {
             </div>
             <div className='attributes'>
                 {
-                    attributes.length > 0  ? attributes.map((attribute, i) => {
-                        const isInForm = form.items[index].attributes.length > 0 ? form.items[index].attributes.filter(att => att.key === attribute.attribute)[0].key === attribute.attribute : false;
-                        return isInForm ? <Datalist key={attribute.attribute} attribute={attribute} form={[form, setForm]} index={i} itemIndex={index}/> : undefined
+                    /* {
+                        attributes.length > 0  ? attributes.map((attribute, i) => {
+                            console.log(form.items[index].attributes)
+                            const isInForm = form.items[index].attributes.length > 0 ? form.items[index].attributes.filter(att => {
+                                return att.key === attribute.attribute
+                            })[0].key === attribute.attribute : false;
+                            return isInForm ? <Datalist key={attribute.attribute} attribute={attribute} form={[form, setForm]} index={i} itemIndex={index}/> : undefined
+                        }) : undefined
+                    } */
+                }
+                {
+                    attributes.length > 0 ? attributes.map((attribute, i) => {
+                        return (
+                            <Datalist key={attribute.attribute} attribute={attribute} form={[form, setForm]} index={i} itemIndex={index}/>
+                        )
                     }) : undefined
                 }
             </div>

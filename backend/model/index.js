@@ -487,7 +487,7 @@ const queries = [
         conditions: 'WHERE item_id ='
     },
     {
-        name: 'insertItemAttributeValues',
+        name: 'insertItemAttributeValue',
         type: 'insert',
         tables: {name: 'item_attribute_value', columns: ['item_id', 'attribute', 'value']}
     },
@@ -496,6 +496,12 @@ const queries = [
         type: 'update',
         tables: {name: 'item_attribute_value', columns: ['value']},
         conditions: ['WHERE item_id =', 'AND attribute =']
+    },
+    {
+        name: 'deleteAllItemAttributeValues',
+        type: 'delete',
+        tables: {name: 'item_attribute_value'},
+        conditions: ['WHERE item_id =']
     },
     {
         name: 'deleteItemAttributeValues',

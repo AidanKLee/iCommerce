@@ -181,7 +181,7 @@ const Products = props => {
             })
         } else {
             if (value === 'next') {
-                page = Number(queryParams.page) + 1
+                page = Number(queryParams.page) + 1;
                 if (Number.isNaN(page)) {
                     page = 2
                 }

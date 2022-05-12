@@ -11,6 +11,7 @@ import Paragraph from '../../components/Paragraph';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToBag, saveItem, selectCategories, selectUser } from '../../app/appSlice';
 import NotificaitionModal from '../../components/NotificationModal';
+import Select from '../../components/ProductCreation/Select';
 const { products: p, customer: c } = api;
 
 const Product = props => {
@@ -140,7 +141,7 @@ const Top = props => {
     const notificationTimer = useRef(null);
 
     useEffect(() => {
-        if (stockNotification === true) {
+        if (stockNotification !== false) {
             notificationTimer.current = setTimeout(() => {
                 setStockNotification(false);
             }, 5000)
@@ -240,6 +241,77 @@ const Top = props => {
         return selectable;
     }, [items, selected])
 
+    const selectableOptions = useMemo(() => {
+        return Object.keys(selectableItems).map(key => key);
+    }, [selectableItems])
+
+    const selectedOptions = useMemo(() => {
+        return selectableOptions.map(option => {
+            let value = items[selected][selectedItem].attributes[option];
+            if (!Number.isNaN(value)) {
+                value = Number(value);
+            }
+            return {
+                name: option, value
+            };
+        });
+    }, [items, selectableOptions, selected, selectedItem])
+
+    const options = useMemo(() => {
+        return Object.keys(selectableItems).map(key => {
+            let values = [];
+            selectableItems[key].forEach(item => {
+                let option = item.attributes[key];
+                if (!Number.isNaN(option)) {
+                    option = Number(option);
+                }
+                if (!values.includes(option)) {
+                    values.push(option);
+                }
+            })
+            values = values.sort((a,b) => a < b ? -1 : a > b ? 1 : 0);
+            return {
+                name: key,
+                options: values.map(value => { return {value, name: value} })
+            };
+        })
+    }, [selectableItems])
+
+    const handleChange = e => {
+        let value = e.target.value;
+        const name = e.target.name;
+        if (!Number.isNaN(value)) {
+            value = Number(value);
+        }
+        let selectedAttributes = {};
+        selectedOptions.forEach(option => {
+            selectedAttributes[option.name] =  option.value;
+        })
+        selectedAttributes = {...selectedAttributes, [name]: value}
+        let item = items[selected].filter(item => {
+            let isMatch = true;
+            Object.keys(selectedAttributes).forEach(attribute => {
+                const itemValue = Number.isNaN(item.attributes[attribute]) ? item.attributes[attribute] : Number(item.attributes[attribute]);
+                const selectedValue = Number.isNaN(selectedAttributes[attribute]) ? selectedAttributes[attribute] : Number(selectedAttributes[attribute]);
+                if (itemValue !== selectedValue) {
+                    isMatch = false
+                }
+            })
+            return isMatch;
+        })
+        if (item.length === 0) {
+            item = items[selected].filter(item => {
+                const itemValue = Number.isNaN(item.attributes[name]) ? item.attributes[name] : Number(item.attributes[name]);
+                return itemValue === value;
+            })
+        }
+        if (item.length === 1) {
+            return navigate(`/product/${productId}/${item[0].id}`, { replace: true })
+        } else {
+            setStockNotification(0)
+        }
+    }
+
     const isSavedItem = useMemo(() => {
         const saved = items[selected].filter(item => {
             return user.saved ? user.saved.map(it => {
@@ -252,14 +324,8 @@ const Top = props => {
         return saved;
     }, [items, selected, user])
 
-    const handleChange = e => {
-        const value = e.target.value;
-        navigate(`/product/${productId}/${value}`)
-    }
-
     const handleCartChange = e => {
         const value = e.target.value === '' ? '' : Number(e.target.value);
-        console.log(value)
         if (value === '') {
             setCart('');
         } else if (value < 1) {
@@ -349,7 +415,7 @@ const Top = props => {
                             {
                                 items.map((item, i) => {
                                     return (
-                                        <Link to={`/product/${productId}/${item[selectedItem].id}`} className={`item${selected === i ? ' selected' : ''}`} key={item[selectedItem].id}>
+                                        <Link to={`/product/${productId}/${item[selectedItem].id}`} replace={true} className={`item${selected === i ? ' selected' : ''}`} key={item[selectedItem].id}>
                                             <img name={i} className={`image`} src={item[selectedItem].images.filter(image => image.primary)[0].src} alt={item[selectedItem].name} title={item[selectedItem].name}/>
                                         </Link>
                                     )
@@ -358,13 +424,20 @@ const Top = props => {
                         </div>
                         <div className='attributes'>
                             {
-                                Object.keys(selectableItems).map((item, i) => {
+                                options.map((option) => {
+                                    const label = option.name.split('-').map(word => word.slice(0,1).toUpperCase() + word.slice(1)).join(' ');
                                     return (
-                                        <div className='select' key={item}>
-                                            <label htmlFor={item}>
-                                                {item.split('-').map(word => word.slice(0,1).toUpperCase() + word.slice(1)).join(' ')}
+                                        <div className='select' key={option.name}>
+                                            <label htmlFor={option.name}>
+                                                { label }
                                             </label>
-                                            <select onChange={handleChange} id={item} name={item} value={itemId}>
+                                            <Select id={option.name} onChange={handleChange} hidden={`Select ${label}...`} options={option.options} value={items[selected][selectedItem].attributes[option.name] || null} />
+                                            {/* <select onChange={handleChange} id={item} name={item} value={itemId}>
+                                                {
+                                                    options.map(option => {
+                                                        
+                                                    })
+                                                }
                                                 {
                                                     selectableItems[item].map((option, i) => {
                                                         return(
@@ -376,7 +449,7 @@ const Top = props => {
                                                         )
                                                     })
                                                 }
-                                            </select>
+                                            </select> */}
                                         </div>
                                     )
                                 })
@@ -422,12 +495,12 @@ const Top = props => {
                         <CSSTransition 
                             timeout={500}
                             classNames={'grow-down'}
-                            in={stockNotification}
+                            in={stockNotification !== false}
                             mountOnEnter={true}
                             unmountOnExit={true}
                         >
                             <NotificaitionModal >
-                                <p>{`Sorry there's only ${items[selected][selectedItem].in_stock} in stock at the moment!`}</p>
+                                <p>{`Sorry there's ${stockNotification !== 0 && stockNotification !== false ? items[selected][selectedItem].in_stock : 0} in stock at the moment!`}</p>
                             </NotificaitionModal>
                         </CSSTransition>
                     </div>

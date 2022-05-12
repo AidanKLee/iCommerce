@@ -2,14 +2,12 @@ import React, { useMemo } from 'react';
 
 const Datalist = props => {
 
-    const { attribute, form: [form, setForm], index, itemIndex } = props;
+    const { attribute, form: [form, setForm], index: formAttIndex, itemIndex } = props;
 
     const text = useMemo(() => {
-        let formatted;
-        if (attribute.attribute.includes('_')) {
+        let formatted = attribute.attribute;
+        if (formatted.includes('_')) {
             formatted = attribute.attribute.split('_').slice(0, 1).join('');
-        } else {
-            formatted = attribute.attribute;
         };
         if (formatted.includes('-')) {
             formatted = formatted.split('-');
@@ -23,24 +21,27 @@ const Datalist = props => {
         return formatted
     }, [attribute])
 
+    const index = form.items[itemIndex].attributes.findIndex(att => {
+        return att.key === attribute.attribute
+    })
+
     const handleChange = e => {
         const value = e.target.value;
+        const key = e.target.name;
         // let items = [...form.items]
         // items[itemIndex].attributes[index].value = value;
         const updatedForm = {
             ...form,
             items: form.items.map((item, i) => {
                 if (i === itemIndex) {
+                    const newAttributes = item.attributes.filter(att => {
+                        return att.key !== key;
+                    })
+                    newAttributes.push({ key, value })
+                    console.log(newAttributes)
                     return {
                         ...item,
-                        attributes: item.attributes.map((attribute, j) => {
-                            if(j === index) {
-                                return {
-                                    ...attribute, value
-                                };
-                            };
-                            return attribute;
-                        })
+                        attributes: newAttributes
                     };
                 };
                 return item;
@@ -52,7 +53,7 @@ const Datalist = props => {
 
     return (
         <div className='datalist'>
-            <input onChange={handleChange} name={`${attribute.attribute}#${itemIndex}`} list={`${attribute.attribute}#${itemIndex}`} placeholder={text} value={form.items[itemIndex].attributes[index].value}/>
+            <input onChange={handleChange} name={attribute.attribute} list={`${attribute.attribute}#${itemIndex}`} placeholder={text} value={form.items[itemIndex].attributes[index] && form.items[itemIndex].attributes[index].value ? form.items[itemIndex].attributes[index].value : ''}/>
             <datalist id={`${attribute.attribute}#${itemIndex}`}>
                 {
                     attribute.values.map(option => {

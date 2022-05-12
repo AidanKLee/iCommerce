@@ -46,6 +46,7 @@ const EditProduct = props => {
     const [ submitting, setSubmitting ] = useState(false);
 
     const images = useMemo(() => {
+        console.log(form.items)
         let imageArray = form.images.map(image => {
             return <img src={image.src} title={image.name} alt={image.name}/>
         })
