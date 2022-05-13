@@ -194,7 +194,6 @@ const Top = props => {
 
     const selectedItem = useMemo(() => {
         const index = items && items[selected] ? items[selected].findIndex(item => {
-            console.log(item.id)
             return itemId === item.id;
         }) : 0;
         if (index > -1) {
@@ -306,7 +305,6 @@ const Top = props => {
                 return itemValue === value;
             })
         }
-        console.log(item[0].id)
         if (item.length === 1 && item[0] && item[0].id) {
             return navigate(`/product/${productId}/${item[0].id}`, { replace: true })
         } else {
@@ -317,7 +315,6 @@ const Top = props => {
     const isSavedItem = useMemo(() => {
         const saved = items[selected].filter(item => {
             return user.saved ? user.saved.map(it => {
-                console.log(item.id)
                 if (it.item_id === item.id) {
                     return true;
                 }
@@ -417,7 +414,6 @@ const Top = props => {
                         <div className='item-select'>
                             {
                                 items.map((item, i) => {
-                                    console.log(item[selectedItem].id)
                                     return (
                                         <Link to={`/product/${productId}/${item[selectedItem].id}`} replace={true} className={`item${selected === i ? ' selected' : ''}`} key={item[selectedItem].id}>
                                             <img name={i} className={`image`} src={item[selectedItem].images.filter(image => image.primary)[0].src} alt={item[selectedItem].name} title={item[selectedItem].name}/>
