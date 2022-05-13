@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToBag, saveItem, selectCategories, selectUser } from '../../app/appSlice';
 import NotificaitionModal from '../../components/NotificationModal';
 import Select from '../../components/ProductCreation/Select';
+import Redirect from '../../components/Redirect';
 const { products: p, customer: c } = api;
 
 const Product = props => {
@@ -372,158 +373,162 @@ const Top = props => {
 
     const warningStyle = {outline: '2px solid rgb(200,0,0)', borderRadius: '8px'}
 
-    return (
-        <div className='top'>
-            <div className='left'>
-                {
-                    selectedCategories.map((categories, i) => {
-                        return (
-                            <ul key={i} className='categories'>
-                                <li>
-                                    <Link to={`/products`}>
-                                        Products
-                                    </Link>
-                                </li>
+    try {
+        return (
+            <div className='top'>
+                <div className='left'>
+                    {
+                        selectedCategories.map((categories, i) => {
+                            return (
+                                <ul key={i} className='categories'>
+                                    <li>
+                                        <Link to={`/products`}>
+                                            Products
+                                        </Link>
+                                    </li>
+                                    {
+                                        categories.map((category, i) => {
+                                            return (
+                                                <li key={category.name}>
+                                                    <span>/</span>
+                                                    <Link to={`/products${category.href}`}>
+                                                        {category.name}
+                                                    </Link>
+                                                </li>
+                                            )
+                                        })
+                                    }
+                                </ul>
+                            )
+                        })
+                    }
+                    
+                    <h2>
+                        {items[selected][selectedItem].name}
+                    </h2>
+                    <div className='rating-wrapper'><Rating count={5} value={averageRating} width={'20px'}/><p>{reviewCount === 1 ? '1 Review' : `${reviewCount} Reviews`}</p></div>
+                    <Gallery images={images}/>
+                </div>
+                <div className='right-wrapper'>
+                    <div className='sticky'>
+                        <div className='right'>
+                            <p className='price'>{items[selected][selectedItem].price}</p>
+                            <div className='item-select'>
                                 {
-                                    categories.map((category, i) => {
+                                    items.map((item, i) => {
                                         return (
-                                            <li key={category.name}>
-                                                <span>/</span>
-                                                <Link to={`/products${category.href}`}>
-                                                    {category.name}
-                                                </Link>
-                                            </li>
+                                            <Link to={`/product/${productId}/${item[selectedItem].id}`} replace={true} className={`item${selected === i ? ' selected' : ''}`} key={item[selectedItem].id}>
+                                                <img name={i} className={`image`} src={item[selectedItem].images.filter(image => image.primary)[0].src} alt={item[selectedItem].name} title={item[selectedItem].name}/>
+                                            </Link>
                                         )
                                     })
                                 }
-                            </ul>
-                        )
-                    })
-                }
-                
-                <h2>
-                    {items[selected][selectedItem].name}
-                </h2>
-                <div className='rating-wrapper'><Rating count={5} value={averageRating} width={'20px'}/><p>{reviewCount === 1 ? '1 Review' : `${reviewCount} Reviews`}</p></div>
-                <Gallery images={images}/>
-            </div>
-            <div className='right-wrapper'>
-                <div className='sticky'>
-                    <div className='right'>
-                        <p className='price'>{items[selected][selectedItem].price}</p>
-                        <div className='item-select'>
-                            {
-                                items.map((item, i) => {
-                                    return (
-                                        <Link to={`/product/${productId}/${item[selectedItem].id}`} replace={true} className={`item${selected === i ? ' selected' : ''}`} key={item[selectedItem].id}>
-                                            <img name={i} className={`image`} src={item[selectedItem].images.filter(image => image.primary)[0].src} alt={item[selectedItem].name} title={item[selectedItem].name}/>
-                                        </Link>
-                                    )
-                                })
-                            }
-                        </div>
-                        <div className='attributes'>
-                            {
-                                options.map((option) => {
-                                    const label = option.name.split('-').map(word => word.slice(0,1).toUpperCase() + word.slice(1)).join(' ');
-                                    return (
-                                        <div className='select' key={option.name}>
-                                            <label htmlFor={option.name}>
-                                                { label }
-                                            </label>
-                                            <Select id={option.name} onChange={handleChange} hidden={`Select ${label}...`} options={option.options} value={items[selected][selectedItem].attributes[option.name] || null} />
-                                            {/* <select onChange={handleChange} id={item} name={item} value={itemId}>
-                                                {
-                                                    options.map(option => {
-                                                        
-                                                    })
-                                                }
-                                                {
-                                                    selectableItems[item].map((option, i) => {
-                                                        return(
-                                                            <option value={option.id} key={option.attributes[item]}>
-                                                                {
-                                                                    option.attributes[item]
-                                                                }
-                                                            </option>
-                                                        )
-                                                    })
-                                                }
-                                            </select> */}
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
-                        {
-                            items[selected][selectedItem].in_stock < 10 && items[selected][selectedItem].in_stock > 0 ? (
-                                <p className='stock'>{` Only ${items[selected][selectedItem].in_stock} left in stock!`}</p>
-                            ) : items[selected][selectedItem].in_stock === 0 ? (
-                                <p className='stock'>Sold out! We'll have some more for you soon.</p>
-                            ) : undefined
-                        }
-                        <div className='actions'>
-                            <div className={`cart${items[selected][selectedItem].in_stock === 0 ? ' disabled' : ''}`}>
-                                <Button
-                                    disabled={items[selected][selectedItem].in_stock === 0}
-                                    onClick={handleAddToCart}
-                                    type='button'
-                                    leftIcon={<svg xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/><path d="M18,6h-2c0-2.21-1.79-4-4-4S8,3.79,8,6H6C4.9,6,4,6.9,4,8v12c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8C20,6.9,19.1,6,18,6z M12,4c1.1,0,2,0.9,2,2h-4C10,4.9,10.9,4,12,4z M18,20H6V8h2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V8h4v2c0,0.55,0.45,1,1,1s1-0.45,1-1V8 h2V20z"/></g></svg>}
-                                    title='Add To Bag'
-                                    primary='#e69600'
-                                >
-                                    Add To Bag
-                                </Button>
-                                <input onChange={handleCartChange} onBlur={handleQuantityBlur} className='add' style={stockNotification ? warningStyle : {}} type='number' name='cart-add' min={1} max={items[selected][selectedItem].in_stock} value={cart} disabled={items[selected][selectedItem].in_stock === 0}/>
                             </div>
-                            <Button
-                                design='invert'
-                                primary='#1f1f1f'
-                                onClick={() => handleItemSave(itemId)}
-                                secondary='white'
-                                title='Save Product'
-                                style={{borderRadius: '50%'}}
-                                icon={
-                                    !isSavedItem ? (
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
-                                    ) : (
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-                                    )
+                            <div className='attributes'>
+                                {
+                                    options.map((option) => {
+                                        const label = option.name.split('-').map(word => word.slice(0,1).toUpperCase() + word.slice(1)).join(' ');
+                                        return (
+                                            <div className='select' key={option.name}>
+                                                <label htmlFor={option.name}>
+                                                    { label }
+                                                </label>
+                                                <Select id={option.name} onChange={handleChange} hidden={`Select ${label}...`} options={option.options} value={items[selected][selectedItem].attributes[option.name] || null} />
+                                                {/* <select onChange={handleChange} id={item} name={item} value={itemId}>
+                                                    {
+                                                        options.map(option => {
+                                                            
+                                                        })
+                                                    }
+                                                    {
+                                                        selectableItems[item].map((option, i) => {
+                                                            return(
+                                                                <option value={option.id} key={option.attributes[item]}>
+                                                                    {
+                                                                        option.attributes[item]
+                                                                    }
+                                                                </option>
+                                                            )
+                                                        })
+                                                    }
+                                                </select> */}
+                                            </div>
+                                        )
+                                    })
                                 }
-                            />
+                            </div>
+                            {
+                                items[selected][selectedItem].in_stock < 10 && items[selected][selectedItem].in_stock > 0 ? (
+                                    <p className='stock'>{` Only ${items[selected][selectedItem].in_stock} left in stock!`}</p>
+                                ) : items[selected][selectedItem].in_stock === 0 ? (
+                                    <p className='stock'>Sold out! We'll have some more for you soon.</p>
+                                ) : undefined
+                            }
+                            <div className='actions'>
+                                <div className={`cart${items[selected][selectedItem].in_stock === 0 ? ' disabled' : ''}`}>
+                                    <Button
+                                        disabled={items[selected][selectedItem].in_stock === 0}
+                                        onClick={handleAddToCart}
+                                        type='button'
+                                        leftIcon={<svg xmlns="http://www.w3.org/2000/svg" enableBackground="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/><path d="M18,6h-2c0-2.21-1.79-4-4-4S8,3.79,8,6H6C4.9,6,4,6.9,4,8v12c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8C20,6.9,19.1,6,18,6z M12,4c1.1,0,2,0.9,2,2h-4C10,4.9,10.9,4,12,4z M18,20H6V8h2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V8h4v2c0,0.55,0.45,1,1,1s1-0.45,1-1V8 h2V20z"/></g></svg>}
+                                        title='Add To Bag'
+                                        primary='#e69600'
+                                    >
+                                        Add To Bag
+                                    </Button>
+                                    <input onChange={handleCartChange} onBlur={handleQuantityBlur} className='add' style={stockNotification ? warningStyle : {}} type='number' name='cart-add' min={1} max={items[selected][selectedItem].in_stock} value={cart} disabled={items[selected][selectedItem].in_stock === 0}/>
+                                </div>
+                                <Button
+                                    design='invert'
+                                    primary='#1f1f1f'
+                                    onClick={() => handleItemSave(itemId)}
+                                    secondary='white'
+                                    title='Save Product'
+                                    style={{borderRadius: '50%'}}
+                                    icon={
+                                        !isSavedItem ? (
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
+                                        ) : (
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                                        )
+                                    }
+                                />
+                            </div>
+                            <CSSTransition 
+                                timeout={500}
+                                classNames={'grow-down'}
+                                in={stockNotification !== false}
+                                mountOnEnter={true}
+                                unmountOnExit={true}
+                            >
+                                <NotificaitionModal >
+                                    <p>{`Sorry there's ${stockNotification !== 0 && stockNotification !== false ? items[selected][selectedItem].in_stock : 0} in stock at the moment!`}</p>
+                                </NotificaitionModal>
+                            </CSSTransition>
                         </div>
-                        <CSSTransition 
-                            timeout={500}
-                            classNames={'grow-down'}
-                            in={stockNotification !== false}
-                            mountOnEnter={true}
-                            unmountOnExit={true}
-                        >
-                            <NotificaitionModal >
-                                <p>{`Sorry there's ${stockNotification !== 0 && stockNotification !== false ? items[selected][selectedItem].in_stock : 0} in stock at the moment!`}</p>
-                            </NotificaitionModal>
-                        </CSSTransition>
-                    </div>
-                    <div className='seller'>
-                            <Link onClick={e => e.preventDefault()} to={`/${seller.shop_name}/products`} className='name'>{seller.shop_name}</Link>
-                            <Rating count={5} value={seller.stats.average_rating || 2.5} width='16px'/>
+                        <div className='seller'>
+                                <Link onClick={e => e.preventDefault()} to={`/${seller.shop_name}/products`} className='name'>{seller.shop_name}</Link>
+                                <Rating count={5} value={seller.stats.average_rating || 2.5} width='16px'/>
+                            </div>
+                        <div className='info'>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zm-.5 1.5l1.96 2.5H17V9.5h2.5zM6 18c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm2.22-3c-.55-.61-1.33-1-2.22-1s-1.67.39-2.22 1H3V6h12v9H8.22zM18 18c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
+                            <p>Free Shipping & Other Options Available.</p>
                         </div>
-                    <div className='info'>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zm-.5 1.5l1.96 2.5H17V9.5h2.5zM6 18c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm2.22-3c-.55-.61-1.33-1-2.22-1s-1.67.39-2.22 1H3V6h12v9H8.22zM18 18c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
-                        <p>Free Shipping & Other Options Available.</p>
-                    </div>
-                    <div className='info'>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 14h4v-4h-4V7l-5 5 5 5zm7-11h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-.14 0-.27.01-.4.04-.39.08-.74.28-1.01.55-.18.18-.33.4-.43.64-.1.23-.16.49-.16.77v14c0 .27.06.54.16.78s.25.45.43.64c.27.27.62.47 1.01.55.13.02.26.03.4.03h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7-.25c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75zM19 19H5V5h14v14z"/></svg>
-                        <p>30 Day Satisfaction Guarantee.</p>
-                    </div>
-                    <div className='info'>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7 15h7v2H7zm0-4h10v2H7zm0-4h10v2H7zm12-4h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-.14 0-.27.01-.4.04-.39.08-.74.28-1.01.55-.18.18-.33.4-.43.64-.1.23-.16.49-.16.77v14c0 .27.06.54.16.78s.25.45.43.64c.27.27.62.47 1.01.55.13.02.26.03.4.03h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7-.25c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75zM19 19H5V5h14v14z"/></svg>
-                        <p>Ts&Cs Apply.</p>
+                        <div className='info'>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 14h4v-4h-4V7l-5 5 5 5zm7-11h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-.14 0-.27.01-.4.04-.39.08-.74.28-1.01.55-.18.18-.33.4-.43.64-.1.23-.16.49-.16.77v14c0 .27.06.54.16.78s.25.45.43.64c.27.27.62.47 1.01.55.13.02.26.03.4.03h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7-.25c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75zM19 19H5V5h14v14z"/></svg>
+                            <p>30 Day Satisfaction Guarantee.</p>
+                        </div>
+                        <div className='info'>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7 15h7v2H7zm0-4h10v2H7zm0-4h10v2H7zm12-4h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-.14 0-.27.01-.4.04-.39.08-.74.28-1.01.55-.18.18-.33.4-.43.64-.1.23-.16.49-.16.77v14c0 .27.06.54.16.78s.25.45.43.64c.27.27.62.47 1.01.55.13.02.26.03.4.03h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7-.25c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75zM19 19H5V5h14v14z"/></svg>
+                            <p>Ts&Cs Apply.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    )
+        )
+    } catch (err) {
+        return <Redirect to='/error'/>
+    }
 }
 
 const Bottom = props => {

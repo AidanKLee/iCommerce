@@ -34,11 +34,19 @@ route.use('/:userId',
 
 route.post('/:userId/products',
     parser.json,
+    validate.arrayOfStrings('categories'),
+    validate.array('images'),
+    validate.array('items'),
+    validate.arrayOfImages('images'),
+    validate.arrayOfItems('items'),
+    validate.boolean('is_active'),
+    validate.handleErrors,
     products.create,
     products.createItems
 );
 
 route.use('/:userId/products/:productId',
+    validate.string('productId'),
     validate.uuid('productId'),
     validate.handleErrors,
     helper.isSellerProduct
@@ -46,11 +54,23 @@ route.use('/:userId/products/:productId',
 
 route.post('/:userId/products/:productId',
     parser.json,
+    validate.array('images'),
+    validate.array('items'),
+    validate.arrayOfImages('images'),
+    validate.arrayOfItems('items'),
+    validate.handleErrors,
     products.createItems
 );
 
 route.put('/:userId/products/:productId',
-    parser.json, 
+    parser.json,
+    validate.arrayOfStrings('categories'),
+    validate.array('images'),
+    validate.array('items'),
+    validate.arrayOfImages('images'),
+    validate.arrayOfItems('items'),
+    validate.boolean('is_active'),
+    validate.handleErrors, 
     products.edit
 );
 

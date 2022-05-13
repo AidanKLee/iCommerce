@@ -816,7 +816,6 @@ products.edit = async (req, res, next) => {
         await Promise.all(items.map(async item => {
             const { attributes, description, id: itemId, name, price, image_ids, image_id_primary, in_stock } = item;
             await model.updateItem([name, description, price, Number(in_stock), itemId]);
-            console.log(attributes)
             await model.deleteAllItemAttributeValues([itemId]);
             await Promise.all(attributes.map(async attribute => {
                 return await model.insertItemAttributeValue([itemId, attribute.key, attribute.value]);

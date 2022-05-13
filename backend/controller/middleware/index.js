@@ -317,7 +317,23 @@ helper.isRequiredUUID = (uuid, err) => {
     const name = helper.variableNameToString(uuid);
     uuid = uuid[name]
     if (!uuid || (uuid && (typeof uuid !== 'string' || !helper.isUUID(uuid)))) {
+        if (!err.message || typeof err.message === 'string') {
+            err.message = [];
+        }
         err.message.push(`${name} is required as a valid UUID string`);
+        return false;
+    }
+    return true;
+}
+
+helper.isRequiredString = (string, err) => {
+    const name = helper.variableNameToString(string);
+    string = string[name]
+    if (!string || (string && (typeof string !== 'string'))) {
+        if (!err.message || typeof err.message === 'string') {
+            err.message = [];
+        }
+        err.message.push(`${name} is required as a string`);
         return false;
     }
     return true;
@@ -327,6 +343,9 @@ helper.isFilledArray = (array, err) => {
     const name = helper.variableNameToString(array);
     array = array[name];
     if (!Array.isArray(array) || (Array.isArray(array) && array.length === 0)) {
+        if (!err.message || typeof err.message === 'string') {
+            err.message = [];
+        }
         err.message.push(`${name} is required as an array with at least one item`);
         return false;
     }
@@ -337,10 +356,50 @@ helper.isRequiredNumber = (number, err) => {
     const name = helper.variableNameToString(number);
     number = number[name]
     if (!number || (number && Number.isNaN(Number(number)))) {
+        if (!err.message || typeof err.message === 'string') {
+            err.message = [];
+        }
         err.message.push(`${name} is required as a number`);
         return false;
     }
     return true;
+}
+
+helper.isArrayOfStrings = (array, err) => {
+    const name = helper.variableNameToString(array);
+    array = array[name];
+    let areAllStrings = true;
+    if (!err.message || typeof err.message === 'string') {
+        err.message = [];
+    }
+    array.forEach(item => {
+        if (typeof item !== 'string') {
+            areAllStrings = false;
+        }
+    })
+    if (!areAllStrings) {
+        err.message.push(`all values in ${name} are required to be strings`)
+    }
+    return areAllStrings;
+}
+
+helper.areAttributeObjects = (array, err) => {
+    const name = helper.variableNameToString(array);
+    array = array[name];
+    let areAllValid = true;
+    if (!err.message || typeof err.message === 'string') {
+        err.message = [];
+    }
+    array.forEach(item => {
+        const { key, value } = item
+        if (!key || !value || (key && typeof key !== 'string') || (value && typeof value !== 'string')) {
+            areAllValid = false;
+        }
+    })
+    if (!areAllValid) {
+        err.message.push(`all values in ${name} are required to be objects with the attribute name as key and attribute value as value`)
+    }
+    return areAllValid;
 }
 
 const stripe = {};
@@ -536,7 +595,6 @@ validate.oneExists = (req, res, next) => {
 validate.arrayOfStrings = array => check(array).custom(value => {
     const err = new Error();
     err.status = 400;
-    console.log(value)
     const areAllStrings = !value.map(val => typeof val === 'string').includes(false);
     if (!areAllStrings) {
         err.message = `all values in ${array} must be strings`
@@ -555,6 +613,49 @@ validate.arrayOfUUID = array => check(array).custom(value => {
     const areAllUUID = !value.map(val => helper.isUUID(val)).includes(false);
     if (!areAllUUID) {
         err.message = `all values in ${array} must be UUID strings`
+        throw err;
+    }
+    return true;
+})
+validate.arrayOfImages = array => check(array).custom(value => {
+    const err = new Error();
+    err.status = 400;
+    err.message = [];
+    if (value.length > 0) {
+        value.forEach(image => {
+            const { id, name, src, type } = image
+            helper.isRequiredUUID({id}, err);
+            helper.isRequiredString({name}, err);
+            helper.isRequiredString({src}, err);
+            helper.isRequiredString({type}, err);
+        })
+        if (err.message.length > 0)  {
+            err.message = err.message.join(', ');
+            throw err;
+        }
+    }
+    return true;
+})
+validate.arrayOfItems = array => check(array).custom(value => {
+    const err = new Error();
+    err.status = 400;
+    err.message = [];
+    const minLength = value.length > 0;
+    if (!minLength) {
+        err.message.push('at least one image is required for each product')
+    }
+    value.forEach(item => {
+        const { attributes, description, image_ids, image_id_primary, in_stock, name, price } = item;
+        helper.areAttributeObjects({attributes}, err);
+        helper.isRequiredString({description}, err);
+        helper.isArrayOfStrings({image_ids}, err);
+        helper.isRequiredUUID({image_id_primary}, err);
+        helper.isRequiredNumber({in_stock}, err);
+        helper.isRequiredString({name}, err);
+        helper.isRequiredNumber({price}, err);
+    })
+    if (err.message.length > 0)  {
+        err.message = err.message.join(', ');
         throw err;
     }
     return true;
@@ -581,7 +682,6 @@ validate.itemIdQuantity = (req, res, next) => {
     const validsIdQuantity = !items.map(item => {
         const validId = 'item_id' in item && helper.isUUID(item.item_id);
         const validQuantity = 'item_quantity' in item && !Number.isNaN(item.item_quantity);
-        console.log(validId, validQuantity)
         return validId && validQuantity;
     }).includes(false);
     if (validsIdQuantity && items.length > 0) {
