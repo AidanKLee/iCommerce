@@ -21,53 +21,49 @@ import OrderDetails from '../../pages/Orders/OrderDetails';
 import Review from '../../pages/Review'
 import Error from '../../pages/Error';
 import Documentation from '../../pages/Documentation';
-import Redirect from '../../pages/Redirect';
-import { ErrorBoundary } from 'react-error-boundary';
 
 const Body = props => {
 
     const { style } = props;
 
     return (
-        <ErrorBoundary FallbackComponent={errorFallback}>
-            <section className='app body' style={style}>
-                <Routes>
-                    <Route path='/' element={<Home/>}/>
-                    <Route path='/products' element={<Products/>}>
-                        <Route path='/products/:category' element={<Products/>}/>
+        <section className='app body' style={style}>
+            <Routes>
+                <Route path='/' element={<Home/>}/>
+                <Route path='/products' element={<Products/>}>
+                    <Route path='/products/:category' element={<Products/>}/>
+                </Route>
+                <Route path='/product/:productId' element={<Product/>}>
+                    <Route path='/product/:productId/:itemId' element={<Product/>}/>
+                </Route>
+                <Route path='/checkout' element={<Checkout/>}>
+                    <Route path='/checkout' element={<CheckoutForm/>}/>
+                    <Route path='/checkout/status' element={<PaymentStatus/>}/>
+                </Route>
+                <Route path='/register' element={<Register/>}/>
+                <Route path='/login' element={<Login/>}/>
+                <Route path='/my-shop' element={<MyShop/>}>
+                    <Route path='/my-shop' element={<Shop/>}/>
+                    <Route path='/my-shop/products' element={<Products type='my-shop'/>}>
+                        <Route path='/my-shop/products/:category' element={<Products type='my-shop'/>}/>
                     </Route>
-                    <Route path='/product/:productId' element={<Product/>}>
-                        <Route path='/product/:productId/:itemId' element={<Product/>}/>
+                    <Route path='/my-shop/sold' element={<Sold />}>
+                        <Route path='/my-shop/sold' element={<OrderList type='my-shop'/>}/>
+                        <Route path='/my-shop/sold/:orderId' element={<OrderDetails/>}/>
                     </Route>
-                    <Route path='/checkout' element={<Checkout/>}>
-                        <Route path='/checkout' element={<CheckoutForm/>}/>
-                        <Route path='/checkout/status' element={<PaymentStatus/>}/>
-                    </Route>
-                    <Route path='/register' element={<Register/>}/>
-                    <Route path='/login' element={<Login/>}/>
-                    <Route path='/my-shop' element={<MyShop/>}>
-                        <Route path='/my-shop' element={<Shop/>}/>
-                        <Route path='/my-shop/products' element={<Products type='my-shop'/>}>
-                            <Route path='/my-shop/products/:category' element={<Products type='my-shop'/>}/>
-                        </Route>
-                        <Route path='/my-shop/sold' element={<Sold />}>
-                            <Route path='/my-shop/sold' element={<OrderList type='my-shop'/>}/>
-                            <Route path='/my-shop/sold/:orderId' element={<OrderDetails/>}/>
-                        </Route>
-                        <Route path='/my-shop/sales' element={<Sales />}/>
-                    </Route>
-                    <Route path='/saved' element={<Saved/>}/>
-                    <Route path='/bag' element={<Bag/>}/>
-                    <Route path='/orders' element={<Orders/>}>
-                        <Route path='/orders' element={<OrderList type='orders'/>}/>
-                        <Route path='/orders/:orderId' element={<OrderDetails/>}/>
-                    </Route>
-                    <Route path='/review' element={<Review/>}/>
-                    <Route path='/docs' element={<Documentation/>}/>
-                    <Route path='*' element={<Error/>}/>
-                </Routes>
-            </section>
-        </ErrorBoundary>
+                    <Route path='/my-shop/sales' element={<Sales />}/>
+                </Route>
+                <Route path='/saved' element={<Saved/>}/>
+                <Route path='/bag' element={<Bag/>}/>
+                <Route path='/orders' element={<Orders/>}>
+                    <Route path='/orders' element={<OrderList type='orders'/>}/>
+                    <Route path='/orders/:orderId' element={<OrderDetails/>}/>
+                </Route>
+                <Route path='/review' element={<Review/>}/>
+                <Route path='/docs' element={<Documentation/>}/>
+                <Route path='*' element={<Error/>}/>
+            </Routes>
+        </section>
     );
 };
 

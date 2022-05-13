@@ -9,6 +9,8 @@ const Error = props => {
 
     const { state } = location;
 
+    console.log(state)
+
     const timer = useRef(null);
 
     const { err, message, status } = useMemo(() => state, [state]);
@@ -17,9 +19,6 @@ const Error = props => {
         if (err) {
             console.error(err);
         }
-    }, [err])
-
-    useEffect(() => {
         timer.current = setTimeout(() => {
             if (location.pathname.includes('/error')) {
                 navigate(-2);
