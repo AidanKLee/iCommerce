@@ -349,7 +349,7 @@
     transform: rotate(180deg);
 }
 
-@media not ((hover: none) and (pointer: coarse)) {
+@media (pointer: fine) and (hover: hover) {
     .docs .main .contents::-webkit-scrollbar {
         width: 8px;
         height: 8px;

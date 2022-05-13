@@ -98,6 +98,16 @@ route.get('/:userId/orders/:orderId',
 );
 
 route.put('/:userId/orders/:orderId',
+    (req,res,next) => {
+        console.log(req.query)
+        next();
+    },
+    validate.booleanString('delivered'),
+    validate.booleanString('dispatched'),
+    validate.stringIfExists('order_item_id'),
+    validate.UUIDIfExists('order_item_id'),
+    validate.booleanString('reviewed'),
+    validate.handleErrors,
     customer.selectOrderById,
     helper.getOrdersData,
     seller.updateSellerOrder
@@ -105,6 +115,16 @@ route.put('/:userId/orders/:orderId',
 
 route.post('/:userId/review', 
     parser.json,
+    validate.string('customer_id'),
+    validate.string('order_id'),
+    validate.string('order_item_id'),
+    validate.uuid('customer_id'),
+    validate.uuid('order_id'),
+    validate.uuid('order_item_id'),
+    validate.number('rating'),
+    validate.stringIsValidOption('rating', [1,2,3,4,5]),
+    validate.string('review'),
+    validate.handleErrors,
     helper.submitReview
 );
 
