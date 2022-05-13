@@ -281,13 +281,14 @@ checkout.paymentIntent = async (data, clientSetter, dataSetter, orderIdSetter) =
 }
 
 checkout.submitOrder = async (customerId, orderId, body) => {
-    await fetch(`${baseUrl}/api/customer/${customerId}/orders/${orderId}`, {
+    const err =  await fetch(`${baseUrl}/api/customer/${customerId}/orders/${orderId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
     });
+    return await err.json();
 }
 
 checkout.confirmPayment = async (customerId, orderId) => {

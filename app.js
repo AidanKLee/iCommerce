@@ -77,7 +77,7 @@ app.use((err, req, res, next) => {
     const status = err.status || 500;
     const message = err.message;
     console.log(err);
-    res.status(status).json({message});
+    res.status(status).json({message, status});
 })
 
 const server = https.createServer(credentials, app);

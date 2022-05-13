@@ -83,6 +83,8 @@ const Register = props => {
         }
     }
 
+    console.log(form)
+
     const handleReset = e => {
         e.preventDefault();
         setForm(initialForm)

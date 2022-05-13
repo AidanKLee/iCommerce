@@ -7,6 +7,7 @@ const multer = require('multer');
 const path = require('path');
 const { check, validationResult } = require('express-validator');
 const fs = require('fs');
+const { isArray } = require('util');
 
 const parser = {};
 parser.json = bodyParser.json({limit: 100000000});
@@ -305,6 +306,43 @@ helper.submitReview = async (req, res, next) => {
     }
 }
 
+helper.isUUID = string => {
+    const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+    return regexExp.test(string);
+}
+
+helper.variableNameToString = v => Object.keys(v)[0];
+
+helper.isRequiredUUID = (uuid, err) => {
+    const name = helper.variableNameToString(uuid);
+    uuid = uuid[name]
+    if (!uuid || (uuid && (typeof uuid !== 'string' || !helper.isUUID(uuid)))) {
+        err.message.push(`${name} is required as a valid UUID string`);
+        return false;
+    }
+    return true;
+}
+
+helper.isFilledArray = (array, err) => {
+    const name = helper.variableNameToString(array);
+    array = array[name];
+    if (!Array.isArray(array) || (Array.isArray(array) && array.length === 0)) {
+        err.message.push(`${name} is required as an array with at least one item`);
+        return false;
+    }
+    return true;
+}
+
+helper.isRequiredNumber = (number, err) => {
+    const name = helper.variableNameToString(number);
+    number = number[name]
+    if (!number || (number && Number.isNaN(Number(number)))) {
+        err.message.push(`${name} is required as a number`);
+        return false;
+    }
+    return true;
+}
+
 const stripe = {};
 
 stripe.retrieveAccount = async (req, res, next) => {
@@ -369,8 +407,13 @@ stripe.generatePaymentIntent = async (req, res, next) => {
         shipping = 3.99
     } else if (shipping === 'Standard') {
         shipping = 1.99
-    } else {
+    } else if (shipping === 'Upto 7 Days') {
         shipping = 0
+    } else {
+        const err = new Error();
+        err.message = `The submitted value (shipping) should match one of the following values [Next Day, Standard, Upto 7 Days].`
+        err.status(400);
+        return next(err)
     }
     try {
         items = await Promise.all(items.map(async item => {
@@ -440,22 +483,145 @@ stripe.fulfillTransfersToSellers = async (req, res, next) => {
 
 const validate = {};
 
-validate.array = array => check(array).isArray();
-validate.email = email => check(email).isEmail();
-validate.password = password => check(password).isStrongPassword();
+validate.array = array => check(array).isArray().withMessage(`${array} must be an array`);
+validate.object = object => check(object).isObject().withMessage(`${object} must be an object`);
+validate.string = string => check(string).isString().withMessage(`${string} must be a string`);
+validate.number = number => check(number).isNumeric().withMessage(`${number} must be a number`);
+validate.boolean = boolean => check(boolean).isBoolean().withMessage(`${boolean} must be a valid boolean (true or false)`);
+validate.date = date => check(date).isDate().withMessage(`${date} must be a valid date or date string`)
+validate.email = email => check(email).isEmail().withMessage(`${email} must be a email format (email@icommerce.com)`);
+validate.password = password => check(password).isStrongPassword().withMessage(`passwords must be a minimum length of 8 and have a minimum on 1 lowercase, uppercase and special character`);
+validate.uuid = string => check(string).isUUID().withMessage(`${string} must be a UUID format`);
+validate.booleanString = string => validate.stringIsValidOption(string, ['true', 'false', undefined]);
+validate.stringIfExists = string => check(string).if(check(string).exists()).isString().withMessage(`${string} must be a string`);
+validate.numberIfExists = number => check(number).if(check(number).exists()).isNumeric().withMessage(`${number} must be a number`);
+validate.UUIDIfExists = uuid => check(uuid).if(check(uuid).exists()).isUUID().withMessage(`${uuid} must be a string`);
+validate.arrayIfExists = array => check(array).if(check(array).exists()).isArray().withMessage(`${array} must be an array`);
 validate.stringIsValidOption = (string, options) => check(string).custom(value => {
-    const match = options
-        .map(option => option.toLowerCase())
-        .includes(value.toLowerCase());
+    const match = options.includes(value);
+    options = options.filter(option => option !== null || option !== undefined)
     if (!match) {
         const err = new Error();
-        err.message = `The submitted value (${value}) should match one of the following values [${options.join(', ')}].`
+        err.message = `the submitted value (${value}) should match one of the following values [${options.join(', ')}].`
         throw err;
     }
     return true;
 });
-validate.uuid = string => check(string).isUUID();
-
+validate.stringIsValidOptionIfExists = (string, options) => check(string).custom(value => {
+    if (value !== undefined) {
+        const match = options.includes(value);
+        options = options.filter(option => option !== null || option !== undefined)
+        if (!match) {
+            const err = new Error();
+            err.message = `the submitted value (${value}) should match one of the following values [${options.join(', ')}].`
+            throw err;
+        }
+    }
+    return true;
+});
+validate.oneExists = (req, res, next) => {
+    const err = new Error();
+    err.status = 400;
+    const { product_id, seller_id } = req.body;
+    const value = [ product_id, seller_id ];
+    const filtered = value.filter(val => {
+        return val !== undefined
+    })
+    if (filtered.length === 0 || filtered.length > 1) {
+        err.message = `it is required that the body only contains one of the following parameters [product_id, seller_id}]`;
+        throw err;
+    }
+    next();
+}
+validate.arrayOfStrings = array => check(array).custom(value => {
+    const err = new Error();
+    err.status = 400;
+    console.log(value)
+    const areAllStrings = !value.map(val => typeof val === 'string').includes(false);
+    if (!areAllStrings) {
+        err.message = `all values in ${array} must be strings`
+        throw err;
+    }
+    return true;
+})
+validate.arrayOfUUID = array => check(array).custom(value => {
+    const err = new Error();
+    err.status = 400;
+    const areAllStrings = !value.map(val => typeof val === 'string').includes(false);
+    if (!areAllStrings) {
+        err.message = `all values in ${array} must be strings`
+        throw err;
+    }
+    const areAllUUID = !value.map(val => helper.isUUID(val)).includes(false);
+    if (!areAllUUID) {
+        err.message = `all values in ${array} must be UUID strings`
+        throw err;
+    }
+    return true;
+})
+validate.queryStringArray = array => check(array).custom(value => {
+    if (value !== undefined) {
+        const err = new Error();
+        err.status = 400;
+        if (Array.isArray(value)) {
+            const areAllStrings = !value.map(val => typeof val === 'string').includes(false);
+            if (!areAllStrings) {
+                err.message = `if ${array} is an array all values in ${array} must be strings`
+                throw err;
+            }
+        } else if (typeof value !== 'string') {
+            err.message = `${array} must be either an array or string`
+            throw err;
+        }
+    }
+    return true;
+})
+validate.itemIdQuantity = (req, res, next) => {
+    const { items } = req.body;
+    const validsIdQuantity = !items.map(item => {
+        const validId = 'item_id' in item && helper.isUUID(item.item_id);
+        const validQuantity = 'item_quantity' in item && !Number.isNaN(item.item_quantity);
+        console.log(validId, validQuantity)
+        return validId && validQuantity;
+    }).includes(false);
+    if (validsIdQuantity && items.length > 0) {
+        next();
+    } else {
+        const err = new Error();
+        err.message = 'You need at least one item with a valid UUID (item_id) and a valid number (item_quantity)';
+        err.status = 400;
+        throw err;
+    }
+}
+validate.order = (req, res, next) => {
+    const { cartId, deliveryAddressId, items, postage } = req.body;
+    const err = new Error();
+    err.message = [];
+    err.status = 400;
+    helper.isRequiredUUID({cartId}, err);
+    helper.isRequiredUUID({deliveryAddressId}, err);
+    helper.isFilledArray({items}, err);
+    items.forEach(item => {
+        const { item_id, item_price, item_quantity, seller_id } = item;
+        helper.isRequiredUUID({item_id}, err);
+        helper.isRequiredNumber({item_price}, err);
+        helper.isRequiredNumber({item_quantity}, err);
+        helper.isRequiredUUID({seller_id}, err);
+    });
+    const options = [ 'Next Day', 'Standard', 'Upto 7 Days' ];
+    const { option, price } = postage;
+    if (!option || (option && !options.includes(option))) {
+        err.message.push(`option is required as a number`);
+        return false;
+    }
+    helper.isRequiredNumber({price}, err);
+    if (err.message.length === 0) {
+        next();
+    } else {
+        err.message = err.message.join(', ');
+        throw err;
+    }
+}
 validate.handleErrors = (req, res, next) => {
     let err = validationResult(req);
     if (!err.isEmpty()) {

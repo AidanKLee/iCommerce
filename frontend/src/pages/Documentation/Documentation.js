@@ -125,7 +125,7 @@ docs.api.routes.auth = {
                                 description: 'Last (family) name of the user.'
                             },
                             birth_date: {
-                                type: 'date',
+                                type: 'date/string',
                                 required: true,
                                 description: 'The users date of birth.'
                             },
@@ -184,7 +184,7 @@ docs.api.routes.auth = {
                                 description: 'Description of the shop/business.'
                             },
                             business_email: {
-                                type: 'date',
+                                type: 'string',
                                 required: true,
                                 description: 'The email of the buesiness account.',
                                 requirements: [
@@ -210,6 +210,19 @@ docs.api.routes.auth = {
                             }
                         }
                     }
+                }
+            }
+        },
+        {
+            uri: '/stripe/account',
+            method: {
+                get: {
+                    name: 'Get Stripe account',
+                    description: 'Retrieves the sellers stripe account.',
+                },
+                post: {
+                    name: 'Register Stripe account',
+                    description: 'Gets a Stripe Account Link to register a user, check Stripe onboarding documentation for more information.',
                 }
             }
         }
@@ -710,7 +723,8 @@ docs.api.routes.customer = {
                             }, 
                             is_primary: {
                                 type: 'boolean',
-                                description: 'True if you would like this to be the customers primary address.'
+                                description: 'True if you would like this to be the customers primary address.',
+                                required: true
                             },
                             line_1: {
                                 type: 'string',

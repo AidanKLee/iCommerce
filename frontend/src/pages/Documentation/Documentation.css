@@ -64,6 +64,10 @@
     transition: .5s;
 }
 
+.docs .main .contents a {
+    white-space: nowrap;
+}
+
 .docs .main .contents .view {
     overflow: hidden;
 }
@@ -103,13 +107,11 @@
     max-height: 320px;
 }
 
-
 .docs .main .contents .route .dropdown {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
 
 .docs .main .contents .route .dropdown svg {
     margin-right: 8px;

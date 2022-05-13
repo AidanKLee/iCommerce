@@ -3,6 +3,7 @@ import { PaymentElement } from '@stripe/react-stripe-js';
 import AddressForm from '../../components/AddressForm';
 import { CSSTransition } from 'react-transition-group';
 import { useStripe, useElements } from '@stripe/react-stripe-js';
+import LoadingModal from '../../components/LoadingModal';
 import baseUrl from '../../utils/baseUrl';
 import api from '../../utils/api';
 import { useOutletContext } from 'react-router-dom';
@@ -23,6 +24,7 @@ const CheckoutForm = props => {
     const elements = useElements();
 
     const [ error, setError ] = useState('');
+    const [ loading, setLoading ] = useState(false);
 
     const orderBody = useMemo(() => {
         return {
@@ -30,14 +32,14 @@ const CheckoutForm = props => {
             cartId: user.cart.id,
             postage: {
                 option: shippingOption,
-                price: prices.shipping
+                price: helper.currencyToInteger(prices.shipping)
             },
             items: items && items.length > 0 ? items.map(item => {
                 return {
                     seller_id: item.seller.id,
                     item_id: item.id,
                     item_quantity: item.item_quantity,
-                    item_price: item.price
+                    item_price: helper.currencyToInteger(item.price)
                 }
             }) : []
         }
@@ -59,22 +61,30 @@ const CheckoutForm = props => {
         if (!stripe || !elements) {
             return;
         }
-        await c.submitOrder(user.id, order_id, orderBody);
-        const { err } = await stripe.confirmPayment({
-            elements,
-            confirmParams: {
-                return_url: `${baseUrl}/checkout/status`,
-                shipping: {
-                    address: {
-                        city, country, line1, line2, state, postal_code
-                    },
-                    name: `${user.first_name} ${user.last_name}`
+        setLoading(true)
+        const { message, status } = await c.submitOrder(user.id, order_id, orderBody);
+        if (!status) {
+            const { err } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    return_url: `${baseUrl}/checkout/status`,
+                    shipping: {
+                        address: {
+                            city, country, line1, line2, state, postal_code
+                        },
+                        name: `${user.first_name} ${user.last_name}`
+                    }
                 }
+            })
+            if (err) {
+                setError(err.message)
             }
-        })
-        if (err) {
-            setError(err.message)
+        } else {
+            console.error(message)
+            setError(message)
         }
+        setLoading(false)
+        
     }
 
     return (
@@ -240,6 +250,15 @@ const CheckoutForm = props => {
             >
                 <AddressForm handleSubmit={handleAddressSubmit} form={[addressForm, setAddressesForm]} />
             </CSSTransition>
+            <CSSTransition 
+                    timeout={500}
+                    classNames={'fade'}
+                    in={loading}
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                >
+                    <LoadingModal />
+                </CSSTransition>
         </div>
         
     )

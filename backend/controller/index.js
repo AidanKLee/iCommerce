@@ -287,7 +287,7 @@ customer.submitOrder = async (req, res, next) => {
     try {
         const { orderId, customerId } = req.params;
         const { deliveryAddressId, postage, items, cartId } = req.body;
-        postage.price = Number(postage.price.slice(1).replace(',',''));
+        postage.price = Number(postage.price);
         await model.insertOrder([orderId, customerId, deliveryAddressId, postage.option, postage.price]);
         await Promise.all(items.map(async item => {
             const { seller_id, item_id, item_quantity, item_price } = item;

@@ -15,7 +15,7 @@ const AddressForm = props => {
         const value = e.target.value;
         setForm({...form, [key]: value})
     }
-
+console.log(form)
     return (
         <div className='address'>
             <form className='form' onSubmit={handleSubmit}>
