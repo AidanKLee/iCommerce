@@ -4,12 +4,10 @@ import './Error.css';
 
 const Error = props => {
 
-    const { state } = props;
-
-    console.log(state)
-
     const navigate = useNavigate();
     const location = useLocation();
+
+    const { state } = location;
 
     const timer = useRef(null);
 

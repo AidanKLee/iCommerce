@@ -24,12 +24,6 @@ import Documentation from '../../pages/Documentation';
 import Redirect from '../../pages/Redirect';
 import { ErrorBoundary } from 'react-error-boundary';
 
-const errorFallback = ({err, resetErrorBoundary}) => {
-    return (
-        <Redirect to='/error' error={err} reset={resetErrorBoundary}/>
-    )
-}
-
 const Body = props => {
 
     const { style } = props;
