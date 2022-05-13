@@ -41,11 +41,11 @@ const Body = props => {
                 <Route path='/products' element={<Products/>}>
                     <Route path='/products/:category' element={<Products/>}/>
                 </Route>
-                <ErrorBoundary FallbackComponent={errorFallback}>
-                    <Route path='/product/:productId' element={<Product/>}>
-                        <Route path='/product/:productId/:itemId' element={<Product/>}/>
-                    </Route>
-                </ErrorBoundary>
+                <Route path='/product/:productId' element={<Product/>}>
+                    <ErrorBoundary FallbackComponent={errorFallback}>
+                            <Route path='/product/:productId/:itemId' element={<Product/>}/>
+                    </ErrorBoundary>
+                </Route>
                 <Route path='/checkout' element={<Checkout/>}>
                     <Route path='/checkout' element={<CheckoutForm/>}/>
                     <Route path='/checkout/status' element={<PaymentStatus/>}/>
