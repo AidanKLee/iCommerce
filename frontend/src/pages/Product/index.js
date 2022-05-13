@@ -305,7 +305,7 @@ const Top = props => {
                 return itemValue === value;
             })
         }
-        if (item.length === 1) {
+        if (item.length === 1 && item[0].id) {
             return navigate(`/product/${productId}/${item[0].id}`, { replace: true })
         } else {
             setStockNotification(0)
