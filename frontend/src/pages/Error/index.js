@@ -4,10 +4,20 @@ import './Error.css';
 
 const Error = props => {
 
+    const { error: err, reset } = props;
+
     const navigate = useNavigate();
     const location = useLocation();
 
     const timer = useRef(null);
+
+    useEffect(() => {
+        if (reset) {
+            reset();
+        }
+    })
+
+    console.log(err)
 
     useEffect(() => {
         timer.current = setTimeout(() => {
