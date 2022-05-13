@@ -102,6 +102,9 @@ const Products = props => {
             })
             return {...product, items: itemGroups}
         })
+        if (products.length === 0) {
+            return [];
+        }
         return prods;
     }, [products])
     
@@ -270,15 +273,20 @@ const Products = props => {
                             </select>
                         </div>
                     </div>
-                        {
-                            groupedProducts.length > 0 ? groupedProducts.map((product, i) => {
-                                return product.is_active || type !== 'browse' ? (
-                                    <CSSTransition key={product.id} timeout={500} classNames='fade' in={groupedProducts.length > 0} mountOnEnter={true} unmountOnExit={true}>
-                                        <ProductData index={i} product={product} products={products} type={type} refresh={getProducts}/>
-                                    </CSSTransition>
-                                ) : undefined
-                            }) : undefined
-                        }
+                    {
+                        groupedProducts.map((product, i) => {
+                            return (
+                                <CSSTransition key={product.id} timeout={500} classNames='fade' in={!loading} mountOnEnter={true} unmountOnExit={true}>
+                                    <ProductData index={i} product={product} products={products} type={type} refresh={getProducts}/>
+                                </CSSTransition>
+                            )
+                        })
+                    }
+                    <CSSTransition timeout={500} classNames='fade' in={!loading && groupedProducts.length === 0} mountOnEnter={true} unmountOnExit={true}>
+                        <div className='no-products'>
+                            { filter.attributes.length === 0 ? filter.query.length === 0 ? `Sorry, there's nothing here at the moment!` : `No products match your search.` : `No products match your criteria.`}
+                        </div>
+                    </CSSTransition>
                     </div>
                     <CSSTransition timeout={500} classNames='fade' in={newProduct} mountOnEnter={true} unmountOnExit={true}>
                         <NewProduct open={[newProduct, setNewProduct]} refresh={getProducts}/>

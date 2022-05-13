@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 const Datalist = props => {
 
-    const { attribute, form: [form, setForm], itemIndex } = props;
+    const { attribute, form: [form, setForm], itemIndex, title } = props;
 
     const text = useMemo(() => {
         let formatted = attribute.attribute;
@@ -52,7 +52,7 @@ const Datalist = props => {
     //need to add a value param
 
     return (
-        <div className='datalist'>
+        <div className='datalist' title={title}>
             <input onChange={handleChange} name={attribute.attribute} list={`${attribute.attribute}#${itemIndex}`} placeholder={text} value={form.items[itemIndex].attributes[index] && form.items[itemIndex].attributes[index].value ? form.items[itemIndex].attributes[index].value : ''}/>
             <datalist id={`${attribute.attribute}#${itemIndex}`}>
                 {

@@ -8,7 +8,7 @@ const carouselCards = [
         name: 'Gaming', src: '../../images/sony-2619483_1920.jpg',
         title: 'All the latest games, new and used.',
         text: 'Never miss out on the best deals for the latest games.',
-        href: '/',
+        href: '/products/game-consoles',
         style: {
             backgroundColor: 'rgba(35, 35, 35, .7)', color: '#f1f1f1',
             padding: '20px', textAlign: 'center', transform: 'translateX(-50%)',
@@ -20,7 +20,7 @@ const carouselCards = [
         name: 'Tech', src: '../../images/apple-1868496_1920.jpg',
         title: 'Get the latest tech at a variety of prices.',
         text: 'Want to stay up to date with the latest tech trends? We have everything you need here.',
-        href: '/',
+        href: '/products/electronics',
         buttonStyle: {backgroundColor: '#1f1f1f'},
         style: {
             backgroundColor: 'rgba(35, 35, 35, .8)', color: 'white',
@@ -33,7 +33,7 @@ const carouselCards = [
         name: 'Home Design', src: '../../images/furniture-998265_1920.jpg',
         title: 'Style your home the way you like with all the most popular designs.',
         buttonStyle: {backgroundColor: '#1f1f1f'},
-        href: '/',
+        href: '/products/house-garden',
         style: {
             backgroundColor: 'rgba(35, 35, 35, .8)', color: 'white',
             padding: '20px', textAlign: 'right', transform: 'translateY(-50%)',
@@ -44,7 +44,7 @@ const carouselCards = [
     {
         name: 'Sales', src: '../../images/mountain-6538890_1920.jpg',
         title: "Sales year round, you'll never miss out on a chance for a good deal.",
-        href: '/',
+        href: '/products',
         style: {
             backgroundColor: '#463b73', color: '#f1f1f1',
             padding: '48px', textAlign: 'center', transform: 'translate(-50%, -50%)',
@@ -59,7 +59,7 @@ const carouselCards = [
         title: 'Stay up to date with our latest fashion pieces.',
         text: ' All the most up to date fashion trends from outrageous to smart. We have pieces however you identify!',
         buttonStyle: {backgroundColor: '#1f1f1f'},
-        href: '/',
+        href: '/fashion',
         style: {
             backgroundColor: 'rgba(35, 35, 35, .8)', color: 'white',
             padding: '20px', textAlign: 'left', transform: 'translateY(-50%)',
@@ -84,7 +84,7 @@ const Home = props => {
                                 <div className='text' style={card.style}>
                                     {card.title ? <h2>{card.title}</h2> : undefined}
                                     {card.text ? <p>{card.text}</p> : undefined}
-                                    {card.href ? <Button style={{marginTop: '16px', ...card.buttonStyle}} href={card.href} shape='curved'>See More</Button> : undefined}
+                                    {card.href ? <Button style={{marginTop: '16px', ...card.buttonStyle}} href={card.href} shape='curved' type='link'>See More</Button> : undefined}
                                 </div>
                             </div>
                         )

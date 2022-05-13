@@ -474,7 +474,7 @@ export const NewItem = props => {
                 {
                     attributes.length > 0 ? attributes.map((attribute, i) => {
                         return (
-                            <Datalist key={attribute.attribute} attribute={attribute} form={[form, setForm]} index={i} itemIndex={index}/>
+                            <Datalist key={attribute.attribute} attribute={attribute} form={[form, setForm]} index={i} itemIndex={index} title={attribute.attribute}/>
                         )
                     }) : undefined
                 }

@@ -9,6 +9,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import './Checkout.css';
 import LoadingModal from '../../components/LoadingModal';
+import Modal from '../../components/Modal';
 
 const { customer: c, checkout: check, helper } = api;
 const stripePromise = loadStripe('pk_test_51KqCC6Akn0wgoOV8Ka8mzVNQl8GKwM9JlitRWG4R5pyrsXA49Q2ca1OJSka4GJUiHW6KFZzSGVo4H1yPwXBYjuF300tHQf9oeJ');
@@ -33,6 +34,7 @@ const Checkout = props => {
     const [ addressSelect, setAddressSelect ] = useState(false);
     const [ selected, setSelected ] = useState(0);
     const [ initialLoad, setInitialLoad ] = useState(false);
+    const [ notification, setNotification ] = useState(false);
     const [ addressForm, setAddressesForm ] = useState({
         open: false,
         line_1: '',
@@ -73,6 +75,13 @@ const Checkout = props => {
             shipping: helper.currencyFormatter(bag ? bag.shipping === 'Next Day' ? 3.99 : bag.shipping === 'Standard' ? 1.99 : 0 : 0)
         }
     }, [bag, total])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setNotification(true);
+        }, 200)
+        return() => clearTimeout(timer);
+    }, [])
 
     useEffect(() => {
         if (bag && 'items' in bag && 'shipping' in bag) {
@@ -145,11 +154,27 @@ const Checkout = props => {
             <CSSTransition 
                     timeout={500}
                     classNames={'fade'}
-                    in={!transitionIn}
+                    in={!transitionIn && !notification}
                     mountOnEnter={true}
                     unmountOnExit={true}
                 >
                 <LoadingModal />
+            </CSSTransition>
+            <CSSTransition 
+                    timeout={500}
+                    classNames={'fade'}
+                    in={notification}
+                    mountOnEnter={true}
+                    unmountOnExit={true}
+                >
+                <Modal 
+                    buttons={[
+                        { text: 'Confirm', onClick: () => setNotification(false), primary: true },
+                        { text: 'Go Back', onClick: () => navigate(-1) }
+                    ]}
+                    header='Test Notification'
+                    text={`Unfortunately this isn't a real shop... yet. To complete a test payment at checkout, use card number '4000 0000 0000 0077' with any Expiration, CVC and Postal code. I hope you enjoyed the site!`}
+                />
             </CSSTransition>
             {
                 !isLoggedIn && sessionRestoreAttempt ? <Redirect to={'/login'}/> : undefined

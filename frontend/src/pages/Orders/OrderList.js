@@ -48,7 +48,7 @@ const OrderList = props => {
         }
     }, [count, searchParams.limit, searchParams.page])
 
-    const [ search, setSearch ] = useState('');
+    const [ search, setSearch ] = useState(searchParams.search || '');
     const [ term , setTerm ] = useState(search);
 
     useEffect(() => {

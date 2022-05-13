@@ -75,56 +75,56 @@ const Filter = props => {
     
     return (
         <div className='filter'>
-                        <p className='title'>Filters</p>
-                        <div className='categories'>
+            <p className='title'>Filters</p>
+            <div className='categories'>
+                {
+                    (data && data.category && data.category.length > 0) || category.length > 0 ? (
+                        <div className='container cat'>
+                            <p className='subtitle'>Categories</p>
                             {
-                                (data && data.category && data.category.length > 0) || category.length > 0 ? (
-                                    <div className='container cat'>
-                                        <p className='subtitle'>Categories</p>
+                                category.length > 0 ? <Link to={`${type === 'my-shop' ? '/my-shop' : ''}/products`} className='category'>All</Link> : undefined
+                            }
+                            {
+                                data && data.parent_category && 'name' in data.parent_category ? <Link to={`${type === 'my-shop' ? '/my-shop' : ''}/products${data.parent_category.href}`} className='category'><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none" opacity=".87"/><path d="M17.51 3.87L15.73 2.1 5.84 12l9.9 9.9 1.77-1.77L9.38 12l8.13-8.13z"/></svg>{data.parent_category.name} ({data.parent_category.count})</Link> : undefined
+                            }
+                            {
+                                data && data.category && data.category.length > 0 && data.category.map(cat => {
+                                    return <Link to={`${type === 'my-shop' ? '/my-shop' : ''}/products${cat.href}`} key={cat.category_name} className={`category ${category.length > 0 ? 'main' : ''}`}>{cat.category_name} ({cat.count})</Link>
+                                })
+                            }
+                        </div>
+                    ) : undefined
+                }
+                {
+                    attributes.length > 0 ? (
+                        attributes.map((attribute, i) => {
+                            return (
+                                <div key={attribute.key} className='container' style={selected[i] > 0 ? {height: `${37 + selected[i]}px`} : {height: '29px'}}>
+                                    <button onClick={handleClick} value={i} className='subtitle'>
+                                        {attribute.text}
+                                        <svg className={selected[i] > 0 ? 'deg180' : ''} xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7 10l5 5 5-5H7z"/></svg>
+                                    </button>
+                                    <div className='values'>
                                         {
-                                            category.length > 0 ? <Link to={`${type === 'my-shop' ? '/my-shop' : ''}/products`} className='category'>All</Link> : undefined
-                                        }
-                                        {
-                                            data && data.parent_category && 'name' in data.parent_category ? <Link to={`${type === 'my-shop' ? '/my-shop' : ''}/products${data.parent_category.href}`} className='category'><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none" opacity=".87"/><path d="M17.51 3.87L15.73 2.1 5.84 12l9.9 9.9 1.77-1.77L9.38 12l8.13-8.13z"/></svg>{data.parent_category.name} ({data.parent_category.count})</Link> : undefined
-                                        }
-                                        {
-                                            data && data.category && data.category.length > 0 && data.category.map(cat => {
-                                                return <Link to={`${type === 'my-shop' ? '/my-shop' : ''}/products${cat.href}`} key={cat.category_name} className={`category ${category.length > 0 ? 'main' : ''}`}>{cat.category_name} ({cat.count})</Link>
+                                            attribute.value.map((value, i) => {
+                                                return (
+                                                    <div key={value.value + i} className='checkbox'>
+                                                        <input onChange={handleToggle} type='checkbox' id={value.value} name='attributes' value={`${attribute.key}~${value.value}`} checked={filter.attributes && filter.attributes.includes(`${attribute.key}~${value.value}`)}/>
+                                                        <label htmlFor={value.value}>
+                                                            <p>{value.value} ({value.count})</p>
+                                                        </label>
+                                                    </div>
+                                                )
                                             })
                                         }
                                     </div>
-                                ) : undefined
-                            }
-                            {
-                                attributes.length > 0 ? (
-                                    attributes.map((attribute, i) => {
-                                        return (
-                                            <div key={attribute.key} className='container' style={selected[i] > 0 ? {height: `${37 + selected[i]}px`} : {height: '29px'}}>
-                                                <button onClick={handleClick} value={i} className='subtitle'>
-                                                    {attribute.text}
-                                                    <svg className={selected[i] > 0 ? 'deg180' : ''} xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7 10l5 5 5-5H7z"/></svg>
-                                                </button>
-                                                <div className='values'>
-                                                    {
-                                                        attribute.value.map((value, i) => {
-                                                            return (
-                                                                <div key={value.value + i} className='checkbox'>
-                                                                    <input onChange={handleToggle} type='checkbox' id={value.value} name='attributes' value={`${attribute.key}~${value.value}`} checked={filter.attributes && filter.attributes.includes(`${attribute.key}~${value.value}`)}/>
-                                                                    <label htmlFor={value.value}>
-                                                                        <p>{value.value} ({value.count})</p>
-                                                                    </label>
-                                                                </div>
-                                                            )
-                                                        })
-                                                    }
-                                                </div>
-                                            </div>
-                                        )
-                                    })
-                                ) : undefined
-                            }
-                        </div>
-                    </div>
+                                </div>
+                            )
+                        })
+                    ) : undefined
+                }
+            </div>
+        </div>
     )
 }
 
