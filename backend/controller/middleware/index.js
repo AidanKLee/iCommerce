@@ -7,7 +7,6 @@ const multer = require('multer');
 const path = require('path');
 const { check, validationResult } = require('express-validator');
 const fs = require('fs');
-const { isArray } = require('util');
 
 const parser = {};
 parser.json = bodyParser.json({limit: 100000000});

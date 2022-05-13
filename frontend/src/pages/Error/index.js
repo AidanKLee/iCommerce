@@ -9,8 +9,6 @@ const Error = props => {
 
     const { state } = location;
 
-    console.log(state)
-
     const timer = useRef(null);
 
     const { err, message, status } = useMemo(() => state, [state]);
@@ -20,11 +18,11 @@ const Error = props => {
             console.error(err);
         }
         timer.current = setTimeout(() => {
-            if (location.pathname.includes('/error')) {
-                navigate(-2);
-            } else {
+            // if (location.pathname.includes('/error')) {
+            //     navigate(-2);
+            // } else {
                 navigate(-1);
-            }
+            // }
         }, 5000)
         return () => clearTimeout(timer.current)
     // eslint-disable-next-line react-hooks/exhaustive-deps
