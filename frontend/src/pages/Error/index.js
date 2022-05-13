@@ -6,6 +6,8 @@ const Error = props => {
 
     const { state } = props;
 
+    console.log(state)
+
     const navigate = useNavigate();
     const location = useLocation();
 
