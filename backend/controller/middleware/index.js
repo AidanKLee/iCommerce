@@ -617,7 +617,7 @@ validate.arrayOfUUID = array => check(array).custom(value => {
     }
     return true;
 })
-validate.arrayOfImages = array => check(array).custom(value => {
+validate.arrayOfImages = (array) => check(array).custom(value => {
     const err = new Error();
     err.status = 400;
     err.message = [];

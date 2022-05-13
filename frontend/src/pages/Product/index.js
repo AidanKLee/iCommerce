@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToBag, saveItem, selectCategories, selectUser } from '../../app/appSlice';
 import NotificaitionModal from '../../components/NotificationModal';
 import Select from '../../components/ProductCreation/Select';
-import Redirect from '../../components/Redirect';
+import Redirect from '../Redirect';
 const { products: p, customer: c } = api;
 
 const Product = props => {
