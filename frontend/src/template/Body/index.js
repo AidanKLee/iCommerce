@@ -21,14 +21,6 @@ import OrderDetails from '../../pages/Orders/OrderDetails';
 import Review from '../../pages/Review'
 import Error from '../../pages/Error';
 import Documentation from '../../pages/Documentation';
-import Redirect from '../../pages/Redirect';
-import { ErrorBoundary } from 'react-error-boundary';
-
-const errorFallback = ({err, resetErrorBoundary}) => {
-    return (
-        <Redirect to='/error' error={err}/>
-    )
-}
 
 const Body = props => {
 
@@ -42,9 +34,7 @@ const Body = props => {
                     <Route path='/products/:category' element={<Products/>}/>
                 </Route>
                 <Route path='/product/:productId' element={<Product/>}>
-                    <ErrorBoundary FallbackComponent={errorFallback}>
-                            <Route path='/product/:productId/:itemId' element={<Product/>}/>
-                    </ErrorBoundary>
+                    <Route path='/product/:productId/:itemId' element={<Product/>}/>
                 </Route>
                 <Route path='/checkout' element={<Checkout/>}>
                     <Route path='/checkout' element={<CheckoutForm/>}/>
