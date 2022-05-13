@@ -279,42 +279,37 @@ const Top = props => {
     }, [selectableItems])
 
     const handleChange = e => {
-        try {
-            let value = e.target.value;
-            const name = e.target.name;
-            if (!Number.isNaN(Number(value))) {
-                value = Number(value);
-            }
-            let selectedAttributes = {};
-            selectedOptions.forEach(option => {
-                selectedAttributes[option.name] =  option.value;
+        let value = e.target.value;
+        const name = e.target.name;
+        if (!Number.isNaN(Number(value))) {
+            value = Number(value);
+        }
+        let selectedAttributes = {};
+        selectedOptions.forEach(option => {
+            selectedAttributes[option.name] =  option.value;
+        })
+        selectedAttributes = {...selectedAttributes, [name]: value}
+        let item = items[selected].filter(item => {
+            let isMatch = true;
+            Object.keys(selectedAttributes).forEach(attribute => {
+                const itemValue = Number.isNaN(Number(item.attributes[attribute])) ? item.attributes[attribute] : Number(item.attributes[attribute]);
+                const selectedValue = Number.isNaN(Number(selectedAttributes[attribute])) ? selectedAttributes[attribute] : Number(selectedAttributes[attribute]);
+                if (itemValue !== selectedValue) {
+                    isMatch = false
+                }
             })
-            selectedAttributes = {...selectedAttributes, [name]: value}
-            let item = items[selected].filter(item => {
-                let isMatch = true;
-                Object.keys(selectedAttributes).forEach(attribute => {
-                    const itemValue = Number.isNaN(Number(item.attributes[attribute])) ? item.attributes[attribute] : Number(item.attributes[attribute]);
-                    const selectedValue = Number.isNaN(Number(selectedAttributes[attribute])) ? selectedAttributes[attribute] : Number(selectedAttributes[attribute]);
-                    if (itemValue !== selectedValue) {
-                        isMatch = false
-                    }
-                })
-                return isMatch;
+            return isMatch;
+        })
+        if (item.length === 0) {
+            item = items[selected].filter(item => {
+                const itemValue = Number.isNaN(Number(item.attributes[name])) ? item.attributes[name] : Number(item.attributes[name]);
+                return itemValue === value;
             })
-            if (item.length === 0) {
-                item = items[selected].filter(item => {
-                    const itemValue = Number.isNaN(Number(item.attributes[name])) ? item.attributes[name] : Number(item.attributes[name]);
-                    return itemValue === value;
-                })
-            }
-            if (item.length === 1 && item[0] && item[0].id) {
-                return navigate(`/product/${productId}/${item[0].id}`, { replace: true })
-            } else {
-                setStockNotification(0)
-            }
-        } catch (err) {
-            console.error(err);
-            setStockNotification(0);
+        }
+        if (item.length === 1 && item[0] && item[0].id) {
+            return navigate(`/product/${productId}/${item[0].id}`, { replace: true })
+        } else {
+            setStockNotification(0)
         }
     }
 

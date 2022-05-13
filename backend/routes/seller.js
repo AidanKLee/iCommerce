@@ -75,12 +75,18 @@ route.put('/:userId/products/:productId',
 );
 
 route.get('/:userId/orders',
+    validate.numberIfExists('limit'),
+    validate.numberIfExists('page'),
+    validate.stringIfExists('search'),
+    validate.numberIfExists('year'),
+    validate.handleErrors,
     seller.selectAllOrders,
     helper.getOrdersData,
     helper.sendOrderData
 );
 
 route.use('/:userId/orders/:orderId',
+    validate.string('orderId'),
     validate.uuid('orderId'),
     validate.handleErrors
 )
