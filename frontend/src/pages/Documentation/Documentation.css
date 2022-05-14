@@ -185,11 +185,17 @@
     outline: 0 none transparent;
 }
 
+.docs .main .contents .search .input input:focus + label svg {
+    transform: scale(1.2);
+    fill: #1f1f1f;
+}
+
 .docs .main .contents .search .input label {
     display: flex;
 }
 
 .docs .main .contents .search .input svg {
+    transition: .3s;
     height: 20px;
     width: 20px;
     fill: rgba(0, 0, 0, 0.4);
