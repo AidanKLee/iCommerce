@@ -174,10 +174,11 @@
     padding: 4px 8px 4px 12px;
     align-items: center;
     border: 1px solid rgba(0, 0, 0, 0.2);
+    display: flex;
 }
 
 .docs .main .contents .search .input input {
-    flex: 1 1;
+    width: calc(100% - 28px);
 }
 
 .docs .main .contents .search .input input:focus {
