@@ -1,22 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { v4 } from 'uuid';
-import docs, { contents } from './Documentation';
+import { contents } from './Documentation';
 import './Documentation.css';
-
-const dropdowns = [];
-
-for (let doc in docs) {
-    doc = docs[doc];
-    for (let route in doc.routes) {
-        route = doc.routes[route];
-        dropdowns.push({id: route.uri, open: false});
-    }
-}
 
 const Documentation = props => {
 
     const [ contentsOpen, setContentsOpen ] = useState(false);
-    const [ menus, setMenus ] = useState(dropdowns);
+    const [ menus, setMenus ] = useState([]);
+    const [ search, setSearch ] = useState('');
+
+    const list = useMemo(() => {
+        const list = [];
+        contents.forEach(doc => {
+            const r1 = {};
+            Object.keys(doc.routes).forEach(route => {
+                const name = route;
+                route = doc.routes[name];
+                const r2 = [];
+                route.routes.forEach((route, i) => {
+                    const methods = {};
+                    Object.keys(route.method).forEach(method => {
+                        const name = method;
+                        method = route.method[name];
+                        if (method.name.toLowerCase().includes(search.toLowerCase())) {
+                            methods[name] = method;
+                        }
+                    })
+                    if (Object.keys(methods).length > 0) {
+                        r2.push({...route, method: methods})
+                    }
+                })
+                if (r2.length > 0) {
+                    r1[name] = {...route, routes: r2};
+                }
+            })
+            if (Object.keys(r1).length > 0) {
+                list.push({...doc, routes: r1})
+            }
+        })
+        return list;
+    }, [search])
+    console.log(list)
+
+    useEffect(() => {
+        const r1 = list && list[0] && list[0].routes ? list[0].routes : {}
+        const dropdowns = Object.keys(r1).map(menu => {
+            menu = r1[menu];
+            return { id: menu.uri, open: false }
+        })
+        setMenus(dropdowns)
+    }, [list])
 
     const handleScroll = e => {
         e.preventDefault();
@@ -41,6 +74,10 @@ const Documentation = props => {
         setMenus(newMenus);
     }
 
+    const handleSearch = e => {
+        setSearch(e.target.value);
+    }
+
     return (
         <section className='docs'>
             <header className='header'>
@@ -51,14 +88,22 @@ const Documentation = props => {
             </header>
             <div className='main'>
                 <ul className={`contents${contentsOpen ? ' open' : ''}`}>
+                    <li className='search'>
+                        <div className='input'>
+                            <input id='doc-search' onChange={handleSearch} type='search' value={search}/>
+                            <label htmlFor='doc-search'>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="48" width="48" viewBox='0 0 48 48'><path d="M39.95 42.75 26.7 29.5Q25.2 30.75 23.125 31.45Q21.05 32.15 18.8 32.15Q13.1 32.15 9.2 28.225Q5.3 24.3 5.3 18.7Q5.3 13.1 9.2 9.2Q13.1 5.3 18.7 5.3Q24.3 5.3 28.225 9.2Q32.15 13.1 32.15 18.7Q32.15 20.95 31.475 22.925Q30.8 24.9 29.4 26.7L42.75 39.95ZM18.75 28.25Q22.75 28.25 25.5 25.475Q28.25 22.7 28.25 18.7Q28.25 14.7 25.5 11.925Q22.75 9.15 18.75 9.15Q14.65 9.15 11.9 11.925Q9.15 14.7 9.15 18.7Q9.15 22.7 11.9 25.475Q14.65 28.25 18.75 28.25Z"/></svg>
+                            </label>
+                        </div>
+                    </li>
                     {
-                        contents.map(doc => {
-                        const link = `/docs#${doc.name.replaceAll(' ','-').replaceAll('/','-').toLowerCase()}`;
+                        list.map((doc, i) => {
+                            const link = `/docs#${doc.name.replaceAll(' ','-').replaceAll('/','-').toLowerCase()}`;
                             return (
                                 <li key={`countents-${link}`}>
                                     <a href={link} onClick={handleScroll}>{doc.name}</a>
                                     {
-                                        doc.routes ? (
+                                        doc && doc.routes && menus.length > 0 && menus.length === Object.keys(list[i].routes).length ? (
                                             <ul className='route'>
                                                 {
                                                     Object.keys(doc.routes).map((route,i) => {
@@ -98,15 +143,22 @@ const Documentation = props => {
                                                 }
                                             </ul>
                                         ) : undefined
-                                    } 
+                                    }
                                 </li>
                             )
                         })
                     }
+                    {
+                        list.length === 0 ? (
+                            <li className='tab'>
+                                <p className='none'>No results</p>
+                            </li>
+                        ) : undefined
+                    }
                 </ul>
                 <div className='view'>
                     {
-                        contents.map(doc => {
+                        list.map((doc, i) => {
                             const id = doc.name.replaceAll(' ','-').replaceAll('/','-').toLowerCase();
                             return(
                                 <div key={id} className='doc'>
@@ -114,7 +166,7 @@ const Documentation = props => {
                                         { doc.name }
                                     </h3>
                                     {
-                                        doc.routes ? (
+                                        doc && doc.routes && menus.length > 0 && menus.length === Object.keys(list[i].routes).length ? (
                                             <ul>
                                                 {
                                                     Object.keys(doc.routes).map(route => {
@@ -410,6 +462,13 @@ const Documentation = props => {
                                 </div>
                             )
                         })
+                    }
+                    {
+                        list.length === 0 ? (
+                            <div className='doc'>
+                                <h3 className='centre'>No results</h3>
+                            </div>
+                        ) : undefined
                     }
                 </div>
             </div>

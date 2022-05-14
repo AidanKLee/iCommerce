@@ -76,7 +76,7 @@
     font-weight: 600;
 }
 
-.docs .main .contents li a {
+.docs .main .contents li a, .docs .main .contents li .none {
     font-weight: 600;
     display: block;
     padding: 16px;
@@ -160,6 +160,41 @@
     padding: 2px 16px;
 }
 
+.docs .main .contents .search {
+    width: 100%;
+    padding: 8px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.docs .main .contents .search .input {
+    width: 100%;
+    background-color: white;
+    border-radius: 16px;
+    display: flex;
+    padding: 4px 8px 4px 12px;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.docs .main .contents .search .input input {
+    flex: 1 1;
+}
+
+.docs .main .contents .search .input input:focus {
+    outline: 0 none transparent;
+}
+
+.docs .main .contents .search .input label {
+    display: flex;
+}
+
+.docs .main .contents .search .input svg {
+    height: 20px;
+    width: 20px;
+    fill: rgba(0, 0, 0, 0.4);
+    margin-left: 8px;
+}
+
 .docs .main .view {
     width: 100%;
     padding: 16px;
@@ -167,8 +202,7 @@
 }
 
 .docs .main .view .doc {
-    width: fit-content;
-    max-width: 100%;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -308,6 +342,10 @@
     font-size: 1.6rem;
     font-weight: 600;
     padding: 16px 0;
+}
+
+.docs h3.centre {
+    text-align: center;
 }
 
 .docs h4 {
